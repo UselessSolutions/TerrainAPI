@@ -14,6 +14,7 @@ import net.minecraft.core.world.noise.PerlinNoise;
 import net.minecraft.core.world.type.WorldTypes;
 
 import java.util.Random;
+import java.util.function.Function;
 
 public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 	public final World world;
@@ -54,6 +55,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		long l2 = random.nextLong() / 2L * 2L + 1L;
 		random.setSeed((long)chunkX * l1 + (long)chunkZ * l2 ^ this.world.getRandomSeed());
 		Random swampRand = new Random((long)chunkX * l1 + (long)chunkZ * l2 ^ this.world.getRandomSeed());
+		Random structureRand = new Random((long)chunkX * l1 + (long)chunkZ * l2 ^ this.world.getRandomSeed());
 
 		BlockSand.fallInstantly = true;
 
@@ -61,90 +63,14 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			swampFeature(xCoord, zCoord, swampRand);
 		}
 		int lakeChance = getLakeChance(biome);
+
 		generateLakeFeature(lakeChance, xCoord, zCoord, biome, random);
-		generateDungeons(xCoord, zCoord, random);
-		generateLabyrinths(xCoord, zCoord, chunk, random);
 
-		generateWithChancesUnderground(new WorldFeatureClay(32), 20f*oreHeightModifier, rangeY, xCoord, zCoord, random);
-		if (biome instanceof BiomeOutback){
-			generateWithChancesSurface(new WorldFeatureRichScorchedDirt(10), 1,xCoord, zCoord, random);
-		}
-		generateWithChancesUnderground(new WorldFeatureOre(Block.dirt.id, 32, false), 20 * oreHeightModifier, rangeY, xCoord, zCoord, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.gravel.id, 32, false), 10 * oreHeightModifier, rangeY, xCoord, zCoord, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreCoalStone.id, 16, true), 20 * oreHeightModifier, rangeY, xCoord, zCoord, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreIronStone.id, 8, true), 20 * oreHeightModifier, rangeY/2, xCoord, zCoord, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreGoldStone.id, 8, true), 2 * oreHeightModifier, rangeY/4, xCoord, zCoord, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreRedstoneStone.id, 7, true), 8 * oreHeightModifier, rangeY/8, xCoord, zCoord, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreDiamondStone.id, 7, true), oreHeightModifier, rangeY/8, xCoord, zCoord, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.mossStone.id, 32, true), oreHeightModifier, rangeY/2, xCoord, zCoord, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreLapisStone.id, 6, true), oreHeightModifier,rangeY/8, xCoord, zCoord, random);
+		generateStructures(biome, chunk,xCoord, zCoord, structureRand);
+		generateOreFeatures(biome, xCoord, zCoord, random);
+		generateBiomeFeature(biome,xCoord, zCoord, random);
+		generateRandomFeatures(biome,xCoord, zCoord, random);
 
-		int treeDensity = getTreeDensity(biome, xCoord,zCoord, random);
-
-		WorldFeature treeFeature = biome.getRandomWorldGenForTrees(random);
-		treeFeature.func_517_a(1.0, 1.0, 1.0);
-		generateWithChancesSurface(treeFeature, treeDensity, xCoord, zCoord, 8, 8, random);
-
-		if (biome == Biomes.OVERWORLD_RAINFOREST){
-			generateWithChancesSurface(new WorldFeatureSugarCaneTall(), 1, xCoord, zCoord, 8, 8, random);
-		}
-
-		int flowerDensity = getFlowerDensity(biome);
-		for (int i = 0; i < flowerDensity; ++i) {
-			int blockId = Block.flowerYellow.id;
-			if (random.nextInt(3) != 0) {
-				blockId = Block.flowerRed.id;
-			}
-			int posX = xCoord + random.nextInt(16) + 8;
-			int posY = random.nextInt(this.world.getHeightBlocks());
-			int posZ = zCoord + random.nextInt(16) + 8;
-			new WorldFeatureTallGrass(blockId).generate(this.world, random, posX, posY, posZ);
-		}
-
-		int yellowFlowerDensity = getYellowFlowerDensity(biome);
-		generateWithChancesUnderground(new WorldFeatureFlowers(Block.flowerYellow.id), yellowFlowerDensity, rangeY, xCoord, zCoord, 8, 8, random);
-
-		int grassDensity = getGrassDensity(biome);
-		for (int i = 0; i < grassDensity; ++i) {
-			int type = Block.tallgrass.id;
-			if ((biome == Biomes.OVERWORLD_RAINFOREST || biome == Biomes.OVERWORLD_SWAMPLAND || biome == Biomes.OVERWORLD_BOREAL_FOREST || biome == Biomes.OVERWORLD_TAIGA) && random.nextInt(3) != 0) {
-				type = Block.tallgrassFern.id;
-			}
-			int posX = xCoord + random.nextInt(16) + 8;
-			int posY = minY + random.nextInt(rangeY);
-			int posZ = zCoord + random.nextInt(16) + 8;
-			new WorldFeatureTallGrass(type).generate(this.world, random, posX, posY, posZ);
-		}
-
-		if (biome == Biomes.OVERWORLD_OUTBACK) {
-			generateWithChancesUnderground(new WorldFeatureSpinifexPatch(), 4, rangeY, xCoord, zCoord, 8, 8, random);
-		}
-		if (biome == Biomes.OVERWORLD_DESERT) {
-			generateWithChancesUnderground(new WorldFeatureDeadBush(Block.deadbush.id),2, rangeY, xCoord, zCoord, 8, 8, random);
-		}
-
-		if (random.nextInt(2) == 0) {
-			generateWithChancesUnderground(new WorldFeatureFlowers(Block.flowerRed.id), 1, rangeY, xCoord, zCoord, 8, 8, random);
-		}
-		if (random.nextInt(4) == 0) {
-			generateWithChancesUnderground(new WorldFeatureFlowers(Block.mushroomBrown.id), 1, rangeY, xCoord, zCoord, 8, 8, random);
-		}
-		if (random.nextInt(8) == 0) {
-			generateWithChancesUnderground(new WorldFeatureFlowers(Block.mushroomRed.id), 1, rangeY, xCoord, zCoord, 8, 8, random);
-		}
-		if (random.nextInt(5) == 0) {
-			generateWithChancesSurface(new WorldFeatureSugarCane(), 1, xCoord, zCoord, 8, 8, random);
-		}
-		if (random.nextInt(128) == 0) {
-			generateWithChancesSurface(new WorldFeaturePumpkin(), 1, xCoord, zCoord, 8, 8, random);
-		}
-		if (random.nextInt(64) == 0) {
-			generateWithChancesSurface(new WorldFeatureSponge(), 1, xCoord, zCoord, 8, 8, random);
-		}
-
-		if (biome == Biomes.OVERWORLD_DESERT) {
-			generateWithChancesUnderground(new WorldFeatureCactus(), 10, rangeY,xCoord, zCoord, 8, 8, random);
-		}
 		generateWithChancesUnderground(new WorldFeatureLiquid(Block.fluidWaterFlowing.id), 50, rangeY, xCoord, zCoord, 8, 8, random);
 		generateWithChancesUnderground(new WorldFeatureLiquid(Block.fluidLavaFlowing.id), 20, rangeY, xCoord, zCoord, 8, 8, random);
 
@@ -152,6 +78,24 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 
 		BlockSand.fallInstantly = false;
 
+	}
+	public WorldFeature grassTypeCondition(Object[] parameters){
+		Biome biome = (Biome)parameters[0];
+		Random random = (Random)parameters[1];
+
+		int blockId = Block.tallgrass.id;
+		if ((biome == Biomes.OVERWORLD_RAINFOREST || biome == Biomes.OVERWORLD_SWAMPLAND || biome == Biomes.OVERWORLD_BOREAL_FOREST || biome == Biomes.OVERWORLD_TAIGA) && random.nextInt(3) != 0) {
+			blockId = Block.tallgrassFern.id;
+		}
+		return new WorldFeatureTallGrass(blockId);
+	}
+	public WorldFeature flowerTypeCondition(Object[] parameters){
+		Random random = (Random) parameters[0];
+		int blockId = Block.flowerYellow.id;
+		if (random.nextInt(3) != 0) {
+			blockId = Block.flowerRed.id;
+		}
+		return new WorldFeatureTallGrass(blockId);
 	}
 	public void swampFeature(int x, int z, Random random){
 		for (int dx = 0; dx < 16; ++dx) {
@@ -227,6 +171,74 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			new WorldFeatureLabyrinth().generate(world, lRand, xPos, yPos, zPos);
 		}
 	}
+	public void generateStructures(Biome biome, Chunk chunk, int x, int z, Random random){
+		generateDungeons(x, z, random);
+		generateLabyrinths(x, z, chunk, random);
+	}
+	public void generateOreFeatures(Biome biome, int x, int z, Random random){
+		generateWithChancesUnderground(new WorldFeatureClay(32), 20f*oreHeightModifier, rangeY, x, z, random);
+
+		generateWithChancesUnderground(new WorldFeatureOre(Block.dirt.id, 32, false), 20 * oreHeightModifier, rangeY, x, z, random);
+		generateWithChancesUnderground(new WorldFeatureOre(Block.gravel.id, 32, false), 10 * oreHeightModifier, rangeY, x, z, random);
+		generateWithChancesUnderground(new WorldFeatureOre(Block.oreCoalStone.id, 16, true), 20 * oreHeightModifier, rangeY, x, z, random);
+		generateWithChancesUnderground(new WorldFeatureOre(Block.oreIronStone.id, 8, true), 20 * oreHeightModifier, rangeY/2, x, z, random);
+		generateWithChancesUnderground(new WorldFeatureOre(Block.oreGoldStone.id, 8, true), 2 * oreHeightModifier, rangeY/4, x, z, random);
+		generateWithChancesUnderground(new WorldFeatureOre(Block.oreRedstoneStone.id, 7, true), 8 * oreHeightModifier, rangeY/8, x, z, random);
+		generateWithChancesUnderground(new WorldFeatureOre(Block.oreDiamondStone.id, 7, true), oreHeightModifier, rangeY/8, x, z, random);
+		generateWithChancesUnderground(new WorldFeatureOre(Block.mossStone.id, 32, true), oreHeightModifier, rangeY/2, x, z, random);
+		generateWithChancesUnderground(new WorldFeatureOre(Block.oreLapisStone.id, 6, true), oreHeightModifier,rangeY/8, x, z, random);
+	}
+	public void generateRandomFeatures(Biome biome, int x, int z, Random random){
+		if (random.nextInt(2) == 0) {
+			generateWithChancesUnderground(new WorldFeatureFlowers(Block.flowerRed.id), 1, rangeY, x, z, 8, 8, random);
+		}
+		if (random.nextInt(4) == 0) {
+			generateWithChancesUnderground(new WorldFeatureFlowers(Block.mushroomBrown.id), 1, rangeY, x, z, 8, 8, random);
+		}
+		if (random.nextInt(8) == 0) {
+			generateWithChancesUnderground(new WorldFeatureFlowers(Block.mushroomRed.id), 1, rangeY, x, z, 8, 8, random);
+		}
+		if (random.nextInt(5) == 0) {
+			generateWithChancesSurface(new WorldFeatureSugarCane(), 1, x, z, 8, 8, random);
+		}
+		if (random.nextInt(128) == 0) {
+			generateWithChancesSurface(new WorldFeaturePumpkin(), 1, x, z, 8, 8, random);
+		}
+		if (random.nextInt(64) == 0) {
+			generateWithChancesSurface(new WorldFeatureSponge(), 1, x, z, 8, 8, random);
+		}
+	}
+	public void generateBiomeFeature(Biome biome, int x, int z, Random random){
+		if (biome instanceof BiomeOutback){
+			generateWithChancesSurface(new WorldFeatureRichScorchedDirt(10), 1,x, z, random);
+		}
+
+		int treeDensity = getTreeDensity(biome, x,z, random);
+		WorldFeature treeFeature = biome.getRandomWorldGenForTrees(random);
+		treeFeature.func_517_a(1.0, 1.0, 1.0);
+		generateWithChancesSurface(treeFeature, treeDensity, x, z, 8, 8, random);
+
+		if (biome == Biomes.OVERWORLD_RAINFOREST){
+			generateWithChancesSurface(new WorldFeatureSugarCaneTall(), 1, x, z, 8, 8, random);
+		}
+		int flowerDensity = getFlowerDensity(biome);
+		generateWithChancesAndConditionallyUnderground(this::flowerTypeCondition, new Object[]{random}, flowerDensity, x, z, 8, 8, random);
+
+		int yellowFlowerDensity = getYellowFlowerDensity(biome);
+		generateWithChancesUnderground(new WorldFeatureFlowers(Block.flowerYellow.id), yellowFlowerDensity, rangeY, x, z, 8, 8, random);
+
+		int grassDensity = getGrassDensity(biome);
+		generateWithChancesAndConditionallyUnderground(this::grassTypeCondition, new Object[]{biome, random}, grassDensity, x, z, 8, 8, random);
+		if (biome == Biomes.OVERWORLD_OUTBACK) {
+			generateWithChancesUnderground(new WorldFeatureSpinifexPatch(), 4, rangeY, x, z, 8, 8, random);
+		}
+		if (biome == Biomes.OVERWORLD_DESERT) {
+			generateWithChancesUnderground(new WorldFeatureDeadBush(Block.deadbush.id),2, rangeY, x, z, 8, 8, random);
+		}
+		if (biome == Biomes.OVERWORLD_DESERT) {
+			generateWithChancesUnderground(new WorldFeatureCactus(), 10, rangeY, x, z, 8, 8, random);
+		}
+	}
 	public void generateWithChancesUnderground(WorldFeature worldFeature, float chances, int rangeY, int x, int z, Random random){
 		generateWithChancesUnderground(worldFeature, chances, rangeY, x, z, 0, 0, random);
 	}
@@ -236,6 +248,14 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			int posY = minY + random.nextInt(rangeY);
 			int posZ = z + random.nextInt(16) + zOff;
 			worldFeature.generate(world, random, posX, posY, posZ);
+		}
+	}
+	public void generateWithChancesAndConditionallyUnderground(Function<Object[], WorldFeature> condition, Object[] parameters, float chances, int x, int z, int xOff, int zOff, Random random){
+		for (int i = 0; i < chances; i++) {
+			int posX = x + random.nextInt(16) + xOff;
+			int posY = minY + random.nextInt(rangeY);
+			int posZ = z + random.nextInt(16) + zOff;
+			condition.apply(parameters).generate(world, random, posX, posY, posZ);
 		}
 	}
 	public void generateWithChancesSurface(WorldFeature worldFeature, float chances, int x, int z, Random random){
