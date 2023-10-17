@@ -192,9 +192,9 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 				if (random.nextInt(RandomFeatures.inverseProbabilityList.get(i)) == 0){
 					float rangeModifier = RandomFeatures.rangeModifierList.get(i);
 					if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
-						generateWithChancesSurface(RandomFeatures.featureList.get(i), 1, x, z, 8, 8, random);
+						generateWithChancesSurface(RandomFeatures.featureList.get(i), RandomFeatures.chancesList.get(i), x, z, 8, 8, random);
 					} else {
-						generateWithChancesUnderground(RandomFeatures.featureList.get(i), 1, (int) (RandomFeatures.rangeModifierList.get(i) * rangeY), x, z, 8, 8, random);
+						generateWithChancesUnderground(RandomFeatures.featureList.get(i), RandomFeatures.chancesList.get(i), (int) (RandomFeatures.rangeModifierList.get(i) * rangeY), x, z, 8, 8, random);
 					}
 				}
 			}
@@ -440,18 +440,20 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		public static List<WorldFeature> featureList = new ArrayList<>();
 		public static List<Integer> inverseProbabilityList = new ArrayList<>();
 		public static List<Float> rangeModifierList = new ArrayList<>();
+		public static List<Integer> chancesList = new ArrayList<>();
 		public static List<Biome[]> biomesList = new ArrayList<>();
 		public static void addFeatureSurface(WorldFeature feature, int inverseProbability){
 			addFeature(feature, inverseProbability, -1f);
 		}
 		public static void addFeature(WorldFeature feature, int inverseProbability, float rangeModifier){
-			addFeature(feature, inverseProbability, rangeModifier, null);
+			addFeature(feature, inverseProbability, rangeModifier,1, null);
 		}
-		public static void addFeature(WorldFeature feature, int inverseProbability, float rangeModifier, Biome[] biomes){
+		public static void addFeature(WorldFeature feature, int inverseProbability, float rangeModifier, int chances, Biome[] biomes){
 			assert (rangeModifier >= 0 && rangeModifier <= 1f) || (-1.01f <= rangeModifier && rangeModifier <= -0.99f): "Range Modifier must be bounded to a range of [0f to 1f]";
 			featureList.add(feature);
 			inverseProbabilityList.add(inverseProbability);
 			rangeModifierList.add(rangeModifier);
+			chancesList.add(chances);
 			biomesList.add(biomes);
 			assert (featureList.size() == inverseProbabilityList.size()) && (featureList.size() == rangeModifierList.size()) && (featureList.size() == biomesList.size()): "OreFeatures list sizes do not match!!";
 		}
