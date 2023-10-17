@@ -180,36 +180,24 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 	public void generateOreFeatures(Biome biome, int x, int z, Random random){
 		int featureSize = OreFeatures.featureList.size();
 		for (int i = 0; i < featureSize; i++) {
-			if (OreFeatures.biomesList.get(i) == null){
+			if (OreFeatures.biomesList.get(i) == null || checkForBiomeInBiomes(biome, OreFeatures.biomesList.get(i))){
 				generateWithChancesUnderground(OreFeatures.featureList.get(i),oreHeightModifier * OreFeatures.chancesList.get(i), (int) (rangeY * OreFeatures.rangeModifierList.get(i)), x, z, random);
-			} else {
-				for (Biome checkBiome: OreFeatures.biomesList.get(i)) {
-					if (biome.equals(checkBiome)){
-						generateWithChancesUnderground(OreFeatures.featureList.get(i),oreHeightModifier * OreFeatures.chancesList.get(i), (int) (rangeY * OreFeatures.rangeModifierList.get(i)), x, z, random);
-						break;
-					}
-				}
 			}
 		}
 	}
 	public void generateRandomFeatures(Biome biome, int x, int z, Random random){
-		if (random.nextInt(2) == 0) {
-			generateWithChancesUnderground(new WorldFeatureFlowers(Block.flowerRed.id), 1, rangeY, x, z, 8, 8, random);
-		}
-		if (random.nextInt(4) == 0) {
-			generateWithChancesUnderground(new WorldFeatureFlowers(Block.mushroomBrown.id), 1, rangeY, x, z, 8, 8, random);
-		}
-		if (random.nextInt(8) == 0) {
-			generateWithChancesUnderground(new WorldFeatureFlowers(Block.mushroomRed.id), 1, rangeY, x, z, 8, 8, random);
-		}
-		if (random.nextInt(5) == 0) {
-			generateWithChancesSurface(new WorldFeatureSugarCane(), 1, x, z, 8, 8, random);
-		}
-		if (random.nextInt(128) == 0) {
-			generateWithChancesSurface(new WorldFeaturePumpkin(), 1, x, z, 8, 8, random);
-		}
-		if (random.nextInt(64) == 0) {
-			generateWithChancesSurface(new WorldFeatureSponge(), 1, x, z, 8, 8, random);
+		int featureSize = RandomFeatures.featureList.size();
+		for (int i = 0; i < featureSize; i++) {
+			if (RandomFeatures.biomesList.get(i) == null || checkForBiomeInBiomes(biome, RandomFeatures.biomesList.get(i))){
+				if (random.nextInt(RandomFeatures.inverseProbabilityList.get(i)) == 0){
+					float rangeModifier = RandomFeatures.rangeModifierList.get(i);
+					if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
+						generateWithChancesSurface(RandomFeatures.featureList.get(i), 1, x, z, 8, 8, random);
+					} else {
+						generateWithChancesUnderground(RandomFeatures.featureList.get(i), 1, (int) (RandomFeatures.rangeModifierList.get(i) * rangeY), x, z, 8, 8, random);
+					}
+				}
+			}
 		}
 	}
 	public void generateBiomeFeature(Biome biome, int x, int z, Random random){
@@ -404,20 +392,28 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			}
 		}
 	}
-
+	public static boolean checkForBiomeInBiomes(Biome biome, Biome[] biomes){
+		for (Biome checkBiome: biomes) {
+			if (biome.equals(checkBiome)){
+				return true;
+			}
+		}
+		return false;
+	}
 	static {
 		OreFeatures.initialize();
+		RandomFeatures.initialize();
 	}
 	public static class OreFeatures {
 		public static List<WorldFeature> featureList = new ArrayList<>();
 		public static List<Integer> chancesList = new ArrayList<>();
 		public static List<Float> rangeModifierList = new ArrayList<>();
 		public static List<Biome[]> biomesList = new ArrayList<>();
-		private static final boolean hasInitialized = false;
-		public static void addOreFeature(WorldFeature feature, int chances, float rangeModifier){
-			addOreFeature(feature, chances, rangeModifier, null);
+		private static boolean hasInitialized = false;
+		public static void addFeature(WorldFeature feature, int chances, float rangeModifier){
+			addFeature(feature, chances, rangeModifier, null);
 		}
-		public static void addOreFeature(WorldFeature feature, int chances, float rangeModifier, Biome[] biomes){
+		public static void addFeature(WorldFeature feature, int chances, float rangeModifier, Biome[] biomes){
 			assert rangeModifier >= 0 && rangeModifier <= 1f: "Range Modifier must be bounded to a range of [0f to 1f]";
 			featureList.add(feature);
 			chancesList.add(chances);
@@ -427,19 +423,48 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		}
 		private static void initialize(){
 			if (hasInitialized) {return;}
-			addOreFeature(new WorldFeatureClay(32), 20, 1);
-			addOreFeature(new WorldFeatureOre(Block.dirt.id, 32, false), 20, 1);
-			addOreFeature(new WorldFeatureOre(Block.gravel.id, 32, false), 10, 1);
-			addOreFeature(new WorldFeatureOre(Block.oreCoalStone.id, 16, true), 20, 1);
-			addOreFeature(new WorldFeatureOre(Block.oreIronStone.id, 8, true), 20, 1/2f);
-			addOreFeature(new WorldFeatureOre(Block.oreGoldStone.id, 8, true), 2, 1/4f);
-			addOreFeature(new WorldFeatureOre(Block.oreRedstoneStone.id, 7, true), 8, 1/8f);
-			addOreFeature(new WorldFeatureOre(Block.oreDiamondStone.id, 7, true), 1, 1/8f);
-			addOreFeature(new WorldFeatureOre(Block.mossStone.id, 32, true), 1, 1/2f);
-			addOreFeature(new WorldFeatureOre(Block.oreLapisStone.id, 6, true), 1, 1/8f);
+			hasInitialized = true;
+			addFeature(new WorldFeatureClay(32), 20, 1);
+			addFeature(new WorldFeatureOre(Block.dirt.id, 32, false), 20, 1);
+			addFeature(new WorldFeatureOre(Block.gravel.id, 32, false), 10, 1);
+			addFeature(new WorldFeatureOre(Block.oreCoalStone.id, 16, true), 20, 1);
+			addFeature(new WorldFeatureOre(Block.oreIronStone.id, 8, true), 20, 1/2f);
+			addFeature(new WorldFeatureOre(Block.oreGoldStone.id, 8, true), 2, 1/4f);
+			addFeature(new WorldFeatureOre(Block.oreRedstoneStone.id, 7, true), 8, 1/8f);
+			addFeature(new WorldFeatureOre(Block.oreDiamondStone.id, 7, true), 1, 1/8f);
+			addFeature(new WorldFeatureOre(Block.mossStone.id, 32, true), 1, 1/2f);
+			addFeature(new WorldFeatureOre(Block.oreLapisStone.id, 6, true), 1, 1/8f);
 		}
 	}
 	public static class RandomFeatures {
-		
+		public static List<WorldFeature> featureList = new ArrayList<>();
+		public static List<Integer> inverseProbabilityList = new ArrayList<>();
+		public static List<Float> rangeModifierList = new ArrayList<>();
+		public static List<Biome[]> biomesList = new ArrayList<>();
+		public static void addFeatureSurface(WorldFeature feature, int inverseProbability){
+			addFeature(feature, inverseProbability, -1f);
+		}
+		public static void addFeature(WorldFeature feature, int inverseProbability, float rangeModifier){
+			addFeature(feature, inverseProbability, rangeModifier, null);
+		}
+		public static void addFeature(WorldFeature feature, int inverseProbability, float rangeModifier, Biome[] biomes){
+			assert (rangeModifier >= 0 && rangeModifier <= 1f) || (-1.01f <= rangeModifier && rangeModifier <= -0.99f): "Range Modifier must be bounded to a range of [0f to 1f]";
+			featureList.add(feature);
+			inverseProbabilityList.add(inverseProbability);
+			rangeModifierList.add(rangeModifier);
+			biomesList.add(biomes);
+			assert (featureList.size() == inverseProbabilityList.size()) && (featureList.size() == rangeModifierList.size()) && (featureList.size() == biomesList.size()): "OreFeatures list sizes do not match!!";
+		}
+		private static boolean hasInitialized = false;
+		private static void initialize(){
+			if (hasInitialized) {return;}
+			hasInitialized = true;
+			addFeature(new WorldFeatureFlowers(Block.flowerRed.id), 2, 1);
+			addFeature(new WorldFeatureFlowers(Block.mushroomBrown.id), 4, 1);
+			addFeature(new WorldFeatureFlowers(Block.mushroomRed.id), 8, 1);
+			addFeatureSurface(new WorldFeatureSugarCane(), 5);
+			addFeatureSurface(new WorldFeaturePumpkin(), 128);
+			addFeatureSurface(new WorldFeatureSponge(), 64);
+		}
 	}
 }

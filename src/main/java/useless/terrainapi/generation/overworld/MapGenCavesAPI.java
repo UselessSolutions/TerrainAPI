@@ -5,9 +5,10 @@ import net.minecraft.core.block.tag.BlockTags;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.generate.MapGenBase;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Random;
-
+@ApiStatus.Experimental
 public class MapGenCavesAPI extends MapGenBase {
 	private final boolean isAlphaWorldType;
 
