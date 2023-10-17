@@ -12,8 +12,11 @@ import net.minecraft.core.world.generate.chunk.ChunkDecorator;
 import net.minecraft.core.world.generate.feature.*;
 import net.minecraft.core.world.noise.PerlinNoise;
 import net.minecraft.core.world.type.WorldTypes;
+import org.apache.logging.log4j.core.util.ArrayUtils;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
@@ -70,7 +73,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 
 		generateStructures(biome, chunk,xCoord, zCoord, structureRand);
 		generateOreFeatures(biome, xCoord, zCoord, random);
-		generateBiomeFeature(biome,xCoord, zCoord, random);
+		generateBiomeFeature(biome,xCoord, zCoord, random, chunk);
 		generateRandomFeatures(biome,xCoord, zCoord, random);
 
 		generateWithChancesUnderground(new WorldFeatureLiquid(Block.fluidWaterFlowing.id), 50, rangeY, xCoord, zCoord, 8, 8, random);
@@ -80,24 +83,6 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 
 		BlockSand.fallInstantly = false;
 
-	}
-	public WorldFeature grassTypeCondition(Object[] parameters){
-		Biome biome = (Biome)parameters[0];
-		Random random = (Random)parameters[1];
-
-		int blockId = Block.tallgrass.id;
-		if ((biome == Biomes.OVERWORLD_RAINFOREST || biome == Biomes.OVERWORLD_SWAMPLAND || biome == Biomes.OVERWORLD_BOREAL_FOREST || biome == Biomes.OVERWORLD_TAIGA) && random.nextInt(3) != 0) {
-			blockId = Block.tallgrassFern.id;
-		}
-		return new WorldFeatureTallGrass(blockId);
-	}
-	public WorldFeature flowerTypeCondition(Object[] parameters){
-		Random random = (Random) parameters[0];
-		int blockId = Block.flowerYellow.id;
-		if (random.nextInt(3) != 0) {
-			blockId = Block.flowerRed.id;
-		}
-		return new WorldFeatureTallGrass(blockId);
 	}
 	public void swampFeature(int x, int z, Random random){
 		for (int dx = 0; dx < 16; ++dx) {
@@ -194,41 +179,42 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 					if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
 						generateWithChancesSurface(RandomFeatures.featureList.get(i), RandomFeatures.chancesList.get(i), x, z, 8, 8, random);
 					} else {
-						generateWithChancesUnderground(RandomFeatures.featureList.get(i), RandomFeatures.chancesList.get(i), (int) (RandomFeatures.rangeModifierList.get(i) * rangeY), x, z, 8, 8, random);
+						generateWithChancesUnderground(RandomFeatures.featureList.get(i), RandomFeatures.chancesList.get(i), (int) (rangeModifier * rangeY), x, z, 8, 8, random);
 					}
 				}
 			}
 		}
 	}
-	public void generateBiomeFeature(Biome biome, int x, int z, Random random){
-		if (biome instanceof BiomeOutback){
-			generateWithChancesSurface(new WorldFeatureRichScorchedDirt(10), 1,x, z, random);
+	public void generateBiomeFeature(Biome biome, int x, int z, Random random, Chunk chunk){
+		int simpleFeatureSize = BiomeFeatures.simpleFeatures.size();
+		for (int i = 0; i < simpleFeatureSize; i++) {
+			if (BiomeFeatures.simpleBiomes.get(i) == null || checkForBiomeInBiomes(biome, BiomeFeatures.simpleBiomes.get(i))){
+				float rangeModifier = BiomeFeatures.simpleRangeModifiers.get(i);
+				if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
+					generateWithChancesSurface(BiomeFeatures.simpleFeatures.get(i), BiomeFeatures.simpleChances.get(i), x, z,8,8, random);
+				} else {
+					generateWithChancesUnderground(BiomeFeatures.simpleFeatures.get(i), BiomeFeatures.simpleChances.get(i), (int) (rangeModifier * rangeY), x, z, 8, 8, random);
+				}
+			}
 		}
-
-		int treeDensity = getTreeDensity(biome, x,z, random);
-		WorldFeature treeFeature = biome.getRandomWorldGenForTrees(random);
-		treeFeature.func_517_a(1.0, 1.0, 1.0);
-		generateWithChancesSurface(treeFeature, treeDensity, x, z, 8, 8, random);
-
-		if (biome == Biomes.OVERWORLD_RAINFOREST){
-			generateWithChancesSurface(new WorldFeatureSugarCaneTall(), 1, x, z, 8, 8, random);
-		}
-		int flowerDensity = getFlowerDensity(biome);
-		generateWithChancesAndConditionallyUnderground(this::flowerTypeCondition, new Object[]{random}, flowerDensity, x, z, 8, 8, random);
-
-		int yellowFlowerDensity = getYellowFlowerDensity(biome);
-		generateWithChancesUnderground(new WorldFeatureFlowers(Block.flowerYellow.id), yellowFlowerDensity, rangeY, x, z, 8, 8, random);
-
-		int grassDensity = getGrassDensity(biome);
-		generateWithChancesAndConditionallyUnderground(this::grassTypeCondition, new Object[]{biome, random}, grassDensity, x, z, 8, 8, random);
-		if (biome == Biomes.OVERWORLD_OUTBACK) {
-			generateWithChancesUnderground(new WorldFeatureSpinifexPatch(), 4, rangeY, x, z, 8, 8, random);
-		}
-		if (biome == Biomes.OVERWORLD_DESERT) {
-			generateWithChancesUnderground(new WorldFeatureDeadBush(Block.deadbush.id),2, rangeY, x, z, 8, 8, random);
-		}
-		if (biome == Biomes.OVERWORLD_DESERT) {
-			generateWithChancesUnderground(new WorldFeatureCactus(), 10, rangeY, x, z, 8, 8, random);
+		int complexFeatureSize = BiomeFeatures.complexFeatures.size();
+		for (int i = 0; i < complexFeatureSize; i++) {
+			Object[] featureParameters = new Object[]{biome, random, chunk, this};
+			if (BiomeFeatures.complexFeatureParameters.get(i) != null){
+				featureParameters = concatenate(featureParameters, BiomeFeatures.complexFeatureParameters.get(i));
+			}
+			Object[] densityParameters = new Object[]{biome, random, chunk, this};
+			if (BiomeFeatures.complexDensityParameters.get(i) != null){
+				densityParameters = concatenate(featureParameters, BiomeFeatures.complexDensityParameters.get(i));
+			}
+			WorldFeature feature = BiomeFeatures.complexFeatures.get(i).apply(featureParameters);
+			int density = BiomeFeatures.complexDensities.get(i).apply(densityParameters);
+			float rangeModifier = BiomeFeatures.complexRangeModifierList.get(i);
+			if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
+				generateWithChancesSurface(feature, density, x, z, 8, 8, random);
+			} else {
+				generateWithChancesUnderground(feature, density, (int) rangeModifier * rangeY, x, z, 8, 8, random);
+			}
 		}
 	}
 	public void generateWithChancesUnderground(WorldFeature worldFeature, float chances, int rangeY, int x, int z, Random random){
@@ -261,123 +247,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			worldFeature.generate(world, random, posX, posY, posZ);
 		}
 	}
-	public int getTreeDensity(Biome biome, int x, int z, Random random){
-		if (treeDensityOverride != -1){
-			return treeDensityOverride;
-		}
-		double d = 0.5;
-		int noiseValue = (int)((this.treeDensityNoise.get((double)x * d, (double)z * d) / 8.0 + random.nextDouble() * 4.0 + 4.0) / 3.0);
-		int treeDensity = 0;
-		if (random.nextInt(10) == 0) {
-			++treeDensity;
-		}
-		if (biome == Biomes.OVERWORLD_FOREST) {
-			treeDensity += noiseValue + 5;
-		}
-		if (biome == Biomes.OVERWORLD_BIRCH_FOREST) {
-			treeDensity += noiseValue + 4;
-		}
-		if (biome == Biomes.OVERWORLD_RAINFOREST) {
-			treeDensity += noiseValue + 10;
-		}
-		if (biome == Biomes.OVERWORLD_SEASONAL_FOREST) {
-			treeDensity += noiseValue + 2;
-		}
-		if (biome == Biomes.OVERWORLD_TAIGA) {
-			treeDensity += noiseValue + 5;
-		}
-		if (biome == Biomes.OVERWORLD_BOREAL_FOREST) {
-			treeDensity += noiseValue + 3;
-		}
-		if (biome == Biomes.OVERWORLD_DESERT) {
-			treeDensity = 0;
-		}
-		if (biome == Biomes.OVERWORLD_TUNDRA) {
-			treeDensity -= 20;
-		}
-		if (biome == Biomes.OVERWORLD_PLAINS) {
-			treeDensity -= 20;
-		}
-		if (biome == Biomes.OVERWORLD_SWAMPLAND) {
-			treeDensity += noiseValue + 4;
-		}
-		if (biome == Biomes.OVERWORLD_OUTBACK_GRASSY) {
-			treeDensity += noiseValue;
-		}
-		return treeDensity;
-	}
-	public int getFlowerDensity(Biome biome){
-		if (biome == Biomes.OVERWORLD_SEASONAL_FOREST) {
-			return 1;
-		}
-		if (biome == Biomes.OVERWORLD_MEADOW) {
-			return 2;
-		}
-		if (biome == Biomes.OVERWORLD_BOREAL_FOREST) {
-			return 2;
-		}
-		if (biome == Biomes.OVERWORLD_SHRUBLAND) {
-			return 1;
-		}
-		return 0;
-	}
-	public int getYellowFlowerDensity(Biome biome){
-		if (biome == Biomes.OVERWORLD_FOREST) {
-			return 2;
-		}
-		if (biome == Biomes.OVERWORLD_SWAMPLAND) {
-			return 2;
-		}
-		if (biome == Biomes.OVERWORLD_TAIGA) {
-			return 2;
-		}
-		if (biome == Biomes.OVERWORLD_PLAINS) {
-			return 3;
-		}
-		if (biome == Biomes.OVERWORLD_OUTBACK_GRASSY || biome == Biomes.OVERWORLD_OUTBACK) {
-			return 2;
-		}
-		return 0;
-	}
-	public int getGrassDensity(Biome biome){
-		if (biome == Biomes.OVERWORLD_FOREST) {
-			return 2;
-		}
-		if (biome == Biomes.OVERWORLD_MEADOW) {
-			return 2;
-		}
-		if (biome == Biomes.OVERWORLD_RAINFOREST) {
-			return 10;
-		}
-		if (biome == Biomes.OVERWORLD_DESERT) {
-			return 5;
-		}
-		if (biome == Biomes.OVERWORLD_SEASONAL_FOREST) {
-			return 2;
-		}
-		if (biome == Biomes.OVERWORLD_TAIGA) {
-			return 1;
-		}
-		if (biome == Biomes.OVERWORLD_BOREAL_FOREST) {
-			return 5;
-		}
-		if (biome == Biomes.OVERWORLD_PLAINS) {
-			return 10;
-		}
-		if (biome == Biomes.OVERWORLD_SWAMPLAND) {
-			return 4;
-		}
-		if (biome == Biomes.OVERWORLD_SHRUBLAND) {
-			return 2;
-		}
-		if (biome == Biomes.OVERWORLD_OUTBACK_GRASSY) {
-			return 25;
-		}
-		if (biome == Biomes.OVERWORLD_BIRCH_FOREST) {
-			return 10;
-		}
-		return 0;
-	}
+
 	public void freezeSurface(int x, int z){
 		int oceanY = this.world.getWorldType().getOceanY();
 		for (int dx = x + 8; dx < x + 8 + 16; ++dx) {
@@ -400,9 +270,22 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		}
 		return false;
 	}
+	public static <T> T[] concatenate(T[] a, T[] b) {
+		int aLen = a.length;
+		int bLen = b.length;
+
+		@SuppressWarnings("unchecked")
+		T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
+		System.arraycopy(a, 0, c, 0, aLen);
+		System.arraycopy(b, 0, c, aLen, bLen);
+
+		return c;
+	}
+
 	static {
 		OreFeatures.initialize();
 		RandomFeatures.initialize();
+		BiomeFeatures.initialize();
 	}
 	public static class OreFeatures {
 		public static List<WorldFeature> featureList = new ArrayList<>();
@@ -442,6 +325,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		public static List<Float> rangeModifierList = new ArrayList<>();
 		public static List<Integer> chancesList = new ArrayList<>();
 		public static List<Biome[]> biomesList = new ArrayList<>();
+		private static boolean hasInitialized = false;
 		public static void addFeatureSurface(WorldFeature feature, int inverseProbability){
 			addFeature(feature, inverseProbability, -1f);
 		}
@@ -455,9 +339,8 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			rangeModifierList.add(rangeModifier);
 			chancesList.add(chances);
 			biomesList.add(biomes);
-			assert (featureList.size() == inverseProbabilityList.size()) && (featureList.size() == rangeModifierList.size()) && (featureList.size() == biomesList.size()): "OreFeatures list sizes do not match!!";
+			assert (featureList.size() == inverseProbabilityList.size()) && (featureList.size() == rangeModifierList.size()) && (featureList.size() == biomesList.size()): "RandomFeatures list sizes do not match!!";
 		}
-		private static boolean hasInitialized = false;
 		private static void initialize(){
 			if (hasInitialized) {return;}
 			hasInitialized = true;
@@ -467,6 +350,210 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			addFeatureSurface(new WorldFeatureSugarCane(), 5);
 			addFeatureSurface(new WorldFeaturePumpkin(), 128);
 			addFeatureSurface(new WorldFeatureSponge(), 64);
+		}
+	}
+	public static class BiomeFeatures {
+		public static List<WorldFeature> simpleFeatures = new ArrayList<>();
+		public static List<Float> simpleRangeModifiers = new ArrayList<>();
+		public static List<Integer> simpleChances = new ArrayList<>();
+		public static List<Biome[]> simpleBiomes = new ArrayList<>();
+		private static boolean hasInitialized = false;
+		public static void addFeatureSurface(WorldFeature feature, int chances, Biome[] biomes){
+			addFeature(feature, -1f, chances, biomes);
+		}
+		public static void addFeature(WorldFeature feature, float rangeModifier, int chances, Biome[] biomes){
+			assert (rangeModifier >= 0 && rangeModifier <= 1f) || (-1.01f <= rangeModifier && rangeModifier <= -0.99f): "Range Modifier must be bounded to a range of [0f to 1f]";
+			simpleFeatures.add(feature);
+			simpleRangeModifiers.add(rangeModifier);
+			simpleChances.add(chances);
+			simpleBiomes.add(biomes);
+			assert (simpleFeatures.size() == simpleChances.size()) && (simpleFeatures.size() == simpleRangeModifiers.size()) && (simpleFeatures.size() == simpleBiomes.size()): "BiomeFeatures list sizes do not match!!";
+		}
+
+		public static List<Function<Object[], WorldFeature>> complexFeatures = new ArrayList<>();
+		public static List<Object[]> complexFeatureParameters = new ArrayList<>();
+		public static List<Function<Object[], Integer>> complexDensities = new ArrayList<>();
+		public static List<Object[]> complexDensityParameters = new ArrayList<>();
+		public static List<Float> complexRangeModifierList = new ArrayList<>();
+
+		/** The Object[] are the parameters passed into the provided function, index 0 will always be populated by Biome, index 1 with Random, index 2 with Chunk, and index 3 with the ChunkDecorator. Additional parameters can be added in the method.
+		 * Range Modifier of -1 indicates that the feature should only generate on the surface
+		 *
+		 */
+		public static void addComplexFeature(Function<Object[], WorldFeature> featureFunction, Object[] featureParameters, Function<Object[], Integer> densityFunction, Object[] densityParameters, float rangeModifier){
+			assert (rangeModifier >= 0 && rangeModifier <= 1f) || (-1.01f <= rangeModifier && rangeModifier <= -0.99f): "Range Modifier must be bounded to a range of [0f to 1f]";
+			complexFeatures.add(featureFunction);
+			complexFeatureParameters.add(featureParameters);
+			complexDensities.add(densityFunction);
+			complexDensityParameters.add(densityParameters);
+			complexRangeModifierList.add(rangeModifier);
+			assert (complexFeatures.size() == complexFeatureParameters.size()) && (complexFeatures.size() == complexDensities.size()) && (complexFeatures.size() == complexDensityParameters.size() && (complexFeatures.size() == complexRangeModifierList.size())): "BiomeFeatures list sizes do not match!!";
+		}
+		public static void initialize(){
+			if (hasInitialized) {return;}
+			hasInitialized = true;
+			addFeatureSurface(new WorldFeatureRichScorchedDirt(10), 1, new Biome[]{Biomes.OVERWORLD_OUTBACK, Biomes.OVERWORLD_OUTBACK_GRASSY});
+			addComplexFeature(ComplexFunctions::getTreeFeature, null, ComplexFunctions::getTreeDensity, null, -1f);
+			addFeatureSurface(new WorldFeatureSugarCaneTall(), 1, new Biome[]{Biomes.OVERWORLD_RAINFOREST});
+			addComplexFeature(ComplexFunctions::flowerTypeCondition, null, ComplexFunctions::getFlowerDensity, null, 1f);
+			addComplexFeature((Object[] x) -> new WorldFeatureFlowers(Block.flowerYellow.id), null, ComplexFunctions::getYellowFlowerDensity, null, 1);
+			addComplexFeature(ComplexFunctions::grassTypeCondition, null, ComplexFunctions::getGrassDensity, null, 1);
+			addFeature(new WorldFeatureSpinifexPatch(), 1, 4, new Biome[]{Biomes.OVERWORLD_OUTBACK});
+			addFeature(new WorldFeatureDeadBush(Block.deadbush.id), 1, 2, new Biome[]{Biomes.OVERWORLD_DESERT});
+			addFeature(new WorldFeatureCactus(), 1, 10, new Biome[]{Biomes.OVERWORLD_DESERT});
+		}
+	}
+	public static class ComplexFunctions {
+		public static WorldFeature getTreeFeature(Object[] parameters){
+			Biome biome = (Biome) parameters[0];
+			Random random = (Random) parameters[1];
+			WorldFeature treeFeature = biome.getRandomWorldGenForTrees(random);
+			treeFeature.func_517_a(1.0, 1.0, 1.0);
+			return treeFeature;
+		}
+		public static int getTreeDensity(Object[] parameters){
+			Biome biome = (Biome) parameters[0];
+			Random random = (Random) parameters[1];
+			Chunk chunk = (Chunk) parameters[2];
+			ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
+			int x = chunk.xPosition * 16;
+			int z = chunk.zPosition * 16;
+			if (decorator.treeDensityOverride != -1){
+				return decorator.treeDensityOverride;
+			}
+			double d = 0.5;
+			int noiseValue = (int)((decorator.treeDensityNoise.get((double)x * d, (double)z * d) / 8.0 + random.nextDouble() * 4.0 + 4.0) / 3.0);
+			int treeDensity = 0;
+			if (random.nextInt(10) == 0) {
+				++treeDensity;
+			}
+			if (biome == Biomes.OVERWORLD_FOREST) {
+				treeDensity += noiseValue + 5;
+			}
+			if (biome == Biomes.OVERWORLD_BIRCH_FOREST) {
+				treeDensity += noiseValue + 4;
+			}
+			if (biome == Biomes.OVERWORLD_RAINFOREST) {
+				treeDensity += noiseValue + 10;
+			}
+			if (biome == Biomes.OVERWORLD_SEASONAL_FOREST) {
+				treeDensity += noiseValue + 2;
+			}
+			if (biome == Biomes.OVERWORLD_TAIGA) {
+				treeDensity += noiseValue + 5;
+			}
+			if (biome == Biomes.OVERWORLD_BOREAL_FOREST) {
+				treeDensity += noiseValue + 3;
+			}
+			if (biome == Biomes.OVERWORLD_DESERT) {
+				treeDensity = 0;
+			}
+			if (biome == Biomes.OVERWORLD_TUNDRA) {
+				treeDensity -= 20;
+			}
+			if (biome == Biomes.OVERWORLD_PLAINS) {
+				treeDensity -= 20;
+			}
+			if (biome == Biomes.OVERWORLD_SWAMPLAND) {
+				treeDensity += noiseValue + 4;
+			}
+			if (biome == Biomes.OVERWORLD_OUTBACK_GRASSY) {
+				treeDensity += noiseValue;
+			}
+			return treeDensity;
+		}
+		public static WorldFeature grassTypeCondition(Object[] parameters){
+			Biome biome = (Biome)parameters[0];
+			Random random = (Random)parameters[1];
+
+			int blockId = Block.tallgrass.id;
+			if ((biome == Biomes.OVERWORLD_RAINFOREST || biome == Biomes.OVERWORLD_SWAMPLAND || biome == Biomes.OVERWORLD_BOREAL_FOREST || biome == Biomes.OVERWORLD_TAIGA) && random.nextInt(3) != 0) {
+				blockId = Block.tallgrassFern.id;
+			}
+			return new WorldFeatureTallGrass(blockId);
+		}
+		public static WorldFeature flowerTypeCondition(Object[] parameters){
+			Random random = (Random) parameters[1];
+			int blockId = Block.flowerYellow.id;
+			if (random.nextInt(3) != 0) {
+				blockId = Block.flowerRed.id;
+			}
+			return new WorldFeatureTallGrass(blockId);
+		}
+		public static int getFlowerDensity(Object[] parameters){
+			Biome biome = (Biome) parameters[0];
+			if (biome == Biomes.OVERWORLD_SEASONAL_FOREST) {
+				return 1;
+			}
+			if (biome == Biomes.OVERWORLD_MEADOW) {
+				return 2;
+			}
+			if (biome == Biomes.OVERWORLD_BOREAL_FOREST) {
+				return 2;
+			}
+			if (biome == Biomes.OVERWORLD_SHRUBLAND) {
+				return 1;
+			}
+			return 0;
+		}
+		public static int getYellowFlowerDensity(Object[] parameters){
+			Biome biome = (Biome) parameters[0];
+			if (biome == Biomes.OVERWORLD_FOREST) {
+				return 2;
+			}
+			if (biome == Biomes.OVERWORLD_SWAMPLAND) {
+				return 2;
+			}
+			if (biome == Biomes.OVERWORLD_TAIGA) {
+				return 2;
+			}
+			if (biome == Biomes.OVERWORLD_PLAINS) {
+				return 3;
+			}
+			if (biome == Biomes.OVERWORLD_OUTBACK_GRASSY || biome == Biomes.OVERWORLD_OUTBACK) {
+				return 2;
+			}
+			return 0;
+		}
+		public static int getGrassDensity(Object[] parameters){
+			Biome biome = (Biome) parameters[0];
+			if (biome == Biomes.OVERWORLD_FOREST) {
+				return 2;
+			}
+			if (biome == Biomes.OVERWORLD_MEADOW) {
+				return 2;
+			}
+			if (biome == Biomes.OVERWORLD_RAINFOREST) {
+				return 10;
+			}
+			if (biome == Biomes.OVERWORLD_DESERT) {
+				return 5;
+			}
+			if (biome == Biomes.OVERWORLD_SEASONAL_FOREST) {
+				return 2;
+			}
+			if (biome == Biomes.OVERWORLD_TAIGA) {
+				return 1;
+			}
+			if (biome == Biomes.OVERWORLD_BOREAL_FOREST) {
+				return 5;
+			}
+			if (biome == Biomes.OVERWORLD_PLAINS) {
+				return 10;
+			}
+			if (biome == Biomes.OVERWORLD_SWAMPLAND) {
+				return 4;
+			}
+			if (biome == Biomes.OVERWORLD_SHRUBLAND) {
+				return 2;
+			}
+			if (biome == Biomes.OVERWORLD_OUTBACK_GRASSY) {
+				return 25;
+			}
+			if (biome == Biomes.OVERWORLD_BIRCH_FOREST) {
+				return 10;
+			}
+			return 0;
 		}
 	}
 }
