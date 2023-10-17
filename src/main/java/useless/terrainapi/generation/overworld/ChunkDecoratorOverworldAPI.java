@@ -19,7 +19,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 	public final World world;
 	public final PerlinNoise treeDensityNoise;
 	public final int treeDensityOverride;
-	private int lakeDensityDefault = 4;
+	private final int lakeDensityDefault = 4;
 	public final int minY;
 	public final int maxY;
 	public final int rangeY;
@@ -58,12 +58,12 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		BlockSand.fallInstantly = true;
 
 		if (biome == Biomes.OVERWORLD_SWAMPLAND){
-			swampFeature(xCoord, yCoord, zCoord, swampRand);
+			swampFeature(xCoord, zCoord, swampRand);
 		}
 		int lakeChance = getLakeChance(biome);
-		generateLakeFeature(lakeChance, xCoord, yCoord, zCoord, biome, random);
-		generateDungeons(xCoord, yCoord, zCoord, biome, random);
-		generateLabyrinths(xCoord, yCoord, zCoord, chunk, random);
+		generateLakeFeature(lakeChance, xCoord, zCoord, biome, random);
+		generateDungeons(xCoord, zCoord, random);
+		generateLabyrinths(xCoord, zCoord, chunk, random);
 
 		generateWithChancesUnderground(new WorldFeatureClay(32), 20f*oreHeightModifier, rangeY, xCoord, zCoord, random);
 		if (biome instanceof BiomeOutback){
@@ -79,7 +79,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		generateWithChancesUnderground(new WorldFeatureOre(Block.mossStone.id, 32, true), oreHeightModifier, rangeY/2, xCoord, zCoord, random);
 		generateWithChancesUnderground(new WorldFeatureOre(Block.oreLapisStone.id, 6, true), oreHeightModifier,rangeY/8, xCoord, zCoord, random);
 
-		int treeDensity = getTreeDensity(biome, xCoord,yCoord,zCoord, random);
+		int treeDensity = getTreeDensity(biome, xCoord,zCoord, random);
 
 		WorldFeature treeFeature = biome.getRandomWorldGenForTrees(random);
 		treeFeature.func_517_a(1.0, 1.0, 1.0);
@@ -102,7 +102,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		}
 
 		int yellowFlowerDensity = getYellowFlowerDensity(biome);
-		generateWithChancesSurface(new WorldFeatureFlowers(Block.flowerYellow.id), yellowFlowerDensity, xCoord, zCoord, 8, 8, random);
+		generateWithChancesUnderground(new WorldFeatureFlowers(Block.flowerYellow.id), yellowFlowerDensity, rangeY, xCoord, zCoord, 8, 8, random);
 
 		int grassDensity = getGrassDensity(biome);
 		for (int i = 0; i < grassDensity; ++i) {
@@ -117,20 +117,20 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		}
 
 		if (biome == Biomes.OVERWORLD_OUTBACK) {
-			generateWithChancesSurface(new WorldFeatureSpinifexPatch(), 4, xCoord, zCoord, 8, 8, random);
+			generateWithChancesUnderground(new WorldFeatureSpinifexPatch(), 4, rangeY, xCoord, zCoord, 8, 8, random);
 		}
 		if (biome == Biomes.OVERWORLD_DESERT) {
-			generateWithChancesSurface(new WorldFeatureDeadBush(Block.deadbush.id),2, xCoord, zCoord, 8, 8, random);
+			generateWithChancesUnderground(new WorldFeatureDeadBush(Block.deadbush.id),2, rangeY, xCoord, zCoord, 8, 8, random);
 		}
 
 		if (random.nextInt(2) == 0) {
-			generateWithChancesSurface(new WorldFeatureFlowers(Block.flowerRed.id), 1, xCoord, zCoord, 8, 8, random);
+			generateWithChancesUnderground(new WorldFeatureFlowers(Block.flowerRed.id), 1, rangeY, xCoord, zCoord, 8, 8, random);
 		}
 		if (random.nextInt(4) == 0) {
-			generateWithChancesSurface(new WorldFeatureFlowers(Block.mushroomBrown.id), 1, xCoord, zCoord, 8, 8, random);
+			generateWithChancesUnderground(new WorldFeatureFlowers(Block.mushroomBrown.id), 1, rangeY, xCoord, zCoord, 8, 8, random);
 		}
 		if (random.nextInt(8) == 0) {
-			generateWithChancesSurface(new WorldFeatureFlowers(Block.mushroomRed.id), 1, xCoord, zCoord, 8, 8, random);
+			generateWithChancesUnderground(new WorldFeatureFlowers(Block.mushroomRed.id), 1, rangeY, xCoord, zCoord, 8, 8, random);
 		}
 		if (random.nextInt(5) == 0) {
 			generateWithChancesSurface(new WorldFeatureSugarCane(), 1, xCoord, zCoord, 8, 8, random);
@@ -143,24 +143,24 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		}
 
 		if (biome == Biomes.OVERWORLD_DESERT) {
-			generateWithChancesSurface(new WorldFeatureCactus(), 10, xCoord, zCoord, 8, 8, random);
+			generateWithChancesUnderground(new WorldFeatureCactus(), 10, rangeY,xCoord, zCoord, 8, 8, random);
 		}
-		generateWithChancesSurface(new WorldFeatureLiquid(Block.fluidWaterFlowing.id), 50, xCoord, zCoord, 8, 8, random);
-		generateWithChancesSurface(new WorldFeatureLiquid(Block.fluidLavaFlowing.id), 20, xCoord, zCoord, 8, 8, random);
+		generateWithChancesUnderground(new WorldFeatureLiquid(Block.fluidWaterFlowing.id), 50, rangeY, xCoord, zCoord, 8, 8, random);
+		generateWithChancesUnderground(new WorldFeatureLiquid(Block.fluidLavaFlowing.id), 20, rangeY, xCoord, zCoord, 8, 8, random);
 
 		freezeSurface(xCoord, zCoord);
 
 		BlockSand.fallInstantly = false;
 
 	}
-	public void swampFeature(int x, int y, int z, Random random){
+	public void swampFeature(int x, int z, Random random){
 		for (int dx = 0; dx < 16; ++dx) {
 			for (int dz = 0; dz < 16; ++dz) {
 				boolean shouldPlaceWater;
 				int topBlock = this.world.getHeightValue(x + dx, z + dz);
 				int id = this.world.getBlockId(x + dx, topBlock - 1, z + dz);
 				if (id != Block.grass.id) continue;
-				boolean bl = shouldPlaceWater = random.nextFloat() < 0.5f;
+				shouldPlaceWater = random.nextFloat() < 0.5f;
 				if (!shouldPlaceWater) continue;
 				int posXId = this.world.getBlockId(x + dx + 1, topBlock - 1, z + dz);
 				int negXId = this.world.getBlockId(x + dx - 1, topBlock - 1, z + dz);
@@ -182,7 +182,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		}
 		return lakeDensityDefault;
 	}
-	public void generateLakeFeature(int lakeChance, int x, int y, int z, Biome biome, Random random){
+	public void generateLakeFeature(int lakeChance, int x, int z, Biome biome, Random random){
 		if (lakeChance != 0 && random.nextInt(lakeChance) == 0) {
 			int fluid = Block.fluidWaterStill.id;
 			if (biome.hasSurfaceSnow()) {
@@ -202,7 +202,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			}
 		}
 	}
-	public void generateDungeons(int x, int y, int z, Biome biome, Random random){
+	public void generateDungeons(int x, int z, Random random){
 		for (int i = 0; i < 8.0f * oreHeightModifier; i++) {
 			int xPos = x + random.nextInt(16) + 8;
 			int yPos = minY + random.nextInt(rangeY);
@@ -214,7 +214,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			}
 		}
 	}
-	public void generateLabyrinths(int x, int y, int z, Chunk chunk, Random random){
+	public void generateLabyrinths(int x, int z, Chunk chunk, Random random){
 		for (int i = 0; i < 1; ++i) {
 			int xPos = x + random.nextInt(16) + 8;
 			int zPos = z + random.nextInt(16) + 8;
@@ -249,7 +249,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			worldFeature.generate(world, random, posX, posY, posZ);
 		}
 	}
-	public int getTreeDensity(Biome biome, int x, int y, int z, Random random){
+	public int getTreeDensity(Biome biome, int x, int z, Random random){
 		if (treeDensityOverride != -1){
 			return treeDensityOverride;
 		}
