@@ -228,14 +228,6 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			worldFeature.generate(world, random, posX, posY, posZ);
 		}
 	}
-	public void generateWithChancesAndConditionallyUnderground(Function<Object[], WorldFeature> condition, Object[] parameters, float chances, int x, int z, int xOff, int zOff, Random random){
-		for (int i = 0; i < chances; i++) {
-			int posX = x + random.nextInt(16) + xOff;
-			int posY = minY + random.nextInt(rangeY);
-			int posZ = z + random.nextInt(16) + zOff;
-			condition.apply(parameters).generate(world, random, posX, posY, posZ);
-		}
-	}
 	public void generateWithChancesSurface(WorldFeature worldFeature, float chances, int x, int z, Random random){
 		generateWithChancesSurface(worldFeature, chances, x, z, 0, 0, random);
 	}
