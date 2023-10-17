@@ -13,6 +13,8 @@ import net.minecraft.core.world.generate.feature.*;
 import net.minecraft.core.world.noise.PerlinNoise;
 import net.minecraft.core.world.type.WorldTypes;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -176,17 +178,19 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		generateLabyrinths(x, z, chunk, random);
 	}
 	public void generateOreFeatures(Biome biome, int x, int z, Random random){
-		generateWithChancesUnderground(new WorldFeatureClay(32), 20f*oreHeightModifier, rangeY, x, z, random);
-
-		generateWithChancesUnderground(new WorldFeatureOre(Block.dirt.id, 32, false), 20 * oreHeightModifier, rangeY, x, z, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.gravel.id, 32, false), 10 * oreHeightModifier, rangeY, x, z, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreCoalStone.id, 16, true), 20 * oreHeightModifier, rangeY, x, z, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreIronStone.id, 8, true), 20 * oreHeightModifier, rangeY/2, x, z, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreGoldStone.id, 8, true), 2 * oreHeightModifier, rangeY/4, x, z, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreRedstoneStone.id, 7, true), 8 * oreHeightModifier, rangeY/8, x, z, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreDiamondStone.id, 7, true), oreHeightModifier, rangeY/8, x, z, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.mossStone.id, 32, true), oreHeightModifier, rangeY/2, x, z, random);
-		generateWithChancesUnderground(new WorldFeatureOre(Block.oreLapisStone.id, 6, true), oreHeightModifier,rangeY/8, x, z, random);
+		int featureSize = OreFeatures.featureList.size();
+		for (int i = 0; i < featureSize; i++) {
+			if (OreFeatures.biomesList.get(i) == null){
+				generateWithChancesUnderground(OreFeatures.featureList.get(i),oreHeightModifier * OreFeatures.chancesList.get(i), (int) (rangeY * OreFeatures.rangeModifierList.get(i)), x, z, random);
+			} else {
+				for (Biome checkBiome: OreFeatures.biomesList.get(i)) {
+					if (biome.equals(checkBiome)){
+						generateWithChancesUnderground(OreFeatures.featureList.get(i),oreHeightModifier * OreFeatures.chancesList.get(i), (int) (rangeY * OreFeatures.rangeModifierList.get(i)), x, z, random);
+						break;
+					}
+				}
+			}
+		}
 	}
 	public void generateRandomFeatures(Biome biome, int x, int z, Random random){
 		if (random.nextInt(2) == 0) {
@@ -399,5 +403,43 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 				this.world.setBlockWithNotify(dx, oceanY - 1, dz, Block.ice.id);
 			}
 		}
+	}
+
+	static {
+		OreFeatures.initialize();
+	}
+	public static class OreFeatures {
+		public static List<WorldFeature> featureList = new ArrayList<>();
+		public static List<Integer> chancesList = new ArrayList<>();
+		public static List<Float> rangeModifierList = new ArrayList<>();
+		public static List<Biome[]> biomesList = new ArrayList<>();
+		private static final boolean hasInitialized = false;
+		public static void addOreFeature(WorldFeature feature, int chances, float rangeModifier){
+			addOreFeature(feature, chances, rangeModifier, null);
+		}
+		public static void addOreFeature(WorldFeature feature, int chances, float rangeModifier, Biome[] biomes){
+			assert rangeModifier >= 0 && rangeModifier <= 1f: "Range Modifier must be bounded to a range of [0f to 1f]";
+			featureList.add(feature);
+			chancesList.add(chances);
+			rangeModifierList.add(rangeModifier);
+			biomesList.add(biomes);
+			assert (featureList.size() == chancesList.size()) && (featureList.size() == rangeModifierList.size()) && (featureList.size() == biomesList.size()): "OreFeatures list sizes do not match!!";
+		}
+		private static void initialize(){
+			if (hasInitialized) {return;}
+			addOreFeature(new WorldFeatureClay(32), 20, 1);
+			addOreFeature(new WorldFeatureOre(Block.dirt.id, 32, false), 20, 1);
+			addOreFeature(new WorldFeatureOre(Block.gravel.id, 32, false), 10, 1);
+			addOreFeature(new WorldFeatureOre(Block.oreCoalStone.id, 16, true), 20, 1);
+			addOreFeature(new WorldFeatureOre(Block.oreIronStone.id, 8, true), 20, 1/2f);
+			addOreFeature(new WorldFeatureOre(Block.oreGoldStone.id, 8, true), 2, 1/4f);
+			addOreFeature(new WorldFeatureOre(Block.oreRedstoneStone.id, 7, true), 8, 1/8f);
+			addOreFeature(new WorldFeatureOre(Block.oreDiamondStone.id, 7, true), 1, 1/8f);
+			addOreFeature(new WorldFeatureOre(Block.mossStone.id, 32, true), 1, 1/2f);
+			addOreFeature(new WorldFeatureOre(Block.oreLapisStone.id, 6, true), 1, 1/8f);
+		}
+	}
+	public static class RandomFeatures {
+		
 	}
 }
