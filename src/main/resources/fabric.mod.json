@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "examplemod",
+  "id": "terrainapi",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This mod aims to help new BTA modders.",
+  "name": "TerrainAPI",
+  "description": "Interface for modifying BTA's terrain.",
   "authors": [
-    "Turnip Labs"
+    "Useless"
   ],
   "contact": {
     "homepage": "",
@@ -18,16 +18,19 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-        "turniplabs.examplemod.ExampleMod"
+			"useless.terrainapi.TerrainAPI"
     ]
   },
   "mixins": [
-      "examplemod.mixins.json"
+    "terrainapi.mixins.json"
   ],
 
   "depends": {
     "fabricloader": ">=0.13.3"
   },
   "suggests": {
-  }
+  },
+	"custom": {
+		"modmenu:api": true
+	}
 }
