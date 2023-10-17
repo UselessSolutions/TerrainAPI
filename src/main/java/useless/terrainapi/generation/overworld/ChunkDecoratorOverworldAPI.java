@@ -280,10 +280,10 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		BiomeFeatures.initialize();
 	}
 	public static class OreFeatures {
-		public static List<WorldFeature> featureList = new ArrayList<>();
-		public static List<Integer> chancesList = new ArrayList<>();
-		public static List<Float> rangeModifierList = new ArrayList<>();
-		public static List<Biome[]> biomesList = new ArrayList<>();
+		protected static List<WorldFeature> featureList = new ArrayList<>();
+		protected static List<Integer> chancesList = new ArrayList<>();
+		protected static List<Float> rangeModifierList = new ArrayList<>();
+		protected static List<Biome[]> biomesList = new ArrayList<>();
 		private static boolean hasInitialized = false;
 		public static void addFeature(WorldFeature feature, int chances, float rangeModifier){
 			addFeature(feature, chances, rangeModifier, null);
@@ -312,11 +312,11 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		}
 	}
 	public static class RandomFeatures {
-		public static List<WorldFeature> featureList = new ArrayList<>();
-		public static List<Integer> inverseProbabilityList = new ArrayList<>();
-		public static List<Float> rangeModifierList = new ArrayList<>();
-		public static List<Integer> chancesList = new ArrayList<>();
-		public static List<Biome[]> biomesList = new ArrayList<>();
+		protected static List<WorldFeature> featureList = new ArrayList<>();
+		protected static List<Integer> inverseProbabilityList = new ArrayList<>();
+		protected static List<Float> rangeModifierList = new ArrayList<>();
+		protected static List<Integer> chancesList = new ArrayList<>();
+		protected static List<Biome[]> biomesList = new ArrayList<>();
 		private static boolean hasInitialized = false;
 		public static void addFeatureSurface(WorldFeature feature, int inverseProbability){
 			addFeature(feature, inverseProbability, -1f);
@@ -345,10 +345,10 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		}
 	}
 	public static class BiomeFeatures {
-		public static List<WorldFeature> simpleFeatures = new ArrayList<>();
-		public static List<Float> simpleRangeModifiers = new ArrayList<>();
-		public static List<Integer> simpleChances = new ArrayList<>();
-		public static List<Biome[]> simpleBiomes = new ArrayList<>();
+		protected static List<WorldFeature> simpleFeatures = new ArrayList<>();
+		protected static List<Float> simpleRangeModifiers = new ArrayList<>();
+		protected static List<Integer> simpleChances = new ArrayList<>();
+		protected static List<Biome[]> simpleBiomes = new ArrayList<>();
 		private static boolean hasInitialized = false;
 		public static void addFeatureSurface(WorldFeature feature, int chances, Biome[] biomes){
 			addFeature(feature, -1f, chances, biomes);
@@ -362,11 +362,11 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			assert (simpleFeatures.size() == simpleChances.size()) && (simpleFeatures.size() == simpleRangeModifiers.size()) && (simpleFeatures.size() == simpleBiomes.size()): "BiomeFeatures list sizes do not match!!";
 		}
 
-		public static List<Function<Object[], WorldFeature>> complexFeatures = new ArrayList<>();
-		public static List<Object[]> complexFeatureParameters = new ArrayList<>();
-		public static List<Function<Object[], Integer>> complexDensities = new ArrayList<>();
-		public static List<Object[]> complexDensityParameters = new ArrayList<>();
-		public static List<Float> complexRangeModifierList = new ArrayList<>();
+		protected static List<Function<Object[], WorldFeature>> complexFeatures = new ArrayList<>();
+		protected static List<Object[]> complexFeatureParameters = new ArrayList<>();
+		protected static List<Function<Object[], Integer>> complexDensities = new ArrayList<>();
+		protected static List<Object[]> complexDensityParameters = new ArrayList<>();
+		protected static List<Float> complexRangeModifierList = new ArrayList<>();
 
 		/** The Object[] are the parameters passed into the provided function, index 0 will always be populated by Biome, index 1 with Random, index 2 with Chunk, and index 3 with the ChunkDecorator. Additional parameters can be added in the method.
 		 * Range Modifier of -1 indicates that the feature should only generate on the surface
