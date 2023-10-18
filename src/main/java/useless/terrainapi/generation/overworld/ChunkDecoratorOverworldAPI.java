@@ -15,6 +15,7 @@ import useless.terrainapi.TerrainAPI;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
@@ -366,14 +367,41 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		}
 	}
 	public static class BiomeFeatures {
-
-
 		protected static List<Function<Object[], WorldFeature>> featureFunctionsList = new ArrayList<>();
 		protected static List<Object[]> featureParametersList = new ArrayList<>();
 		protected static List<Function<Object[], Integer>> densityFunctionsList = new ArrayList<>();
 		protected static List<Object[]> densityParametersList = new ArrayList<>();
 		protected static List<Float> rangeModifierList = new ArrayList<>();
 		private static boolean hasInitialized = false;
+		public static HashMap<Biome, Integer> grassDensityMap = new HashMap<>();
+		public static HashMap<Biome, Integer> flowerDensityMap = new HashMap<>();
+		public static HashMap<Biome, Integer> yellowFlowerDensityMap = new HashMap<>();
+		static {
+			grassDensityMap.put(Biomes.OVERWORLD_FOREST, 2);
+			grassDensityMap.put(Biomes.OVERWORLD_MEADOW, 2);
+			grassDensityMap.put(Biomes.OVERWORLD_RAINFOREST, 10);
+			grassDensityMap.put(Biomes.OVERWORLD_DESERT, 5);
+			grassDensityMap.put(Biomes.OVERWORLD_SEASONAL_FOREST, 2);
+			grassDensityMap.put(Biomes.OVERWORLD_TAIGA, 1);
+			grassDensityMap.put(Biomes.OVERWORLD_BOREAL_FOREST, 5);
+			grassDensityMap.put(Biomes.OVERWORLD_PLAINS, 10);
+			grassDensityMap.put(Biomes.OVERWORLD_SWAMPLAND, 4);
+			grassDensityMap.put(Biomes.OVERWORLD_SHRUBLAND, 2);
+			grassDensityMap.put(Biomes.OVERWORLD_OUTBACK_GRASSY, 25);
+			grassDensityMap.put(Biomes.OVERWORLD_BIRCH_FOREST, 10);
+
+			flowerDensityMap.put(Biomes.OVERWORLD_SEASONAL_FOREST, 1);
+			flowerDensityMap.put(Biomes.OVERWORLD_MEADOW, 2);
+			flowerDensityMap.put(Biomes.OVERWORLD_BOREAL_FOREST, 2);
+			flowerDensityMap.put(Biomes.OVERWORLD_SHRUBLAND, 1);
+
+			yellowFlowerDensityMap.put(Biomes.OVERWORLD_FOREST, 2);
+			yellowFlowerDensityMap.put(Biomes.OVERWORLD_SWAMPLAND, 2);
+			yellowFlowerDensityMap.put(Biomes.OVERWORLD_TAIGA, 2);
+			yellowFlowerDensityMap.put(Biomes.OVERWORLD_PLAINS, 3);
+			yellowFlowerDensityMap.put(Biomes.OVERWORLD_OUTBACK_GRASSY, 2);
+			yellowFlowerDensityMap.put(Biomes.OVERWORLD_OUTBACK, 2);
+		}
 		public static void addFeatureSurface(WorldFeature feature, int chances, Biome[] biomes){
 			addFeature(feature, -1f, chances, biomes);
 		}
@@ -400,9 +428,9 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			addFeatureSurface(new WorldFeatureRichScorchedDirt(10), 1, new Biome[]{Biomes.OVERWORLD_OUTBACK, Biomes.OVERWORLD_OUTBACK_GRASSY});
 			addComplexFeature(ComplexFunctions::getTreeFeature, null, ComplexFunctions::getTreeDensity, null, -1f);
 			addFeatureSurface(new WorldFeatureSugarCaneTall(), 1, new Biome[]{Biomes.OVERWORLD_RAINFOREST});
-			addComplexFeature(ComplexFunctions::flowerTypeCondition, null, ComplexFunctions::getFlowerDensity, null, 1f);
-			addComplexFeature((Object[] x) -> new WorldFeatureFlowers(Block.flowerYellow.id), null, ComplexFunctions::getYellowFlowerDensity, null, 1);
-			addComplexFeature(ComplexFunctions::grassTypeCondition, null, ComplexFunctions::getGrassDensity, null, 1);
+			addComplexFeature(ComplexFunctions::flowerTypeCondition, null, (Object[] x) -> flowerDensityMap.getOrDefault((Biome)x[0], 0), null, 1f);
+			addComplexFeature((Object[] x) -> new WorldFeatureFlowers(Block.flowerYellow.id), null, (Object[] x) -> yellowFlowerDensityMap.getOrDefault((Biome)x[0], 0), null, 1);
+			addComplexFeature(ComplexFunctions::grassTypeCondition, null, (Object[] x) -> grassDensityMap.getOrDefault((Biome)x[0], 0), null, 1);
 			addFeature(new WorldFeatureSpinifexPatch(), 1, 4, new Biome[]{Biomes.OVERWORLD_OUTBACK});
 			addFeature(new WorldFeatureDeadBush(Block.deadbush.id), 1, 2, new Biome[]{Biomes.OVERWORLD_DESERT});
 			addFeature(new WorldFeatureCactus(), 1, 10, new Biome[]{Biomes.OVERWORLD_DESERT});
@@ -485,81 +513,6 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			}
 			return new WorldFeatureTallGrass(blockId);
 		}
-		public static int getFlowerDensity(Object[] parameters){
-			Biome biome = (Biome) parameters[0];
-			if (biome == Biomes.OVERWORLD_SEASONAL_FOREST) {
-				return 1;
-			}
-			if (biome == Biomes.OVERWORLD_MEADOW) {
-				return 2;
-			}
-			if (biome == Biomes.OVERWORLD_BOREAL_FOREST) {
-				return 2;
-			}
-			if (biome == Biomes.OVERWORLD_SHRUBLAND) {
-				return 1;
-			}
-			return 0;
-		}
-		public static int getYellowFlowerDensity(Object[] parameters){
-			Biome biome = (Biome) parameters[0];
-			if (biome == Biomes.OVERWORLD_FOREST) {
-				return 2;
-			}
-			if (biome == Biomes.OVERWORLD_SWAMPLAND) {
-				return 2;
-			}
-			if (biome == Biomes.OVERWORLD_TAIGA) {
-				return 2;
-			}
-			if (biome == Biomes.OVERWORLD_PLAINS) {
-				return 3;
-			}
-			if (biome == Biomes.OVERWORLD_OUTBACK_GRASSY || biome == Biomes.OVERWORLD_OUTBACK) {
-				return 2;
-			}
-			return 0;
-		}
-		public static int getGrassDensity(Object[] parameters){
-			Biome biome = (Biome) parameters[0];
-			if (biome == Biomes.OVERWORLD_FOREST) {
-				return 2;
-			}
-			if (biome == Biomes.OVERWORLD_MEADOW) {
-				return 2;
-			}
-			if (biome == Biomes.OVERWORLD_RAINFOREST) {
-				return 10;
-			}
-			if (biome == Biomes.OVERWORLD_DESERT) {
-				return 5;
-			}
-			if (biome == Biomes.OVERWORLD_SEASONAL_FOREST) {
-				return 2;
-			}
-			if (biome == Biomes.OVERWORLD_TAIGA) {
-				return 1;
-			}
-			if (biome == Biomes.OVERWORLD_BOREAL_FOREST) {
-				return 5;
-			}
-			if (biome == Biomes.OVERWORLD_PLAINS) {
-				return 10;
-			}
-			if (biome == Biomes.OVERWORLD_SWAMPLAND) {
-				return 4;
-			}
-			if (biome == Biomes.OVERWORLD_SHRUBLAND) {
-				return 2;
-			}
-			if (biome == Biomes.OVERWORLD_OUTBACK_GRASSY) {
-				return 25;
-			}
-			if (biome == Biomes.OVERWORLD_BIRCH_FOREST) {
-				return 10;
-			}
-			return 0;
-		}
 		public static int getStandardBiomesDensity(Object[] parameters){
 			Biome biome = (Biome) parameters[0];
 			int chance = (int)parameters[4];
@@ -577,7 +530,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			Biome[] biomes = (Biome[])parameters[6];
 			if (biomes == null) {return chance;}
 			if (ChunkDecoratorOverworldAPI.checkForBiomeInBiomes(biome, biomes)){
-				return chance;
+				return (int) (chance * oreHeightModifier);
 			}
 			return 0;
 		}
