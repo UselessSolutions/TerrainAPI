@@ -70,7 +70,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 
 		generateLakeFeature(lakeChance, xCoord, zCoord, biome, random);
 
-		generateStructures(biome, chunk,xCoord, zCoord, structureRand);
+		generateStructures(biome, chunk, structureRand);
 		generateOreFeatures(biome, xCoord, zCoord, random, chunk);
 		generateBiomeFeature(biome,xCoord, zCoord, random, chunk);
 		generateRandomFeatures(biome,xCoord, zCoord, random, chunk);
@@ -132,34 +132,15 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			}
 		}
 	}
-	public void generateDungeons(int x, int z, Random random){
-		for (int i = 0; i < 8.0f * oreHeightModifier; i++) {
-			int xPos = x + random.nextInt(16) + 8;
-			int yPos = minY + random.nextInt(rangeY);
-			int zPos = z + random.nextInt(16) + 8;
-			if (random.nextInt(2) == 0){
-				new WorldFeatureDungeon(Block.brickClay.id, Block.brickClay.id, null).generate(world, random, xPos, yPos, zPos);
-			} else {
-				new WorldFeatureDungeon(Block.cobbleStone.id, Block.cobbleStoneMossy.id, null).generate(world, random, xPos, yPos, zPos);
+	public void generateStructures(Biome biome, Chunk chunk, Random random){
+		int featureSize = StructureFeature.featureFunctionsList.size();
+		for (int i = 0; i < featureSize; i++) {
+			Object[] functionParameters = new Object[]{biome, random, chunk, this};
+			if (StructureFeature.featureParametersList.get(i) != null){
+				functionParameters = concatenate(functionParameters, StructureFeature.featureParametersList.get(i));
 			}
+			StructureFeature.featureFunctionsList.get(i).apply(functionParameters);
 		}
-	}
-	public void generateLabyrinths(int x, int z, Chunk chunk, Random random){
-		for (int i = 0; i < 1; ++i) {
-			int xPos = x + random.nextInt(16) + 8;
-			int zPos = z + random.nextInt(16) + 8;
-			int yPos = world.getHeightValue(xPos, zPos) - (random.nextInt(2) + 2);
-			if (random.nextInt(5) == 0) {
-				yPos -= random.nextInt(10) + 30;
-			}
-			if (random.nextInt(700) != 0) continue;
-			Random lRand = chunk.getChunkRandom(75644760L);
-			new WorldFeatureLabyrinth().generate(world, lRand, xPos, yPos, zPos);
-		}
-	}
-	public void generateStructures(Biome biome, Chunk chunk, int x, int z, Random random){
-		generateDungeons(x, z, random);
-		generateLabyrinths(x, z, chunk, random);
 	}
 	public void generateOreFeatures(Biome biome, int x, int z, Random random, Chunk chunk){
 		int featureSize = OreFeatures.featureFunctionsList.size();
@@ -279,9 +260,34 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 	}
 
 	static {
+		StructureFeature.initialize();
 		OreFeatures.initialize();
 		RandomFeatures.initialize();
 		BiomeFeatures.initialize();
+	}
+	public static class StructureFeature {
+		protected static List<Function<Object[], Boolean>> featureFunctionsList = new ArrayList<>();
+		protected static List<Object[]> featureParametersList = new ArrayList<>();
+		private static boolean hasInitialized = false;
+		/** The Object[] are the parameters passed into the provided function, index 0 will always be populated by Biome, index 1 with Random, index 2 with Chunk, index 3 with the ChunkDecorator, and index 4 with the oreHeightModifier. Additional parameters can be added in the method.
+		 * Range Modifier of -1 indicates that the feature should only generate on the surface
+		 *
+		 */
+		public static void addStructure(Function<Object[], Boolean> function, Object[] functionParameters){
+			featureFunctionsList.add(function);
+			featureParametersList.add(functionParameters);
+			assert featureFunctionsList.size() == featureParametersList.size(): "Structure Features list sizes do not match!!";
+		}
+		private static void initialize() {
+			if (hasInitialized) {
+				return;
+			}
+			hasInitialized = true;
+			addStructure(ComplexFunctions::generateDungeons, null);
+			addStructure(ComplexFunctions::generateLabyrinths, null);
+
+		}
+
 	}
 	public static class OreFeatures {
 		protected static List<Function<Object[], WorldFeature>> featureFunctionsList = new ArrayList<>();
@@ -436,8 +442,12 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			treeDensityMap.put(Biomes.OVERWORLD_SEASONAL_FOREST, 2);
 			treeDensityMap.put(Biomes.OVERWORLD_TAIGA, 5);
 			treeDensityMap.put(Biomes.OVERWORLD_BOREAL_FOREST, 3);
+			treeDensityMap.put(Biomes.OVERWORLD_DESERT, -1000);
+			treeDensityMap.put(Biomes.OVERWORLD_TUNDRA, -1000);
+			treeDensityMap.put(Biomes.OVERWORLD_PLAINS, -1000);
 			treeDensityMap.put(Biomes.OVERWORLD_SWAMPLAND, 4);
 			treeDensityMap.put(Biomes.OVERWORLD_OUTBACK_GRASSY, 0);
+
 		}
 		public static void addFeatureSurface(WorldFeature feature, int chances, Biome[] biomes){
 			addFeature(feature, -1f, chances, biomes);
@@ -485,11 +495,13 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			Biome biome = (Biome) parameters[0];
 			ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
 
+			Integer treeDensity = BiomeFeatures.treeDensityMap.get(biome);
+
 			if (decorator.treeDensityOverride != -1){
 				return decorator.treeDensityOverride;
 			}
 
-			if (BiomeFeatures.treeDensityMap.get(biome) == null){
+			if (treeDensity != null && treeDensity == -1000){
 				return 0;
 			} else {
 				Random random = (Random) parameters[1];
@@ -504,8 +516,11 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 				if (random.nextInt(10) == 0) {
 					++treeDensityOffset;
 				}
+				if (treeDensity == null){
+					return treeDensityOffset;
+				}
 
-				return BiomeFeatures.treeDensityMap.get(biome) + noiseValue + treeDensityOffset;
+				return treeDensity + noiseValue + treeDensityOffset;
 			}
 		}
 		public static WorldFeature grassTypeCondition(Object[] parameters){
@@ -546,6 +561,43 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 				return (int) (chance * oreHeightModifier);
 			}
 			return 0;
+		}
+		public static Boolean generateDungeons(Object[] parameters){
+			Random random = (Random) parameters[1];
+			Chunk chunk = (Chunk) parameters[2];
+			int x = chunk.xPosition * 16;
+			int z = chunk.zPosition * 16;
+			ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
+			for (int i = 0; i < 8.0f * decorator.oreHeightModifier; i++) {
+				int xPos = x + random.nextInt(16) + 8;
+				int yPos = decorator.minY + random.nextInt(decorator.rangeY);
+				int zPos = z + random.nextInt(16) + 8;
+				if (random.nextInt(2) == 0){
+					new WorldFeatureDungeon(Block.brickClay.id, Block.brickClay.id, null).generate(decorator.world, random, xPos, yPos, zPos);
+				} else {
+					new WorldFeatureDungeon(Block.cobbleStone.id, Block.cobbleStoneMossy.id, null).generate(decorator.world, random, xPos, yPos, zPos);
+				}
+			}
+			return true;
+		}
+		public static Boolean generateLabyrinths(Object[] parameters){
+			Random random = (Random) parameters[1];
+			Chunk chunk = (Chunk) parameters[2];
+			ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
+			int x = chunk.xPosition * 16;
+			int z = chunk.zPosition * 16;
+			for (int i = 0; i < 1; ++i) {
+				int xPos = x + random.nextInt(16) + 8;
+				int zPos = z + random.nextInt(16) + 8;
+				int yPos = decorator.world.getHeightValue(xPos, zPos) - (random.nextInt(2) + 2);
+				if (random.nextInt(5) == 0) {
+					yPos -= random.nextInt(10) + 30;
+				}
+				if (random.nextInt(700) != 0) continue;
+				Random lRand = chunk.getChunkRandom(75644760L);
+				new WorldFeatureLabyrinth().generate(decorator.world, lRand, xPos, yPos, zPos);
+			}
+			return true;
 		}
 	}
 }
