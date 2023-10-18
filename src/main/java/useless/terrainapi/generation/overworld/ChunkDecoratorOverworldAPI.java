@@ -11,6 +11,7 @@ import net.minecraft.core.world.generate.chunk.ChunkDecorator;
 import net.minecraft.core.world.generate.feature.*;
 import net.minecraft.core.world.noise.PerlinNoise;
 import net.minecraft.core.world.type.WorldTypes;
+import useless.terrainapi.TerrainAPI;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		generateLakeFeature(lakeChance, xCoord, zCoord, biome, random);
 
 		generateStructures(biome, chunk,xCoord, zCoord, structureRand);
-		generateOreFeatures(biome, xCoord, zCoord, random);
+		generateOreFeatures(biome, xCoord, zCoord, random, chunk);
 		generateBiomeFeature(biome,xCoord, zCoord, random, chunk);
 		generateRandomFeatures(biome,xCoord, zCoord, random, chunk);
 
@@ -159,12 +160,21 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		generateDungeons(x, z, random);
 		generateLabyrinths(x, z, chunk, random);
 	}
-	public void generateOreFeatures(Biome biome, int x, int z, Random random){
-		int featureSize = OreFeatures.featureList.size();
+	public void generateOreFeatures(Biome biome, int x, int z, Random random, Chunk chunk){
+		int featureSize = OreFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
-			if (OreFeatures.biomesList.get(i) == null || checkForBiomeInBiomes(biome, OreFeatures.biomesList.get(i))){
-				generateWithChancesUnderground(OreFeatures.featureList.get(i),oreHeightModifier * OreFeatures.chancesList.get(i), (int) (rangeY * OreFeatures.rangeModifierList.get(i)), x, z, random);
+			Object[] featureParameters = new Object[]{biome, random, chunk, this, oreHeightModifier};
+			if (OreFeatures.featureParametersList.get(i) != null){
+				featureParameters = concatenate(featureParameters, OreFeatures.featureParametersList.get(i));
 			}
+			Object[] densityParameters = new Object[]{biome, random, chunk, this, oreHeightModifier};
+			if (OreFeatures.densityParametersList.get(i) != null){
+				densityParameters = concatenate(featureParameters, OreFeatures.densityParametersList.get(i));
+			}
+			WorldFeature feature = OreFeatures.featureFunctionsList.get(i).apply(featureParameters);
+			int density = OreFeatures.densityFunctionsList.get(i).apply(densityParameters);
+			float rangeModifier = OreFeatures.rangeModifierList.get(i);
+			generateWithChancesUnderground(feature, density, (int) (rangeModifier * rangeY), x, z, random);
 		}
 	}
 	public void generateRandomFeatures(Biome biome, int x, int z, Random random, Chunk chunk){
@@ -185,7 +195,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
 				generateWithChancesSurface(feature, density, x, z, 8, 8, random);
 			} else {
-				generateWithChancesUnderground(feature, density, (int) rangeModifier * rangeY, x, z, 8, 8, random);
+				generateWithChancesUnderground(feature, density, (int) (rangeModifier * rangeY), x, z, 8, 8, random);
 			}
 		}
 	}
@@ -206,7 +216,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
 				generateWithChancesSurface(feature, density, x, z, 8, 8, random);
 			} else {
-				generateWithChancesUnderground(feature, density, (int) rangeModifier * rangeY, x, z, 8, 8, random);
+				generateWithChancesUnderground(feature, density, (int) (rangeModifier * rangeY), x, z, 8, 8, random);
 			}
 		}
 	}
@@ -273,21 +283,30 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		BiomeFeatures.initialize();
 	}
 	public static class OreFeatures {
-		protected static List<WorldFeature> featureList = new ArrayList<>();
-		protected static List<Integer> chancesList = new ArrayList<>();
+		protected static List<Function<Object[], WorldFeature>> featureFunctionsList = new ArrayList<>();
+		protected static List<Object[]> featureParametersList = new ArrayList<>();
+		protected static List<Function<Object[], Integer>> densityFunctionsList = new ArrayList<>();
+		protected static List<Object[]> densityParametersList = new ArrayList<>();
 		protected static List<Float> rangeModifierList = new ArrayList<>();
-		protected static List<Biome[]> biomesList = new ArrayList<>();
 		private static boolean hasInitialized = false;
 		public static void addFeature(WorldFeature feature, int chances, float rangeModifier){
 			addFeature(feature, chances, rangeModifier, null);
 		}
 		public static void addFeature(WorldFeature feature, int chances, float rangeModifier, Biome[] biomes){
-			assert rangeModifier >= 0 && rangeModifier <= 1f: "Range Modifier must be bounded to a range of [0f to 1f]";
-			featureList.add(feature);
-			chancesList.add(chances);
+			addComplexFeature((Object[] x) -> feature, null, ComplexFunctions::getStandardOreBiomesDensity, new Object[]{chances, biomes}, rangeModifier);
+		}
+		/** The Object[] are the parameters passed into the provided function, index 0 will always be populated by Biome, index 1 with Random, index 2 with Chunk, index 3 with the ChunkDecorator, and index 4 with the oreHeightModifier. Additional parameters can be added in the method.
+		 * Range Modifier of -1 indicates that the feature should only generate on the surface
+		 *
+		 */
+		public static void addComplexFeature(Function<Object[], WorldFeature> featureFunction, Object[] featureParameters, Function<Object[], Integer> densityFunction, Object[] densityParameters, float rangeModifier){
+			assert (rangeModifier >= 0 && rangeModifier <= 1f): "Range Modifier must be bounded to a range of [0f to 1f]";
+			featureFunctionsList.add(featureFunction);
+			featureParametersList.add(featureParameters);
+			densityFunctionsList.add(densityFunction);
+			densityParametersList.add(densityParameters);
 			rangeModifierList.add(rangeModifier);
-			biomesList.add(biomes);
-			assert (featureList.size() == chancesList.size()) && (featureList.size() == rangeModifierList.size()) && (featureList.size() == biomesList.size()): "OreFeatures list sizes do not match!!";
+			assert (featureFunctionsList.size() == featureParametersList.size()) && (featureFunctionsList.size() == densityFunctionsList.size()) && (featureFunctionsList.size() == densityParametersList.size() && (featureFunctionsList.size() == rangeModifierList.size())): "OreFeatures list sizes do not match!!";
 		}
 		private static void initialize(){
 			if (hasInitialized) {return;}
@@ -333,7 +352,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			densityParametersList.add(densityParameters);
 			rangeModifierList.add(rangeModifier);
 			inverseProbabilityList.add(inverseProbability);
-			assert (featureFunctionsList.size() == featureParametersList.size()) && (featureFunctionsList.size() == densityFunctionsList.size()) && (featureFunctionsList.size() == densityParametersList.size() && (featureFunctionsList.size() == rangeModifierList.size())): "BiomeFeatures list sizes do not match!!";
+			assert (featureFunctionsList.size() == featureParametersList.size()) && (featureFunctionsList.size() == densityFunctionsList.size()) && (featureFunctionsList.size() == densityParametersList.size() && (featureFunctionsList.size() == rangeModifierList.size())): "RandomFeatures list sizes do not match!!";
 		}
 		private static void initialize(){
 			if (hasInitialized) {return;}
@@ -545,6 +564,17 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			Biome biome = (Biome) parameters[0];
 			int chance = (int)parameters[4];
 			Biome[] biomes = (Biome[])parameters[5];
+			if (biomes == null) {return chance;}
+			if (ChunkDecoratorOverworldAPI.checkForBiomeInBiomes(biome, biomes)){
+				return chance;
+			}
+			return 0;
+		}
+		public static int getStandardOreBiomesDensity(Object[] parameters){
+			Biome biome = (Biome) parameters[0];
+			float oreHeightModifier = (float) parameters[4];
+			int chance = (int)parameters[5];
+			Biome[] biomes = (Biome[])parameters[6];
 			if (biomes == null) {return chance;}
 			if (ChunkDecoratorOverworldAPI.checkForBiomeInBiomes(biome, biomes)){
 				return chance;
