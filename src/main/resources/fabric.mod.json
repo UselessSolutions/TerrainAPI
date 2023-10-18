@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "terrainapi",
+  "id": "terrain-api",
   "version": "${version}",
 
   "name": "TerrainAPI",
@@ -18,7 +18,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-			"useless.terrainapi.TerrainAPI"
+			"useless.terrainapi.TerrainMain"
     ]
   },
   "mixins": [

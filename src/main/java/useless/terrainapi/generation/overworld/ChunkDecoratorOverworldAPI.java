@@ -11,7 +11,7 @@ import net.minecraft.core.world.generate.chunk.ChunkDecorator;
 import net.minecraft.core.world.generate.feature.*;
 import net.minecraft.core.world.noise.PerlinNoise;
 import net.minecraft.core.world.type.WorldTypes;
-import useless.terrainapi.TerrainAPI;
+import useless.terrainapi.TerrainMain;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -332,7 +332,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		}
 		public static void setOreValues(String modID, int blockID, int blockNumbers, int chances, float range){
 			if (blockNumberMap.get(blockID) != null){
-				TerrainAPI.LOGGER.warn(modID + String.format(" has changed block %s to generate %d blocks with %d chances and a range of %f", Block.getBlock(blockID).getKey(), blockNumbers, chances, range));
+				TerrainMain.LOGGER.warn(modID + String.format(" has changed block %s to generate %d blocks with %d chances and a range of %f", Block.getBlock(blockID).getKey(), blockNumbers, chances, range));
 			}
 			setOreValues(blockID, blockNumbers, chances, range);
 		}
