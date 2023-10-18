@@ -290,6 +290,21 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		protected static List<Object[]> densityParametersList = new ArrayList<>();
 		protected static List<Float> rangeModifierList = new ArrayList<>();
 		private static boolean hasInitialized = false;
+		protected static HashMap<Integer, Integer> blockNumberMap = new HashMap<>();
+		protected static HashMap<Integer, Integer> chancesMap = new HashMap<>();
+		protected static HashMap<Integer, Float> rangeMap = new HashMap<>();
+		static {
+			setOreValues(Block.blockClay.id, 32, 20, 1f);
+			setOreValues(Block.dirt.id, 32, 20, 1f);
+			setOreValues(Block.gravel.id, 32, 10, 1f);
+			setOreValues(Block.oreCoalStone.id, 16, 20, 1f);
+			setOreValues(Block.oreIronStone.id, 8, 20, 1/2f);
+			setOreValues(Block.oreGoldStone.id, 8, 2, 1/4f);
+			setOreValues(Block.oreRedstoneStone.id, 7, 8, 1/8f);
+			setOreValues(Block.oreDiamondStone.id, 7, 1, 1/8f);
+			setOreValues(Block.mossStone.id, 32, 1, 1/2f);
+			setOreValues(Block.oreLapisStone.id, 6, 1, 1/8f);
+		}
 		public static void addFeature(WorldFeature feature, int chances, float rangeModifier){
 			addFeature(feature, chances, rangeModifier, null);
 		}
@@ -309,19 +324,31 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			rangeModifierList.add(rangeModifier);
 			assert (featureFunctionsList.size() == featureParametersList.size()) && (featureFunctionsList.size() == densityFunctionsList.size()) && (featureFunctionsList.size() == densityParametersList.size() && (featureFunctionsList.size() == rangeModifierList.size())): "OreFeatures list sizes do not match!!";
 		}
+		public static void setOreValues(String modID, int blockID, int blockNumbers, int chances, float range){
+			if (blockNumberMap.get(blockID) != null){
+				TerrainAPI.LOGGER.warn(modID + String.format(" has changed block %s to generate %d blocks with %d chances and a range of %f", Block.getBlock(blockID).getKey(), blockNumbers, chances, range));
+			}
+			setOreValues(blockID, blockNumbers, chances, range);
+		}
+		protected static void setOreValues(int blockID, int blockNumbers, int chances, float range){
+			blockNumberMap.put(blockID, blockNumbers);
+			chancesMap.put(blockID, chances);
+			rangeMap.put(blockID, range);
+		}
 		private static void initialize(){
 			if (hasInitialized) {return;}
 			hasInitialized = true;
-			addFeature(new WorldFeatureClay(32), 20, 1);
-			addFeature(new WorldFeatureOre(Block.dirt.id, 32, false), 20, 1);
-			addFeature(new WorldFeatureOre(Block.gravel.id, 32, false), 10, 1);
-			addFeature(new WorldFeatureOre(Block.oreCoalStone.id, 16, true), 20, 1);
-			addFeature(new WorldFeatureOre(Block.oreIronStone.id, 8, true), 20, 1/2f);
-			addFeature(new WorldFeatureOre(Block.oreGoldStone.id, 8, true), 2, 1/4f);
-			addFeature(new WorldFeatureOre(Block.oreRedstoneStone.id, 7, true), 8, 1/8f);
-			addFeature(new WorldFeatureOre(Block.oreDiamondStone.id, 7, true), 1, 1/8f);
-			addFeature(new WorldFeatureOre(Block.mossStone.id, 32, true), 1, 1/2f);
-			addFeature(new WorldFeatureOre(Block.oreLapisStone.id, 6, true), 1, 1/8f);
+			int currentBlockID = Block.blockClay.id;
+			addFeature(new WorldFeatureClay(blockNumberMap.get(currentBlockID)), chancesMap.get(currentBlockID), rangeMap.get(currentBlockID));
+			addFeature(new WorldFeatureOre(currentBlockID = Block.dirt.id, blockNumberMap.get(currentBlockID), false), chancesMap.get(currentBlockID), rangeMap.get(currentBlockID));
+			addFeature(new WorldFeatureOre(currentBlockID = Block.gravel.id, blockNumberMap.get(currentBlockID), false), chancesMap.get(currentBlockID), rangeMap.get(currentBlockID));
+			addFeature(new WorldFeatureOre(currentBlockID = Block.oreCoalStone.id, blockNumberMap.get(currentBlockID), true), chancesMap.get(currentBlockID), rangeMap.get(currentBlockID));
+			addFeature(new WorldFeatureOre(currentBlockID = Block.oreIronStone.id, blockNumberMap.get(currentBlockID), true), chancesMap.get(currentBlockID), rangeMap.get(currentBlockID));
+			addFeature(new WorldFeatureOre(currentBlockID = Block.oreGoldStone.id, blockNumberMap.get(currentBlockID), true), chancesMap.get(currentBlockID), rangeMap.get(currentBlockID));
+			addFeature(new WorldFeatureOre(currentBlockID = Block.oreRedstoneStone.id, blockNumberMap.get(currentBlockID), true), chancesMap.get(currentBlockID), rangeMap.get(currentBlockID));
+			addFeature(new WorldFeatureOre(currentBlockID = Block.oreDiamondStone.id, blockNumberMap.get(currentBlockID), true), chancesMap.get(currentBlockID), rangeMap.get(currentBlockID));
+			addFeature(new WorldFeatureOre(currentBlockID = Block.mossStone.id, blockNumberMap.get(currentBlockID), true), chancesMap.get(currentBlockID), rangeMap.get(currentBlockID));
+			addFeature(new WorldFeatureOre(currentBlockID = Block.oreLapisStone.id, blockNumberMap.get(currentBlockID), true), chancesMap.get(currentBlockID), rangeMap.get(currentBlockID));
 		}
 	}
 	public static class RandomFeatures {
@@ -376,6 +403,7 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		public static HashMap<Biome, Integer> grassDensityMap = new HashMap<>();
 		public static HashMap<Biome, Integer> flowerDensityMap = new HashMap<>();
 		public static HashMap<Biome, Integer> yellowFlowerDensityMap = new HashMap<>();
+		public static HashMap<Biome, Integer> treeDensityMap = new HashMap<>();
 		static {
 			grassDensityMap.put(Biomes.OVERWORLD_FOREST, 2);
 			grassDensityMap.put(Biomes.OVERWORLD_MEADOW, 2);
@@ -401,6 +429,15 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 			yellowFlowerDensityMap.put(Biomes.OVERWORLD_PLAINS, 3);
 			yellowFlowerDensityMap.put(Biomes.OVERWORLD_OUTBACK_GRASSY, 2);
 			yellowFlowerDensityMap.put(Biomes.OVERWORLD_OUTBACK, 2);
+
+			treeDensityMap.put(Biomes.OVERWORLD_FOREST, 5);
+			treeDensityMap.put(Biomes.OVERWORLD_BIRCH_FOREST, 4);
+			treeDensityMap.put(Biomes.OVERWORLD_RAINFOREST, 10);
+			treeDensityMap.put(Biomes.OVERWORLD_SEASONAL_FOREST, 2);
+			treeDensityMap.put(Biomes.OVERWORLD_TAIGA, 5);
+			treeDensityMap.put(Biomes.OVERWORLD_BOREAL_FOREST, 3);
+			treeDensityMap.put(Biomes.OVERWORLD_SWAMPLAND, 4);
+			treeDensityMap.put(Biomes.OVERWORLD_OUTBACK_GRASSY, 0);
 		}
 		public static void addFeatureSurface(WorldFeature feature, int chances, Biome[] biomes){
 			addFeature(feature, -1f, chances, biomes);
@@ -446,54 +483,30 @@ public class ChunkDecoratorOverworldAPI implements ChunkDecorator {
 		}
 		public static int getTreeDensity(Object[] parameters){
 			Biome biome = (Biome) parameters[0];
-			Random random = (Random) parameters[1];
-			Chunk chunk = (Chunk) parameters[2];
 			ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
-			int x = chunk.xPosition * 16;
-			int z = chunk.zPosition * 16;
+
 			if (decorator.treeDensityOverride != -1){
 				return decorator.treeDensityOverride;
 			}
-			double d = 0.5;
-			int noiseValue = (int)((decorator.treeDensityNoise.get((double)x * d, (double)z * d) / 8.0 + random.nextDouble() * 4.0 + 4.0) / 3.0);
-			int treeDensity = 0;
-			if (random.nextInt(10) == 0) {
-				++treeDensity;
+
+			if (BiomeFeatures.treeDensityMap.get(biome) == null){
+				return 0;
+			} else {
+				Random random = (Random) parameters[1];
+				Chunk chunk = (Chunk) parameters[2];
+
+				int x = chunk.xPosition * 16;
+				int z = chunk.zPosition * 16;
+				double d = 0.5;
+
+				int noiseValue = (int)((decorator.treeDensityNoise.get((double)x * d, (double)z * d) / 8.0 + random.nextDouble() * 4.0 + 4.0) / 3.0);
+				int treeDensityOffset = 0;
+				if (random.nextInt(10) == 0) {
+					++treeDensityOffset;
+				}
+
+				return BiomeFeatures.treeDensityMap.get(biome) + noiseValue + treeDensityOffset;
 			}
-			if (biome == Biomes.OVERWORLD_FOREST) {
-				treeDensity += noiseValue + 5;
-			}
-			if (biome == Biomes.OVERWORLD_BIRCH_FOREST) {
-				treeDensity += noiseValue + 4;
-			}
-			if (biome == Biomes.OVERWORLD_RAINFOREST) {
-				treeDensity += noiseValue + 10;
-			}
-			if (biome == Biomes.OVERWORLD_SEASONAL_FOREST) {
-				treeDensity += noiseValue + 2;
-			}
-			if (biome == Biomes.OVERWORLD_TAIGA) {
-				treeDensity += noiseValue + 5;
-			}
-			if (biome == Biomes.OVERWORLD_BOREAL_FOREST) {
-				treeDensity += noiseValue + 3;
-			}
-			if (biome == Biomes.OVERWORLD_DESERT) {
-				treeDensity = 0;
-			}
-			if (biome == Biomes.OVERWORLD_TUNDRA) {
-				treeDensity -= 20;
-			}
-			if (biome == Biomes.OVERWORLD_PLAINS) {
-				treeDensity -= 20;
-			}
-			if (biome == Biomes.OVERWORLD_SWAMPLAND) {
-				treeDensity += noiseValue + 4;
-			}
-			if (biome == Biomes.OVERWORLD_OUTBACK_GRASSY) {
-				treeDensity += noiseValue;
-			}
-			return treeDensity;
 		}
 		public static WorldFeature grassTypeCondition(Object[] parameters){
 			Biome biome = (Biome)parameters[0];
