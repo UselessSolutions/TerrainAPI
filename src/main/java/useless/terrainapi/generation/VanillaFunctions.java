@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class VanillaFunctions {
-	public static HashMap<Biome, Boolean> randomlyReplaceGrassWithFerns = new HashMap<>();
+	public static HashMap<Biome, Integer> biomeRandomGrassType = new HashMap<>();
 	public static WorldFeature getTreeFeature(Object[] parameters){
 		Biome biome = Parameters.getBiome(parameters);
 		Random random = Parameters.getRandom(parameters);
@@ -59,8 +59,8 @@ public class VanillaFunctions {
 		Random random = Parameters.getRandom(parameters);
 
 		int blockId = Block.tallgrass.id;
-		if (checkForBiomeInBiomes(biome, randomlyReplaceGrassWithFerns.keySet().toArray(new Biome[0])) && random.nextInt(3) != 0) {
-			blockId = Block.tallgrassFern.id;
+		if (checkForBiomeInBiomes(biome, biomeRandomGrassType.keySet().toArray(new Biome[0])) && random.nextInt(3) != 0) {
+			blockId = biomeRandomGrassType.get(biome);
 		}
 		return new WorldFeatureTallGrass(blockId);
 	}
