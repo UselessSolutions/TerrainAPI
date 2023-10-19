@@ -5,6 +5,7 @@ import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.generate.feature.*;
 import useless.terrainapi.api.TerrainAPI;
+import useless.terrainapi.generation.nether.ChunkDecoratorNetherAPI;
 import useless.terrainapi.generation.overworld.ChunkDecoratorOverworldAPI;
 import useless.terrainapi.generation.VanillaFunctions;
 import useless.terrainapi.generation.overworld.OverworldBiomeFeatures;
@@ -29,6 +30,8 @@ public class TerrainInitialization implements TerrainAPI {
 		initializeOverworldOre();
 		initializeOverworldRandom();
 		initializeOverworldBiome();
+
+		initializeNether();
 	}
 	public static void initializeOverworldStructures() {
 		ChunkDecoratorOverworldAPI.structureFeatures.addStructure(VanillaFunctions::generateDungeons, null);
@@ -118,6 +121,14 @@ public class TerrainInitialization implements TerrainAPI {
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(new WorldFeatureSpinifexPatch(), 1, 4, new Biome[]{Biomes.OVERWORLD_OUTBACK});
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(new WorldFeatureDeadBush(Block.deadbush.id), 1, 2, new Biome[]{Biomes.OVERWORLD_DESERT});
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(new WorldFeatureCactus(), 1, 10, new Biome[]{Biomes.OVERWORLD_DESERT});
+	}
+	public static void initializeNether(){
+		ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureNetherLava(Block.fluidLavaFlowing.id),  8,120/128f);
+		ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.oreNethercoalNetherrack.id, 12, false), 10, 120/128f);
+		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Object[] x) -> new WorldFeatureFire(), null, VanillaFunctions::netherFireDensity, null, 120/128f);
+		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Object[] x) -> new WorldFeatureGlowstoneA(), null, VanillaFunctions::netherFireDensity, null, 120/128f);
+		ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureGlowstoneB(), 10, 120/128f);
+		ChunkDecoratorNetherAPI.randomFeatures.addFeature(new WorldFeatureLake(Block.fluidLavaStill.id), 8, 120/128f);
 	}
 }
 

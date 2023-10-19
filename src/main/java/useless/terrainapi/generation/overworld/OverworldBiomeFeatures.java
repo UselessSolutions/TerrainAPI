@@ -15,7 +15,7 @@ public class OverworldBiomeFeatures extends GeneratorFeatures {
 	public static HashMap<Biome, Integer> flowerDensityMap = new HashMap<>();
 	public static HashMap<Biome, Integer> yellowFlowerDensityMap = new HashMap<>();
 	public static HashMap<Biome, Integer> treeDensityMap = new HashMap<>();
-	protected List<Float> rangeModifierList = new ArrayList<>();
+	public List<Float> rangeModifierList = new ArrayList<>();
 	public void addFeatureSurface(WorldFeature feature, int chances, Biome[] biomes){
 		addFeature(feature, -1f, chances, biomes);
 	}

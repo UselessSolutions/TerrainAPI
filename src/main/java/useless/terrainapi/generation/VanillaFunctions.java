@@ -129,6 +129,10 @@ public class VanillaFunctions {
 		}
 		return true;
 	}
+	public static int netherFireDensity(Object[] parameters){
+		Random random = Parameters.getRandom(parameters);
+		return random.nextInt(random.nextInt(10) + 1);
+	}
 	public static boolean checkForBiomeInBiomes(Biome biome, Biome[] biomes){
 		for (Biome checkBiome: biomes) {
 			if (biome.equals(checkBiome)){

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class OverworldOreFeatures extends GeneratorFeatures {
-	protected  List<Float> rangeModifierList = new ArrayList<>();
+	public List<Float> rangeModifierList = new ArrayList<>();
 	public static HashMap<Integer, Integer> blockNumberMap = new HashMap<>();
 	public static HashMap<Integer, Integer> chancesMap = new HashMap<>();
 	public static HashMap<Integer, Float> rangeMap = new HashMap<>();
