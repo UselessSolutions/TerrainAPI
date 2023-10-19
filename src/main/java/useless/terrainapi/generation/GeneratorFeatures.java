@@ -16,7 +16,7 @@ public class GeneratorFeatures {
 	 * Range Modifier of -1 indicates that the feature should only generate on the surface
 	 *
 	 */
-	protected void addComplexFeature(Function<Object[], WorldFeature> featureFunction, Object[] featureParameters, Function<Object[], Integer> densityFunction, Object[] densityParameters){
+	public void addComplexFeature(Function<Object[], WorldFeature> featureFunction, Object[] featureParameters, Function<Object[], Integer> densityFunction, Object[] densityParameters){
 		featureFunctionsList.add(featureFunction);
 		featureParametersList.add(featureParameters);
 		densityFunctionsList.add(densityFunction);
