@@ -18,11 +18,9 @@ public class TerrainMain implements ModInitializer {
 
     @Override
     public void onInitialize() {
-		LOGGER.info("TerrainMain loading modules.");
-		loadModules();
         LOGGER.info("TerrainMain initialized.");
     }
-	public void loadModules(){
+	public static void loadModules(){
 		new TerrainInitialization().onInitialize();
 		FabricLoader.getInstance().getEntrypoints("terrain-api", TerrainAPI.class).forEach(api -> {
 			try {

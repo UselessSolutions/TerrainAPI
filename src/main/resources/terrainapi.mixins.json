@@ -4,6 +4,8 @@
   "package": "useless.terrainapi.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MinecraftMixin",
+    "MinecraftServerMixin",
     "WorldTypeOverworldMixin"
   ],
   "client": [
