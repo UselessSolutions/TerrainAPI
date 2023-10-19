@@ -2,7 +2,6 @@ package useless.terrainapi.generation;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.world.biome.Biome;
-import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureDungeon;
@@ -11,9 +10,11 @@ import net.minecraft.core.world.generate.feature.WorldFeatureTallGrass;
 import useless.terrainapi.generation.overworld.ChunkDecoratorOverworldAPI;
 import useless.terrainapi.generation.overworld.OverworldBiomeFeatures;
 
+import java.util.HashMap;
 import java.util.Random;
 
 public class VanillaFunctions {
+	public static HashMap<Biome, Boolean> randomlyReplaceGrassWithFerns = new HashMap<>();
 	public static WorldFeature getTreeFeature(Object[] parameters){
 		Biome biome = Parameters.getBiome(parameters);
 		Random random = Parameters.getRandom(parameters);
@@ -58,7 +59,7 @@ public class VanillaFunctions {
 		Random random = Parameters.getRandom(parameters);
 
 		int blockId = Block.tallgrass.id;
-		if ((biome == Biomes.OVERWORLD_RAINFOREST || biome == Biomes.OVERWORLD_SWAMPLAND || biome == Biomes.OVERWORLD_BOREAL_FOREST || biome == Biomes.OVERWORLD_TAIGA) && random.nextInt(3) != 0) {
+		if (checkForBiomeInBiomes(biome, randomlyReplaceGrassWithFerns.keySet().toArray(new Biome[0])) && random.nextInt(3) != 0) {
 			blockId = Block.tallgrassFern.id;
 		}
 		return new WorldFeatureTallGrass(blockId);

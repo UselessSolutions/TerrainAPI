@@ -86,6 +86,11 @@ public class TerrainInitialization implements TerrainAPI {
 		OverworldBiomeFeatures.treeDensityMap.put(Biomes.OVERWORLD_SWAMPLAND, 4);
 		OverworldBiomeFeatures.treeDensityMap.put(Biomes.OVERWORLD_OUTBACK_GRASSY, 0);
 
+		VanillaFunctions.randomlyReplaceGrassWithFerns.put(Biomes.OVERWORLD_RAINFOREST, true);
+		VanillaFunctions.randomlyReplaceGrassWithFerns.put(Biomes.OVERWORLD_SWAMPLAND, true);
+		VanillaFunctions.randomlyReplaceGrassWithFerns.put(Biomes.OVERWORLD_BOREAL_FOREST, true);
+		VanillaFunctions.randomlyReplaceGrassWithFerns.put(Biomes.OVERWORLD_TAIGA, true);
+
 		ChunkDecoratorNetherAPI.oreFeatures.setOreValues(TerrainMain.MOD_ID, Block.oreNethercoalNetherrack.id, 12, 10, 120/128f);
 	}
 	public static void initializeOverworldOre(){
