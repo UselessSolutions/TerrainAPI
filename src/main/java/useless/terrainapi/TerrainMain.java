@@ -23,6 +23,7 @@ public class TerrainMain implements ModInitializer {
         LOGGER.info("TerrainMain initialized.");
     }
 	public void loadModules(){
+		new TerrainInitialization().onInitialize();
 		FabricLoader.getInstance().getEntrypoints("terrain-api", TerrainAPI.class).forEach(api -> {
 			try {
 				api.getClass().getDeclaredMethod("onInitialize"); // Make sure the method is implemented
