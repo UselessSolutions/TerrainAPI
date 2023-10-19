@@ -1,6 +1,5 @@
 package useless.terrainapi.generation.nether;
 
-import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockSand;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
@@ -9,10 +8,6 @@ import net.minecraft.core.world.generate.feature.*;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.StructureFeatures;
-import useless.terrainapi.generation.VanillaFunctions;
-import useless.terrainapi.generation.overworld.OverworldBiomeFeatures;
-import useless.terrainapi.generation.overworld.OverworldOreFeatures;
-import useless.terrainapi.generation.overworld.OverworldRandomFeatures;
 
 import java.util.Random;
 
