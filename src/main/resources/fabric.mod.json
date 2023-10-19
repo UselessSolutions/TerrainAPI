@@ -19,7 +19,10 @@
   "entrypoints": {
     "main": [
 			"useless.terrainapi.TerrainMain"
-    ]
+    ],
+		"terrain-api": [
+			"useless.terrainapi.TerrainInitialization"
+		]
   },
   "mixins": [
     "terrainapi.mixins.json"
