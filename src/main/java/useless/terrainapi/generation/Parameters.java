@@ -1,4 +1,4 @@
-package useless.terrainapi.generation.overworld;
+package useless.terrainapi.generation;
 
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
