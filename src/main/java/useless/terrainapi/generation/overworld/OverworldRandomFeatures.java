@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.function.Function;
 
 public class OverworldRandomFeatures extends GeneratorFeatures {
-	protected List<Float> rangeModifierList = new ArrayList<>();
-	protected List<Integer> inverseProbabilityList = new ArrayList<>();
+	public List<Float> rangeModifierList = new ArrayList<>();
+	public List<Integer> inverseProbabilityList = new ArrayList<>();
 	public void addFeatureSurface(WorldFeature feature, int inverseProbability){
 		addFeature(feature, inverseProbability, -1f);
 	}
