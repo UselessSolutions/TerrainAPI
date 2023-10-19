@@ -21,6 +21,7 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 	public static NetherOreFeatures oreFeatures = new NetherOreFeatures();
 	public static NetherRandomFeatures randomFeatures = new NetherRandomFeatures();
 	public static NetherBiomeFeatures biomeFeatures = new NetherBiomeFeatures();
+	private Object[] parameterBase;
 	protected ChunkDecoratorNetherAPI(World world) {
 		super(world);
 	}
@@ -37,6 +38,9 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 		Biome biome = this.world.getBlockBiome(xCoord + 16, maxY-1, zCoord + 16);
 
 		BlockSand.fallInstantly = true;
+
+		parameterBase = new Object[]{biome, random, chunk, this};
+
 		generateStructures(biome, chunk, structureRand);
 		generateOreFeatures(biome, xCoord, zCoord, random, chunk);
 		generateBiomeFeature(biome,xCoord, zCoord, random, chunk);
@@ -49,17 +53,17 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 		int featureSize = structureFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
 			structureFeatures.featureFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, structureFeatures.featureParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, structureFeatures.featureParametersList.get(i)));
 		}
 	}
 	public void generateOreFeatures(Biome biome, int x, int z, Random random, Chunk chunk){
 		int featureSize = oreFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
 			WorldFeature feature = oreFeatures.featureFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, oreFeatures.featureParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, oreFeatures.featureParametersList.get(i)));
 
 			int density = oreFeatures.densityFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, oreFeatures.densityParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, oreFeatures.densityParametersList.get(i)));
 
 			float rangeModifier = oreFeatures.rangeModifierList.get(i);
 			generateWithChancesUnderground(feature, density, (int) (rangeModifier * rangeY), x, z, random);
@@ -70,10 +74,10 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 		for (int i = 0; i < featureSize; i++) {
 			if (random.nextInt(randomFeatures.inverseProbabilityList.get(i)) != 0) {continue;}
 			WorldFeature feature = randomFeatures.featureFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, randomFeatures.featureParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, randomFeatures.featureParametersList.get(i)));
 
 			int density = randomFeatures.densityFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, randomFeatures.densityParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, randomFeatures.densityParametersList.get(i)));
 
 			float rangeModifier = randomFeatures.rangeModifierList.get(i);
 			if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
@@ -87,10 +91,10 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 		int featureSize = biomeFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
 			WorldFeature feature = biomeFeatures.featureFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, biomeFeatures.featureParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, biomeFeatures.featureParametersList.get(i)));
 
 			int density = biomeFeatures.densityFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, biomeFeatures.densityParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, biomeFeatures.densityParametersList.get(i)));
 
 			float rangeModifier = biomeFeatures.rangeModifierList.get(i);
 			if (-1.01 <= rangeModifier && rangeModifier <= -0.99){

@@ -19,6 +19,7 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 	public final PerlinNoise treeDensityNoise;
 	public final int treeDensityOverride;
 	private final int lakeDensityDefault = 4;
+	private Object[] parameterBase;
 	public static StructureFeatures structureFeatures = new StructureFeatures();
 	public static OverworldOreFeatures oreFeatures = new OverworldOreFeatures();
 	public static OverworldRandomFeatures randomFeatures = new OverworldRandomFeatures();
@@ -57,7 +58,6 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 		long l2 = random.nextLong() / 2L * 2L + 1L;
 		random.setSeed((long)chunkX * l1 + (long)chunkZ * l2 ^ this.world.getRandomSeed());
 		Random swampRand = new Random((long)chunkX * l1 + (long)chunkZ * l2 ^ this.world.getRandomSeed());
-		Random structureRand = new Random((long)chunkX * l1 + (long)chunkZ * l2 ^ this.world.getRandomSeed());
 
 		BlockSand.fallInstantly = true;
 
@@ -66,9 +66,11 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 		}
 		int lakeChance = getLakeChance(biome);
 
+		parameterBase = new Object[]{biome, random, chunk, this};
+
 		generateLakeFeature(lakeChance, xCoord, zCoord, biome, random);
 
-		generateStructures(biome, chunk, structureRand);
+		generateStructures(biome, chunk, random);
 		generateOreFeatures(biome, xCoord, zCoord, random, chunk);
 		generateBiomeFeature(biome,xCoord, zCoord, random, chunk);
 		generateRandomFeatures(biome,xCoord, zCoord, random, chunk);
@@ -134,17 +136,17 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 		int featureSize = structureFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
 			structureFeatures.featureFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, structureFeatures.featureParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, structureFeatures.featureParametersList.get(i)));
 		}
 	}
 	public void generateOreFeatures(Biome biome, int x, int z, Random random, Chunk chunk){
 		int featureSize = oreFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
 			WorldFeature feature = oreFeatures.featureFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, oreFeatures.featureParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, oreFeatures.featureParametersList.get(i)));
 
 			int density = oreFeatures.densityFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, oreFeatures.densityParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, oreFeatures.densityParametersList.get(i)));
 
 			float rangeModifier = oreFeatures.rangeModifierList.get(i);
 			generateWithChancesUnderground(feature, density, (int) (rangeModifier * rangeY), x, z, random);
@@ -155,10 +157,10 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 		for (int i = 0; i < featureSize; i++) {
 			if (random.nextInt(randomFeatures.inverseProbabilityList.get(i)) != 0) {continue;}
 			WorldFeature feature = randomFeatures.featureFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, randomFeatures.featureParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, randomFeatures.featureParametersList.get(i)));
 
 			int density = randomFeatures.densityFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, randomFeatures.densityParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, randomFeatures.densityParametersList.get(i)));
 
 			float rangeModifier = randomFeatures.rangeModifierList.get(i);
 			if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
@@ -172,10 +174,10 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 		int featureSize = biomeFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
 			WorldFeature feature = biomeFeatures.featureFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, biomeFeatures.featureParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, biomeFeatures.featureParametersList.get(i)));
 
 			int density = biomeFeatures.densityFunctionsList.get(i)
-				.apply(Parameters.packParameters(biome, random, chunk, this, biomeFeatures.densityParametersList.get(i)));
+				.apply(Parameters.packParameters(parameterBase, biomeFeatures.densityParametersList.get(i)));
 
 			float rangeModifier = biomeFeatures.rangeModifierList.get(i);
 			if (-1.01 <= rangeModifier && rangeModifier <= -0.99){

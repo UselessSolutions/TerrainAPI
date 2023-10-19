@@ -41,12 +41,12 @@ public enum Parameters {
 		}
 		return parameters[biggestID + customIndex];
 	}
-	public static Object[] packParameters(Biome biome, Random random, Chunk chunk, ChunkDecorator decorator, Object[] customParameters){
-		Object[] parameters = new Object[]{biome, random, chunk, decorator};
+	public static Object[] packParameters(Object[] base, Object[] customParameters){
 		if (customParameters != null){
-			parameters = concatenate(parameters, customParameters);
+			Object[] parameters = base.clone();
+			return concatenate(parameters, customParameters);
 		}
-		return parameters;
+		return base;
 	}
 	public static <T> T[] concatenate(T[] a, T[] b) {
 		int aLen = a.length;
