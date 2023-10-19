@@ -1,4 +1,4 @@
-package useless.terrainapi.generation.overworld;
+package useless.terrainapi.generation;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.world.biome.Biome;
@@ -8,6 +8,8 @@ import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureDungeon;
 import net.minecraft.core.world.generate.feature.WorldFeatureLabyrinth;
 import net.minecraft.core.world.generate.feature.WorldFeatureTallGrass;
+import useless.terrainapi.generation.overworld.ChunkDecoratorOverworldAPI;
+import useless.terrainapi.generation.overworld.OverworldBiomeFeatures;
 
 import java.util.Random;
 
@@ -23,7 +25,7 @@ public class VanillaFunctions {
 		Biome biome = Parameters.getBiome(parameters);
 		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) Parameters.getDecorator(parameters);
 
-		Integer treeDensity = ChunkDecoratorOverworldAPI.BiomeFeatures.treeDensityMap.get(biome);
+		Integer treeDensity = OverworldBiomeFeatures.treeDensityMap.get(biome);
 
 		if (decorator.treeDensityOverride != -1){
 			return decorator.treeDensityOverride;
