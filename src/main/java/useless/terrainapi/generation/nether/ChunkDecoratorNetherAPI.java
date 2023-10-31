@@ -5,6 +5,8 @@ import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.feature.*;
+import useless.terrainapi.config.TerrainAPIConfig;
+import useless.terrainapi.config.TerrainAPIConfigManager;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.StructureFeatures;
@@ -12,8 +14,9 @@ import useless.terrainapi.generation.StructureFeatures;
 import java.util.Random;
 
 public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
+	public static TerrainAPIConfig netherConfig = TerrainAPIConfigManager.getConfig("nether");
 	public static StructureFeatures structureFeatures = new StructureFeatures();
-	public static NetherOreFeatures oreFeatures = new NetherOreFeatures();
+	public static NetherOreFeatures oreFeatures = new NetherOreFeatures(netherConfig);
 	public static NetherRandomFeatures randomFeatures = new NetherRandomFeatures();
 	public static NetherBiomeFeatures biomeFeatures = new NetherBiomeFeatures();
 	private Object[] parameterBase;

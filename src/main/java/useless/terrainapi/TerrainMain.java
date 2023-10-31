@@ -1,21 +1,20 @@
 package useless.terrainapi;
 
-import io.github.prospector.modmenu.api.ModMenuApi;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import useless.terrainapi.api.TerrainAPI;
-
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.Map;
+import useless.terrainapi.config.TerrainAPIConfigManager;
 
 
 public class TerrainMain implements ModInitializer {
+	public static final Gson GSON = (new GsonBuilder()).setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).setPrettyPrinting().create();
     public static final String MOD_ID = "terrain-api";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-
     @Override
     public void onInitialize() {
         LOGGER.info("TerrainMain initialized.");
@@ -29,5 +28,6 @@ public class TerrainMain implements ModInitializer {
 			} catch (NoSuchMethodException ignored) {
 			}
 		});
+		TerrainAPIConfigManager.saveAll();
 	}
 }
