@@ -3,11 +3,13 @@ package useless.terrainapi.generation.overworld;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.generate.feature.WorldFeature;
+import net.minecraft.core.world.generate.feature.WorldFeatureOre;
 import useless.terrainapi.TerrainMain;
 import useless.terrainapi.config.TerrainAPIConfig;
 import useless.terrainapi.generation.GeneratorFeatures;
 import useless.terrainapi.generation.VanillaFunctions;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -49,5 +51,9 @@ public class OverworldOreFeatures extends GeneratorFeatures {
 		config.clusterSize.put(block.getKey(), clusterSize);
 		config.chancesPerChunk.put(block.getKey(), chances);
 		config.verticalRange.put(block.getKey(), range);
+	}
+	public void addManagedOreFeature(Block block, boolean hasStoneStates){
+		String currentBlock = block.getKey();
+		addFeature(new WorldFeatureOre(block.id, config.clusterSize.get(currentBlock), hasStoneStates), config.chancesPerChunk.get(currentBlock), config.verticalRange.get(currentBlock));
 	}
 }

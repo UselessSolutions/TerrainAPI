@@ -99,16 +99,17 @@ public class TerrainInitialization implements TerrainAPI {
 		HashMap<String, Integer> chancesMap = ChunkDecoratorOverworldAPI.overworldConfig.chancesPerChunk;
 		HashMap<String, Float> rangeMap = ChunkDecoratorOverworldAPI.overworldConfig.verticalRange;
 		String currentBlock;
-		currentBlock = Block.blockClay.getKey(); 		ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureClay(blockNumberMap.get(currentBlock)), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
-		currentBlock = Block.dirt.getKey(); 			ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.getBlockByName(currentBlock).id, blockNumberMap.get(currentBlock), false), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
-		currentBlock = Block.gravel.getKey(); 			ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.getBlockByName(currentBlock).id, blockNumberMap.get(currentBlock), false), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
-		currentBlock = Block.oreCoalStone.getKey(); 	ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.getBlockByName(currentBlock).id, blockNumberMap.get(currentBlock), true), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
-		currentBlock = Block.oreIronStone.getKey(); 	ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.getBlockByName(currentBlock).id, blockNumberMap.get(currentBlock), true), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
-		currentBlock = Block.oreGoldStone.getKey(); 	ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.getBlockByName(currentBlock).id, blockNumberMap.get(currentBlock), true), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
-		currentBlock = Block.oreRedstoneStone.getKey(); ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.getBlockByName(currentBlock).id, blockNumberMap.get(currentBlock), true), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
-		currentBlock = Block.oreDiamondStone.getKey();	ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.getBlockByName(currentBlock).id, blockNumberMap.get(currentBlock), true), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
-		currentBlock = Block.mossStone.getKey(); 		ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.getBlockByName(currentBlock).id, blockNumberMap.get(currentBlock), true), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
-		currentBlock = Block.oreLapisStone.getKey();	ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.getBlockByName(currentBlock).id, blockNumberMap.get(currentBlock), true), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
+		currentBlock = Block.blockClay.getKey();
+		ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureClay(blockNumberMap.get(currentBlock)), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.dirt, false);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.gravel, false);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreCoalStone, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreIronStone, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreGoldStone, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreRedstoneStone, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreDiamondStone, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.mossStone, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreLapisStone, true);
 	}
 	public static void initializeOverworldRandom(){
 		ChunkDecoratorOverworldAPI.randomFeatures.addFeature(new WorldFeatureFlowers(Block.flowerRed.id), 2, 1);
@@ -130,12 +131,8 @@ public class TerrainInitialization implements TerrainAPI {
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(new WorldFeatureCactus(), 1, 10, new Biome[]{Biomes.OVERWORLD_DESERT});
 	}
 	public static void initializeNether(){
-		HashMap<String, Integer> blockNumberMap = ChunkDecoratorNetherAPI.netherConfig.clusterSize;
-		HashMap<String, Integer> chancesMap = ChunkDecoratorNetherAPI.netherConfig.chancesPerChunk;
-		HashMap<String, Float> rangeMap = ChunkDecoratorNetherAPI.netherConfig.verticalRange;
-		String currentBlock;
 		ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureNetherLava(Block.fluidLavaFlowing.id),  8,120/128f);
-		currentBlock = Block.oreNethercoalNetherrack.getKey(); ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.getBlockByName(currentBlock).id, blockNumberMap.get(currentBlock), false), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
+		ChunkDecoratorNetherAPI.oreFeatures.addManagedOreFeature(Block.oreNethercoalNetherrack, false);
 		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Object[] x) -> new WorldFeatureFire(), null, VanillaFunctions::netherFireDensity, null, 120/128f);
 		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Object[] x) -> new WorldFeatureGlowstoneA(), null, VanillaFunctions::netherFireDensity, null, 120/128f);
 		ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureGlowstoneB(), 10, 120/128f);
