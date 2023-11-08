@@ -5,20 +5,22 @@ import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.generate.feature.*;
 import useless.terrainapi.api.TerrainAPI;
+import useless.terrainapi.config.NetherConfig;
 import useless.terrainapi.config.OverworldConfig;
 import useless.terrainapi.generation.Parameters;
-import useless.terrainapi.generation.VanillaFunctions;
-import useless.terrainapi.generation.nether.ChunkDecoratorNetherAPI;
-import useless.terrainapi.generation.overworld.ChunkDecoratorOverworldAPI;
+import useless.terrainapi.generation.nether.NetherFunctions;
+import useless.terrainapi.generation.nether.api.ChunkDecoratorNetherAPI;
+import useless.terrainapi.generation.overworld.OverworldFunctions;
+import useless.terrainapi.generation.overworld.api.ChunkDecoratorOverworldAPI;
 
 public class TerrainInitialization implements TerrainAPI {
 	private static boolean hasInitialized = false;
 	private static final OverworldConfig overworldConfig = ChunkDecoratorOverworldAPI.overworldConfig;
+	private static final NetherConfig netherConfig = ChunkDecoratorNetherAPI.netherConfig;
 	@Override
 	public String getModID() {
 		return TerrainMain.MOD_ID;
 	}
-
 	@Override
 	public void onInitialize() {
 		if (hasInitialized) {return;}
@@ -31,11 +33,6 @@ public class TerrainInitialization implements TerrainAPI {
 		initializeOverworldBiome();
 
 		initializeNether();
-	}
-	public static void initializeOverworldStructures() {
-		ChunkDecoratorOverworldAPI.structureFeatures.addStructure(VanillaFunctions::generateDungeons, null);
-		ChunkDecoratorOverworldAPI.structureFeatures.addStructure(VanillaFunctions::generateLabyrinths, null);
-
 	}
 	public static void initializeDefaultValues(){
 		overworldConfig.setOreValues(TerrainMain.MOD_ID, Block.blockClay, 32, 20, 1f);
@@ -82,6 +79,10 @@ public class TerrainInitialization implements TerrainAPI {
 		overworldConfig.addRandomGrassBlock(Biomes.OVERWORLD_BOREAL_FOREST, Block.tallgrassFern);
 		overworldConfig.addRandomGrassBlock(Biomes.OVERWORLD_TAIGA, Block.tallgrassFern);
 	}
+	public static void initializeOverworldStructures() {
+		ChunkDecoratorOverworldAPI.structureFeatures.addStructure(OverworldFunctions::generateDungeons, null);
+		ChunkDecoratorOverworldAPI.structureFeatures.addStructure(OverworldFunctions::generateLabyrinths, null);
+	}
 	public static void initializeOverworldOre(){
 		String currentBlock = Block.blockClay.getKey();
 		ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureClay(overworldConfig.clusterSize.get(currentBlock)), overworldConfig.chancesPerChunk.get(currentBlock), overworldConfig.verticalRange.get(currentBlock));
@@ -105,11 +106,11 @@ public class TerrainInitialization implements TerrainAPI {
 	}
 	public static void initializeOverworldBiome(){
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeatureSurface(new WorldFeatureRichScorchedDirt(10), 1, new Biome[]{Biomes.OVERWORLD_OUTBACK, Biomes.OVERWORLD_OUTBACK_GRASSY});
-		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature(VanillaFunctions::getTreeFeature, null, VanillaFunctions::getTreeDensity, null, -1f);
+		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature(OverworldFunctions::getTreeFeature, null, OverworldFunctions::getTreeDensity, null, -1f);
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeatureSurface(new WorldFeatureSugarCaneTall(), 1, new Biome[]{Biomes.OVERWORLD_RAINFOREST});
-		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature(VanillaFunctions::flowerTypeCondition, null, (Object[] x) -> ChunkDecoratorOverworldAPI.overworldConfig.getFlowerDensity(Parameters.getBiome(x), 0), null, 1f);
-		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature((Object[] x) -> new WorldFeatureFlowers(Block.flowerYellow.id), null, (Object[] x) -> ChunkDecoratorOverworldAPI.overworldConfig.getYellowFlowerDensity(Parameters.getBiome(x), 0), null, 1);
-		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature(VanillaFunctions::grassTypeCondition, null, (Object[] x) -> ChunkDecoratorOverworldAPI.overworldConfig.getGrassDensity(Parameters.getBiome(x), 0), null, 1);
+		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature(OverworldFunctions::flowerTypeCondition, null, (Parameters x) -> ChunkDecoratorOverworldAPI.overworldConfig.getFlowerDensity(x.biome, 0), null, 1f);
+		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature((Parameters x) -> new WorldFeatureFlowers(Block.flowerYellow.id), null, (Parameters x) -> ChunkDecoratorOverworldAPI.overworldConfig.getYellowFlowerDensity(x.biome, 0), null, 1);
+		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature(OverworldFunctions::grassTypeCondition, null, (Parameters x) -> ChunkDecoratorOverworldAPI.overworldConfig.getGrassDensity(x.biome, 0), null, 1);
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(new WorldFeatureSpinifexPatch(), 1, 4, new Biome[]{Biomes.OVERWORLD_OUTBACK});
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(new WorldFeatureDeadBush(Block.deadbush.id), 1, 2, new Biome[]{Biomes.OVERWORLD_DESERT});
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(new WorldFeatureCactus(), 1, 10, new Biome[]{Biomes.OVERWORLD_DESERT});
@@ -117,8 +118,8 @@ public class TerrainInitialization implements TerrainAPI {
 	public static void initializeNether(){
 		ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureNetherLava(Block.fluidLavaFlowing.id),  8,120/128f);
 		ChunkDecoratorNetherAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID, Block.oreNethercoalNetherrack, 12, 10, 120/128f, false);
-		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Object[] x) -> new WorldFeatureFire(), null, VanillaFunctions::netherFireDensity, null, 120/128f);
-		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Object[] x) -> new WorldFeatureGlowstoneA(), null, VanillaFunctions::netherFireDensity, null, 120/128f);
+		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Parameters x) -> new WorldFeatureFire(), null, NetherFunctions::netherFireDensity, null, 120/128f);
+		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Parameters x) -> new WorldFeatureGlowstoneA(), null, NetherFunctions::netherFireDensity, null, 120/128f);
 		ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureGlowstoneB(), 10, 120/128f);
 		ChunkDecoratorNetherAPI.randomFeatures.addFeature(new WorldFeatureLake(Block.fluidLavaStill.id), 8, 120/128f);
 	}

@@ -6,7 +6,7 @@ import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureOre;
 import useless.terrainapi.config.OreConfig;
 import useless.terrainapi.generation.GeneratorFeatures;
-import useless.terrainapi.generation.VanillaFunctions;
+import useless.terrainapi.generation.Parameters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +22,13 @@ public class OverworldOreFeatures extends GeneratorFeatures {
 		addFeature(feature, chances, rangeModifier, null);
 	}
 	public void addFeature(WorldFeature feature, int chances, float rangeModifier, Biome[] biomes){
-		addComplexFeature((Object[] x) -> feature, null, VanillaFunctions::getStandardOreBiomesDensity, new Object[]{chances, biomes}, rangeModifier);
+		addComplexFeature((Parameters x) -> feature, null, OverworldFunctions::getStandardOreBiomesDensity, new Object[]{chances, biomes}, rangeModifier);
 	}
 	/** The Object[] are the parameters passed into the provided function, index 0 will always be populated by Biome, index 1 with Random, index 2 with Chunk, index 3 with the ChunkDecorator, and index 4 with the oreHeightModifier. Additional parameters can be added in the method.
 	 * Range Modifier of -1 indicates that the feature should only generate on the surface
 	 *
 	 */
-	public void addComplexFeature(Function<Object[], WorldFeature> featureFunction, Object[] featureParameters, Function<Object[], Integer> densityFunction, Object[] densityParameters, float rangeModifier){
+	public void addComplexFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters, float rangeModifier){
 		super.addComplexFeature(featureFunction, featureParameters, densityFunction, densityParameters);
 		rangeModifierList.add(rangeModifier);
 	}

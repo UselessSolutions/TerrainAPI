@@ -1,4 +1,4 @@
-package useless.terrainapi.generation.nether;
+package useless.terrainapi.generation.nether.api;
 
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.generate.MapGenCavesHell;

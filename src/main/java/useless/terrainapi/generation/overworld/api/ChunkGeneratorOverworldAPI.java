@@ -1,4 +1,4 @@
-package useless.terrainapi.generation.overworld;
+package useless.terrainapi.generation.overworld.api;
 
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.generate.MapGenCaves;
