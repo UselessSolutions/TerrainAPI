@@ -5,19 +5,18 @@ import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureOre;
 import useless.terrainapi.TerrainMain;
-import useless.terrainapi.config.TerrainAPIConfig;
+import useless.terrainapi.config.OreConfig;
 import useless.terrainapi.generation.GeneratorFeatures;
 import useless.terrainapi.generation.VanillaFunctions;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 public class OverworldOreFeatures extends GeneratorFeatures {
 	public List<Float> rangeModifierList = new ArrayList<>();
-	public TerrainAPIConfig config;
-	public OverworldOreFeatures(TerrainAPIConfig config){
+	public OreConfig config;
+	public OverworldOreFeatures(OreConfig config){
 		this.config = config;
 	}
 	public void addFeature(WorldFeature feature, int chances, float rangeModifier){

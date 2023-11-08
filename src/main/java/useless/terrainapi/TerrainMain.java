@@ -8,7 +8,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import useless.terrainapi.api.TerrainAPI;
-import useless.terrainapi.config.TerrainAPIConfigManager;
+import useless.terrainapi.config.ConfigManager;
 
 
 public class TerrainMain implements ModInitializer {
@@ -28,6 +28,6 @@ public class TerrainMain implements ModInitializer {
 			} catch (NoSuchMethodException ignored) {
 			}
 		});
-		TerrainAPIConfigManager.saveAll();
+		ConfigManager.saveAll();
 	}
 }

@@ -9,8 +9,8 @@ import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.feature.*;
 import net.minecraft.core.world.noise.PerlinNoise;
-import useless.terrainapi.config.TerrainAPIConfig;
-import useless.terrainapi.config.TerrainAPIConfigManager;
+import useless.terrainapi.config.OreConfig;
+import useless.terrainapi.config.ConfigManager;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.StructureFeatures;
@@ -18,7 +18,7 @@ import useless.terrainapi.generation.StructureFeatures;
 import java.util.Random;
 
 public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
-	public static TerrainAPIConfig overworldConfig = TerrainAPIConfigManager.getConfig("overworld");
+	public static OreConfig overworldConfig = ConfigManager.getConfig("overworld", OreConfig.class);
 	public final PerlinNoise treeDensityNoise;
 	public final int treeDensityOverride;
 	private final int lakeDensityDefault = 4;
