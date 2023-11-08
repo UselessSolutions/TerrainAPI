@@ -12,7 +12,7 @@ import useless.terrainapi.config.ConfigManager;
 
 
 public class TerrainMain implements ModInitializer {
-	public static final Gson GSON = (new GsonBuilder()).setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).setPrettyPrinting().create();
+	public static final Gson GSON = (new GsonBuilder()).setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
     public static final String MOD_ID = "terrain-api";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     @Override

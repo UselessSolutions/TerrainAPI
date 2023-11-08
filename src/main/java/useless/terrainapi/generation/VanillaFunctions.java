@@ -1,20 +1,20 @@
 package useless.terrainapi.generation;
 
 import net.minecraft.core.block.Block;
+import net.minecraft.core.data.registry.Registries;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureDungeon;
 import net.minecraft.core.world.generate.feature.WorldFeatureLabyrinth;
 import net.minecraft.core.world.generate.feature.WorldFeatureTallGrass;
+import useless.terrainapi.config.OverworldConfig;
 import useless.terrainapi.generation.overworld.ChunkDecoratorOverworldAPI;
-import useless.terrainapi.generation.overworld.OverworldBiomeFeatures;
 
-import java.util.HashMap;
 import java.util.Random;
 
 public class VanillaFunctions {
-	public static HashMap<Biome, Integer> biomeRandomGrassType = new HashMap<>();
+	public static OverworldConfig overworldConfig = ChunkDecoratorOverworldAPI.overworldConfig;
 	public static WorldFeature getTreeFeature(Object[] parameters){
 		Biome biome = Parameters.getBiome(parameters);
 		Random random = Parameters.getRandom(parameters);
@@ -26,7 +26,7 @@ public class VanillaFunctions {
 		Biome biome = Parameters.getBiome(parameters);
 		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) Parameters.getDecorator(parameters);
 
-		Integer treeDensity = OverworldBiomeFeatures.treeDensityMap.get(biome);
+		Integer treeDensity = overworldConfig.getTreeDensity(biome);
 
 		if (decorator.treeDensityOverride != -1){
 			return decorator.treeDensityOverride;
@@ -58,11 +58,11 @@ public class VanillaFunctions {
 		Biome biome = Parameters.getBiome(parameters);
 		Random random = Parameters.getRandom(parameters);
 
-		int blockId = Block.tallgrass.id;
-		if (checkForBiomeInBiomes(biome, biomeRandomGrassType.keySet().toArray(new Biome[0])) && random.nextInt(3) != 0) {
-			blockId = biomeRandomGrassType.get(biome);
+		Block block = Block.tallgrass;
+		if (checkForBiomeInBiomes(biome, overworldConfig.biomeRandomGrassBlock.keySet().toArray(new String[0])) && random.nextInt(3) != 0) {
+			block = overworldConfig.getRandomGrassBlock(biome);
 		}
-		return new WorldFeatureTallGrass(blockId);
+		return new WorldFeatureTallGrass(block.id);
 	}
 	public static WorldFeature flowerTypeCondition(Object[] parameters){
 		Random random = Parameters.getRandom(parameters);
@@ -133,6 +133,14 @@ public class VanillaFunctions {
 	public static int netherFireDensity(Object[] parameters){
 		Random random = Parameters.getRandom(parameters);
 		return random.nextInt(random.nextInt(10) + 1);
+	}
+	public static boolean checkForBiomeInBiomes(Biome biome, String[] biomesKeys){
+		for (String key: biomesKeys) {
+			if (biome.equals(Registries.BIOMES.getItem(key))){
+				return true;
+			}
+		}
+		return false;
 	}
 	public static boolean checkForBiomeInBiomes(Biome biome, Biome[] biomes){
 		for (Biome checkBiome: biomes) {

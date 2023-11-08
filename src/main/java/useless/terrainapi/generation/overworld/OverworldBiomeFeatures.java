@@ -6,15 +6,10 @@ import useless.terrainapi.generation.GeneratorFeatures;
 import useless.terrainapi.generation.VanillaFunctions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
 public class OverworldBiomeFeatures extends GeneratorFeatures {
-	public static HashMap<Biome, Integer> grassDensityMap = new HashMap<>();
-	public static HashMap<Biome, Integer> flowerDensityMap = new HashMap<>();
-	public static HashMap<Biome, Integer> yellowFlowerDensityMap = new HashMap<>();
-	public static HashMap<Biome, Integer> treeDensityMap = new HashMap<>();
 	public List<Float> rangeModifierList = new ArrayList<>();
 	public void addFeatureSurface(WorldFeature feature, int chances, Biome[] biomes){
 		addFeature(feature, -1f, chances, biomes);

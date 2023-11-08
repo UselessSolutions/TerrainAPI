@@ -48,7 +48,6 @@ public class ConfigManager {
 		prepareBiomeConfigFile(id);
 
 		String jsonString = TerrainMain.GSON.toJson(configHashMap.get(id));
-		TerrainMain.LOGGER.info(jsonString);
 
 		try (FileWriter fileWriter = new FileWriter(fileHashMap.get(id))) {
 			fileWriter.write(jsonString);
@@ -74,8 +73,7 @@ public class ConfigManager {
 					configHashMap.put(id, classOfT.getDeclaredConstructor().newInstance());
 					return classOfT.cast(configHashMap.get(id));
 				}
-			} catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-					 NoSuchMethodException e) {
+			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				throw new RuntimeException(e);
 			}
 		}

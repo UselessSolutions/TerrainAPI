@@ -4,7 +4,6 @@ import net.minecraft.core.block.Block;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureOre;
-import useless.terrainapi.TerrainMain;
 import useless.terrainapi.config.OreConfig;
 import useless.terrainapi.generation.GeneratorFeatures;
 import useless.terrainapi.generation.VanillaFunctions;
@@ -32,24 +31,6 @@ public class OverworldOreFeatures extends GeneratorFeatures {
 	public void addComplexFeature(Function<Object[], WorldFeature> featureFunction, Object[] featureParameters, Function<Object[], Integer> densityFunction, Object[] densityParameters, float rangeModifier){
 		super.addComplexFeature(featureFunction, featureParameters, densityFunction, densityParameters);
 		rangeModifierList.add(rangeModifier);
-	}
-	@Deprecated
-	public void setOreValues(String modID, int blockID, int clusterSize, int chances, float range){
-		setOreValues(modID, Block.getBlock(blockID), clusterSize, chances, range);
-	}
-	public void setOreValues(String modID, Block block, int clusterSize, int chances, float range){
-		if (config.clusterSize.get(block.getKey()) != null){
-			TerrainMain.LOGGER.warn(modID + String.format(" has changed block %s to generate %d blocks with %d chances and a range of %f", block.getKey(), clusterSize, chances, range));
-		}
-		setOreValues(block, clusterSize, chances, range);
-	}
-	protected void setOreValues(Block block, int clusterSize, int chances, float range){
-		if (config.clusterSize.containsKey(block.getKey()) && config.getConfigOverride()){
-			return;
-		}
-		config.clusterSize.put(block.getKey(), clusterSize);
-		config.chancesPerChunk.put(block.getKey(), chances);
-		config.verticalRange.put(block.getKey(), range);
 	}
 	public void addManagedOreFeature(Block block, boolean hasStoneStates){
 		String currentBlock = block.getKey();

@@ -11,6 +11,7 @@ import net.minecraft.core.world.generate.feature.*;
 import net.minecraft.core.world.noise.PerlinNoise;
 import useless.terrainapi.config.OreConfig;
 import useless.terrainapi.config.ConfigManager;
+import useless.terrainapi.config.OverworldConfig;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.StructureFeatures;
@@ -18,7 +19,7 @@ import useless.terrainapi.generation.StructureFeatures;
 import java.util.Random;
 
 public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
-	public static OreConfig overworldConfig = ConfigManager.getConfig("overworld", OreConfig.class);
+	public static OverworldConfig overworldConfig = ConfigManager.getConfig("overworld", OverworldConfig.class);
 	public final PerlinNoise treeDensityNoise;
 	public final int treeDensityOverride;
 	private final int lakeDensityDefault = 4;
@@ -27,16 +28,6 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 	public static OverworldOreFeatures oreFeatures = new OverworldOreFeatures(overworldConfig);
 	public static OverworldRandomFeatures randomFeatures = new OverworldRandomFeatures();
 	public static OverworldBiomeFeatures biomeFeatures = new OverworldBiomeFeatures();
-	@Deprecated
-	public static StructureFeatures StructureFeatures = structureFeatures;
-	@Deprecated
-	public static OverworldOreFeatures OreFeatures = oreFeatures;
-	@Deprecated
-	public static OverworldRandomFeatures RandomFeatures = randomFeatures;
-	@Deprecated
-	public static OverworldBiomeFeatures BiomeFeatures = biomeFeatures;
-
-
 	protected ChunkDecoratorOverworldAPI(World world, int treeDensityOverride) {
 		super(world);
 		this.treeDensityOverride = treeDensityOverride;
