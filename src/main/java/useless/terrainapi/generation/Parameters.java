@@ -7,47 +7,27 @@ import net.minecraft.core.world.generate.chunk.ChunkDecorator;
 import java.lang.reflect.Array;
 import java.util.Random;
 
-public enum Parameters {
-	BIOME(0),
-	RANDOM(1),
-	CHUNK(2),
-	DECORATOR(3);
-	private static final int biggestID = 3;
-	public final int id;
-	private Parameters(int id){
-		this.id = id;
+public class Parameters {
+	public Biome biome;
+	public Random random;
+	public Chunk chunk;
+	public ChunkDecorator decorator;
+	public Object[] customParameters = new Object[0];
+	public Parameters(Biome biome, Random random, Chunk chunk, ChunkDecorator chunkDecorator, Object[] customParameters){
+		this(biome, random, chunk, chunkDecorator);
+		this.customParameters = customParameters;
 	}
-	public static Biome getBiome(Object[] parameters){
-		return (Biome) parameters[BIOME.id];
+	public Parameters(Biome biome, Random random, Chunk chunk, ChunkDecorator chunkDecorator){
+		this.biome = biome;
+		this.random = random;
+		this.chunk = chunk;
+		this.decorator = chunkDecorator;
 	}
-	public static Random getRandom(Object[] parameters){
-		return (Random) parameters[RANDOM.id];
-	}
-	public static Chunk getChunk(Object[] parameters){
-		return (Chunk) parameters[CHUNK.id];
-	}
-	public static ChunkDecorator getDecorator(Object[] parameters){
-		return (ChunkDecorator) parameters[DECORATOR.id];
+	public Parameters(Parameters baseParameter, Object[] customParameters){
+		this(baseParameter.biome, baseParameter.random, baseParameter.chunk, baseParameter.decorator);
+		this.customParameters = customParameters;
 	}
 
-	/**
-	 * @param parameters Object[] with preloaded parameters
-	 * @param customIndex index into additional parameters, starts at index 1
-	 * @return Returns the selected custom parameter
-	 */
-	public static Object getCustomParameter(Object[] parameters, int customIndex){
-		if (customIndex < 1) {
-			throw new NullPointerException("Custom Index must start from index 1 not 0!");
-		}
-		return parameters[biggestID + customIndex];
-	}
-	public static Object[] packParameters(Object[] base, Object[] customParameters){
-		if (customParameters != null){
-			Object[] parameters = base.clone();
-			return concatenate(parameters, customParameters);
-		}
-		return base;
-	}
 	public static <T> T[] concatenate(T[] a, T[] b) {
 		int aLen = a.length;
 		int bLen = b.length;

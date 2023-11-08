@@ -1,4 +1,4 @@
-package useless.terrainapi.generation.overworld;
+package useless.terrainapi.generation.overworld.api;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.tag.BlockTags;
