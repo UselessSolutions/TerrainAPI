@@ -11,10 +11,9 @@ import useless.terrainapi.generation.VanillaFunctions;
 import useless.terrainapi.generation.nether.ChunkDecoratorNetherAPI;
 import useless.terrainapi.generation.overworld.ChunkDecoratorOverworldAPI;
 
-import java.util.HashMap;
-
 public class TerrainInitialization implements TerrainAPI {
 	private static boolean hasInitialized = false;
+	private static final OverworldConfig overworldConfig = ChunkDecoratorOverworldAPI.overworldConfig;
 	@Override
 	public String getModID() {
 		return TerrainMain.MOD_ID;
@@ -39,17 +38,7 @@ public class TerrainInitialization implements TerrainAPI {
 
 	}
 	public static void initializeDefaultValues(){
-		OverworldConfig overworldConfig = ChunkDecoratorOverworldAPI.overworldConfig;
 		overworldConfig.setOreValues(TerrainMain.MOD_ID, Block.blockClay, 32, 20, 1f);
-		overworldConfig.setOreValues(TerrainMain.MOD_ID,Block.dirt, 32, 20, 1f);
-		overworldConfig.setOreValues(TerrainMain.MOD_ID,Block.gravel, 32, 10, 1f);
-		overworldConfig.setOreValues(TerrainMain.MOD_ID,Block.oreCoalStone, 16, 20, 1f);
-		overworldConfig.setOreValues(TerrainMain.MOD_ID,Block.oreIronStone, 8, 20, 1/2f);
-		overworldConfig.setOreValues(TerrainMain.MOD_ID,Block.oreGoldStone, 8, 2, 1/4f);
-		overworldConfig.setOreValues(TerrainMain.MOD_ID,Block.oreRedstoneStone, 7, 8, 1/8f);
-		overworldConfig.setOreValues(TerrainMain.MOD_ID,Block.oreDiamondStone, 7, 1, 1/8f);
-		overworldConfig.setOreValues(TerrainMain.MOD_ID,Block.mossStone, 32, 1, 1/2f);
-		overworldConfig.setOreValues(TerrainMain.MOD_ID,Block.oreLapisStone, 6, 1, 1/8f);
 
 		overworldConfig.addGrassDensity(Biomes.OVERWORLD_FOREST, 2);
 		overworldConfig.addGrassDensity(Biomes.OVERWORLD_MEADOW, 2);
@@ -92,25 +81,19 @@ public class TerrainInitialization implements TerrainAPI {
 		overworldConfig.addRandomGrassBlock(Biomes.OVERWORLD_SWAMPLAND, Block.tallgrassFern);
 		overworldConfig.addRandomGrassBlock(Biomes.OVERWORLD_BOREAL_FOREST, Block.tallgrassFern);
 		overworldConfig.addRandomGrassBlock(Biomes.OVERWORLD_TAIGA, Block.tallgrassFern);
-
-		ChunkDecoratorNetherAPI.netherConfig.setOreValues(TerrainMain.MOD_ID, Block.oreNethercoalNetherrack, 12, 10, 120/128f);
 	}
 	public static void initializeOverworldOre(){
-		HashMap<String, Integer> blockNumberMap = ChunkDecoratorOverworldAPI.overworldConfig.clusterSize;
-		HashMap<String, Integer> chancesMap = ChunkDecoratorOverworldAPI.overworldConfig.chancesPerChunk;
-		HashMap<String, Float> rangeMap = ChunkDecoratorOverworldAPI.overworldConfig.verticalRange;
-		String currentBlock;
-		currentBlock = Block.blockClay.getKey();
-		ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureClay(blockNumberMap.get(currentBlock)), chancesMap.get(currentBlock), rangeMap.get(currentBlock));
-		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.dirt, false);
-		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.gravel, false);
-		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreCoalStone, true);
-		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreIronStone, true);
-		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreGoldStone, true);
-		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreRedstoneStone, true);
-		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreDiamondStone, true);
-		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.mossStone, true);
-		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(Block.oreLapisStone, true);
+		String currentBlock = Block.blockClay.getKey();
+		ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureClay(overworldConfig.clusterSize.get(currentBlock)), overworldConfig.chancesPerChunk.get(currentBlock), overworldConfig.verticalRange.get(currentBlock));
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.dirt, 32, 20, 1f, false);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.gravel, 32, 10, 1f, false);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.oreCoalStone, 16, 20, 1f, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.oreIronStone, 8, 20, 1/2f, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.oreGoldStone, 8, 2, 1/4f, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.oreRedstoneStone, 7, 8, 1/8f, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.oreDiamondStone, 7, 1, 1/8f, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.mossStone, 32, 1, 1/2f, true);
+		ChunkDecoratorOverworldAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.oreLapisStone, 6, 1, 1/8f, true);
 	}
 	public static void initializeOverworldRandom(){
 		ChunkDecoratorOverworldAPI.randomFeatures.addFeature(new WorldFeatureFlowers(Block.flowerRed.id), 2, 1);
@@ -133,7 +116,7 @@ public class TerrainInitialization implements TerrainAPI {
 	}
 	public static void initializeNether(){
 		ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureNetherLava(Block.fluidLavaFlowing.id),  8,120/128f);
-		ChunkDecoratorNetherAPI.oreFeatures.addManagedOreFeature(Block.oreNethercoalNetherrack, false);
+		ChunkDecoratorNetherAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID, Block.oreNethercoalNetherrack, 12, 10, 120/128f, false);
 		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Object[] x) -> new WorldFeatureFire(), null, VanillaFunctions::netherFireDensity, null, 120/128f);
 		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Object[] x) -> new WorldFeatureGlowstoneA(), null, VanillaFunctions::netherFireDensity, null, 120/128f);
 		ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureGlowstoneB(), 10, 120/128f);

@@ -32,6 +32,10 @@ public class OverworldOreFeatures extends GeneratorFeatures {
 		super.addComplexFeature(featureFunction, featureParameters, densityFunction, densityParameters);
 		rangeModifierList.add(rangeModifier);
 	}
+	public void addManagedOreFeature(String modID, Block block, int defaultClusterSize, int defaultChances, float defaultRange, boolean hasStoneStates){
+		config.setOreValues(modID, block, defaultClusterSize, defaultChances, defaultRange);
+		addManagedOreFeature(block, hasStoneStates);
+	}
 	public void addManagedOreFeature(Block block, boolean hasStoneStates){
 		String currentBlock = block.getKey();
 		addFeature(new WorldFeatureOre(block.id, config.clusterSize.get(currentBlock), hasStoneStates), config.chancesPerChunk.get(currentBlock), config.verticalRange.get(currentBlock));
