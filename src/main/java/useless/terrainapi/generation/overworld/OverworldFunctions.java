@@ -2,12 +2,10 @@ package useless.terrainapi.generation.overworld;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.world.biome.Biome;
-import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureDungeon;
 import net.minecraft.core.world.generate.feature.WorldFeatureLabyrinth;
 import net.minecraft.core.world.generate.feature.WorldFeatureTallGrass;
-import useless.terrainapi.config.OverworldConfig;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.overworld.api.ChunkDecoratorOverworldAPI;
 import useless.terrainapi.util.Utilities;

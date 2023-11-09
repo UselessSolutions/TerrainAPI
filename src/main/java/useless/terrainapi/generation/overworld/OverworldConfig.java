@@ -1,14 +1,15 @@
-package useless.terrainapi.config;
+package useless.terrainapi.generation.overworld;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.data.registry.Registries;
 import net.minecraft.core.world.biome.Biome;
+import useless.terrainapi.config.OreConfig;
 
 import java.util.HashMap;
 
-public class OverworldConfig extends OreConfig{
+public class OverworldConfig extends OreConfig {
 	@Expose @SerializedName(value = "Biome Random Grass Block")
 	public HashMap<String, String> biomeRandomGrassBlock = new HashMap<>();
 	@Expose @SerializedName(value = "Grass Density")

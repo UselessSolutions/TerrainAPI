@@ -12,7 +12,7 @@ import net.minecraft.core.world.generate.feature.WorldFeatureLake;
 import net.minecraft.core.world.generate.feature.WorldFeatureLiquid;
 import net.minecraft.core.world.noise.PerlinNoise;
 import useless.terrainapi.config.ConfigManager;
-import useless.terrainapi.config.OverworldConfig;
+import useless.terrainapi.generation.overworld.OverworldConfig;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.StructureFeatures;

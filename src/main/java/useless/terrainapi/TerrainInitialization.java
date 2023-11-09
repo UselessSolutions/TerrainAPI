@@ -5,13 +5,15 @@ import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.generate.feature.*;
 import useless.terrainapi.api.TerrainAPI;
-import useless.terrainapi.config.NetherConfig;
-import useless.terrainapi.config.OverworldConfig;
+import useless.terrainapi.generation.nether.NetherConfig;
+import useless.terrainapi.generation.overworld.OverworldConfig;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.nether.NetherFunctions;
 import useless.terrainapi.generation.nether.api.ChunkDecoratorNetherAPI;
 import useless.terrainapi.generation.overworld.OverworldFunctions;
 import useless.terrainapi.generation.overworld.api.ChunkDecoratorOverworldAPI;
+
+import java.util.HashMap;
 
 public class TerrainInitialization implements TerrainAPI {
 	private static boolean hasInitialized = false;

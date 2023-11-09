@@ -6,7 +6,7 @@ import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.feature.WorldFeature;
 import useless.terrainapi.config.ConfigManager;
-import useless.terrainapi.config.NetherConfig;
+import useless.terrainapi.generation.nether.NetherConfig;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.StructureFeatures;
