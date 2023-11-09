@@ -80,7 +80,7 @@ public class OverworldFunctions {
 		}
 		return 0;
 	}
-	public static Boolean generateDungeons(Parameters parameters){
+	public static Void generateDungeons(Parameters parameters){
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
 		ChunkDecoratorOverworldAPI decoratorOverworldAPI = (ChunkDecoratorOverworldAPI) parameters.decorator;
@@ -94,9 +94,9 @@ public class OverworldFunctions {
 				new WorldFeatureDungeon(Block.cobbleStone.id, Block.cobbleStoneMossy.id, null).generate(decoratorOverworldAPI.world, parameters.random, xPos, yPos, zPos);
 			}
 		}
-		return true;
+		return null;
 	}
-	public static Boolean generateLabyrinths(Parameters parameters){
+	public static Void generateLabyrinths(Parameters parameters){
 		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters.decorator;
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
@@ -111,6 +111,6 @@ public class OverworldFunctions {
 			Random lRand = parameters.chunk.getChunkRandom(75644760L);
 			new WorldFeatureLabyrinth().generate(decorator.world, lRand, xPos, yPos, zPos);
 		}
-		return true;
+		return null;
 	}
 }

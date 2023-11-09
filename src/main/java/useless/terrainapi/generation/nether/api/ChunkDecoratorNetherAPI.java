@@ -51,9 +51,9 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 	}
 
 	public void generateStructures(Biome biome, Chunk chunk, Random random){
-		int featureSize = structureFeatures.featureFunctionsList.size();
+		int featureSize = structureFeatures.featureFunctionList.size();
 		for (int i = 0; i < featureSize; i++) {
-			structureFeatures.featureFunctionsList.get(i)
+			structureFeatures.featureFunctionList.get(i)
 				.apply(new Parameters(parameterBase, structureFeatures.featureParametersList.get(i)));
 		}
 	}
