@@ -10,6 +10,11 @@ import useless.terrainapi.generation.retro.api.ChunkDecoratorRetroAPI;
 
 public class RetroFunctions {
 	public static RetroConfig retroConfig = ChunkDecoratorRetroAPI.retroConfig;
+
+	/**Vanilla dungeon generation code
+	 * @param parameters Parameters Container
+	 * @return null
+	 */
 	public static Void generateDungeon(Parameters parameters){
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
@@ -21,6 +26,11 @@ public class RetroFunctions {
 		}
 		return null;
 	}
+
+	/**Vanilla tree feature generator
+	 * @param parameters Parameters Container
+	 * @return Tree feature as specified by Biome#getRandomWorldGenForTrees
+	 */
 	public static WorldFeature getTreeFeature(Parameters parameters){
 		WorldFeature tree = new WorldFeatureTree(Block.leavesOakRetro.id, Block.logOak.id, 4);
 		if (parameters.random.nextInt(10) == 0) {
@@ -29,6 +39,11 @@ public class RetroFunctions {
 		tree.func_517_a(1.0, 1.0, 1.0);
 		return tree;
 	}
+
+	/**Vanilla tree density
+	 * @param parameters Parameters Container
+	 * @return treeDensityOverride if applicable, otherwise returns the biome's tree density from OverworldConfig's tree density hashmap
+	 */
 	public static Integer getTreeDensity(Parameters parameters){
 		double d = 0.5;
 		int x = parameters.chunk.xPosition * 16;

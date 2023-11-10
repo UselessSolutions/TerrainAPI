@@ -8,7 +8,8 @@
     "MinecraftServerMixin",
     "worldtypes.WorldTypeNetherMixin",
     "worldtypes.WorldTypeOverworldMixin",
-    "worldtypes.WorldTypeOverworldRetroMixin"
+    "worldtypes.WorldTypeOverworldRetroMixin",
+    "worldtypes.WorldTypeOverworldWoodsMixin"
   ],
   "client": [
   ],
