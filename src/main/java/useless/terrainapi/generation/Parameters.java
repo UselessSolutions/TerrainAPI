@@ -4,9 +4,11 @@ import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.chunk.ChunkDecorator;
 
-import java.lang.reflect.Array;
 import java.util.Random;
 
+/**
+ * Container for references to chunk decorator info
+ */
 public class Parameters {
 	public Biome biome;
 	public Random random;

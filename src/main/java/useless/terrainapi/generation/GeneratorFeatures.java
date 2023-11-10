@@ -12,9 +12,11 @@ public class GeneratorFeatures {
 	public List<Function<Parameters, Integer>> densityFunctionsList = new ArrayList<>();
 	public List<Object[]> densityParametersList = new ArrayList<>();
 
-	/** The Object[] are the parameters passed into the provided function, index 0 will always be populated by Biome, index 1 with Random, index 2 with Chunk, index 3 with the ChunkDecorator, and index 4 with the oreHeightModifier. Additional parameters can be added in the method.
-	 * Range Modifier of -1 indicates that the feature should only generate on the surface
-	 *
+	/**Adds a world feature entry
+	 * @param featureFunction Function that takes a Parameters object and returns a WorldFeature
+	 * @param featureParameters Object[] of additional parameters that will be included with the Parameters object passed into the feature function
+	 * @param densityFunction Function that takes a Parameters object and returns an Integer
+	 * @param densityParameters Object[] of additional parameters that will be included with the Parameters object passed into the density function
 	 */
 	public void addComplexFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters){
 		featureFunctionsList.add(featureFunction);
