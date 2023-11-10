@@ -6,6 +6,7 @@ import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureDungeon;
 import net.minecraft.core.world.generate.feature.WorldFeatureLabyrinth;
 import net.minecraft.core.world.generate.feature.WorldFeatureTallGrass;
+import org.jetbrains.annotations.Nullable;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.overworld.api.ChunkDecoratorOverworldAPI;
 import useless.terrainapi.util.Utilities;
@@ -14,11 +15,21 @@ import java.util.Random;
 
 public class OverworldFunctions {
 	public static OverworldConfig overworldConfig = ChunkDecoratorOverworldAPI.overworldConfig;
+
+	/**Vanilla tree feature generator
+	 * @param parameters Parameters Container
+	 * @return Tree feature as specified by Biome#getRandomWorldGenForTrees
+	 */
 	public static WorldFeature getTreeFeature(Parameters parameters){
 		WorldFeature treeFeature = parameters.biome.getRandomWorldGenForTrees(parameters.random);
 		treeFeature.func_517_a(1.0, 1.0, 1.0);
 		return treeFeature;
 	}
+
+	/**Vanilla tree density
+	 * @param parameters Parameters Container
+	 * @return treeDensityOverride if applicable, otherwise returns the biome's tree density from OverworldConfig's tree density hashmap
+	 */
 	public static int getTreeDensity(Parameters parameters){
 		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters.decorator;
 
@@ -47,13 +58,21 @@ public class OverworldFunctions {
 			return treeDensity + noiseValue + treeDensityOffset;
 		}
 	}
+	/**Vanilla grass feature generator
+	 * @param parameters Parameters Container
+	 * @return Randomly returns tall grass or the random grass for the biome as specified in the OverworldConfig biomeRandomGrassBlock hashmap
+	 */
 	public static WorldFeature grassTypeCondition(Parameters parameters){
 		Block block = Block.tallgrass;
 		if (Utilities.checkForBiomeInBiomes(parameters.biome, overworldConfig.biomeRandomGrassBlock.keySet().toArray(new String[0])) && parameters.random.nextInt(3) != 0) {
-			block = overworldConfig.getRandomGrassBlock(parameters.biome);
+			block = overworldConfig.getRandomGrassBlock(parameters.biome, block);
 		}
 		return new WorldFeatureTallGrass(block.id);
 	}
+	/**Vanilla flower feature generator
+	 * @param parameters Parameters Container
+	 * @return Randomly returns yellow or red flower features
+	 */
 	public static WorldFeature flowerTypeCondition(Parameters parameters){
 		int blockId = Block.flowerYellow.id;
 		if (parameters.random.nextInt(3) != 0) {
@@ -61,6 +80,11 @@ public class OverworldFunctions {
 		}
 		return new WorldFeatureTallGrass(blockId);
 	}
+
+	/**Vanilla biome feature density
+	 * @param parameters Parameters Container
+	 * @return number of chances per chunk if in valid biome
+	 */
 	public static int getStandardBiomesDensity(Parameters parameters){
 		int chance = (int) parameters.customParameters[0];
 		Biome[] biomes = (Biome[]) parameters.customParameters[1];
@@ -70,6 +94,11 @@ public class OverworldFunctions {
 		}
 		return 0;
 	}
+
+	/**Vanilla ore density
+	 * @param parameters Parameters Container
+	 * @return number of chances per chunk scaled by the oreHeightModifier if in valid biome
+	 */
 	public static int getStandardOreBiomesDensity(Parameters parameters){
 		float oreHeightModifier = ((ChunkDecoratorOverworldAPI) parameters.decorator).oreHeightModifier;
 		int chance = (int) parameters.customParameters[0];
@@ -80,6 +109,11 @@ public class OverworldFunctions {
 		}
 		return 0;
 	}
+	/**Vanilla dungeon generation code
+	 * @param parameters Parameters Container
+	 * @return null
+	 */
+	@Nullable
 	public static Void generateDungeons(Parameters parameters){
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
@@ -96,6 +130,12 @@ public class OverworldFunctions {
 		}
 		return null;
 	}
+
+	/**Vanilla labyrinth generation code
+	 * @param parameters Parameters Container
+	 * @return null
+	 */
+	@Nullable
 	public static Void generateLabyrinths(Parameters parameters){
 		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters.decorator;
 		int x = parameters.chunk.xPosition * 16;
