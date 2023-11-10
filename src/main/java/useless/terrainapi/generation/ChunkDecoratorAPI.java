@@ -5,7 +5,7 @@ import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.chunk.ChunkDecorator;
-import net.minecraft.core.world.generate.feature.*;
+import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.type.WorldTypes;
 
 import java.util.Random;

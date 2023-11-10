@@ -83,7 +83,41 @@ public class OverworldConfig extends OreConfig {
 	}
 	public Integer getTreeDensity(Biome biome){
 		return treeDensityMap.get(Registries.BIOMES.getKey(biome));
-	}public Integer getTreeDensity(Biome biome, int defaultValue){
+	}
+
+	/**
+	 * @return Biome's tree density, returns defaultValue if there is no entry for the biome
+	 */
+	@NotNull
+	@SuppressWarnings("unused")
+	public Integer getTreeDensity(Biome biome, int defaultValue){
 		return treeDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
+	}
+
+	/**Specifies the number of chances for lake to spawn for the specified biome
+	 */
+	@SuppressWarnings("unused")
+	public void addLakeDensity(Biome biome, int density){
+		if (getConfigOverride() && getTreeDensity(biome) != null){
+			return;
+		}
+		lakeDensityMap.put(Registries.BIOMES.getKey(biome), density);
+	}
+
+	/**
+	 * @return Biome's lake density, returns null if there is no entry for the biome
+	 */
+	@Nullable
+	@SuppressWarnings("unused")
+	public Integer getLakeDensity(Biome biome){
+		return lakeDensityMap.get(Registries.BIOMES.getKey(biome));
+	}
+
+	/**
+	 * @return Biome's lake density, returns defaultValue if there is no entry for the biome
+	 */
+	@NotNull
+	public Integer getLakeDensity(Biome biome, int defaultValue){
+		return lakeDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
 	}
 }

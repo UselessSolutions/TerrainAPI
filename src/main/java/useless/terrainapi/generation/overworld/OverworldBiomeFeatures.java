@@ -2,6 +2,7 @@ package useless.terrainapi.generation.overworld;
 
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.generate.feature.WorldFeature;
+import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.generation.GeneratorFeatures;
 import useless.terrainapi.generation.Parameters;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class OverworldBiomeFeatures extends GeneratorFeatures {
+	@ApiStatus.Internal
 	public List<Float> rangeModifierList = new ArrayList<>();
 	public void addFeatureSurface(WorldFeature feature, int chances, Biome[] biomes){
 		addFeature(feature, -1f, chances, biomes);

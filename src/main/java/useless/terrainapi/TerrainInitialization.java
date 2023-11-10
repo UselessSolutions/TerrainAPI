@@ -5,11 +5,10 @@ import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.generate.feature.*;
 import useless.terrainapi.api.TerrainAPI;
-import useless.terrainapi.generation.nether.NetherConfig;
-import useless.terrainapi.generation.overworld.OverworldConfig;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.nether.NetherFunctions;
 import useless.terrainapi.generation.nether.api.ChunkDecoratorNetherAPI;
+import useless.terrainapi.generation.overworld.OverworldConfig;
 import useless.terrainapi.generation.overworld.OverworldFunctions;
 import useless.terrainapi.generation.overworld.api.ChunkDecoratorOverworldAPI;
 
@@ -18,7 +17,6 @@ import java.util.HashMap;
 public class TerrainInitialization implements TerrainAPI {
 	private static boolean hasInitialized = false;
 	private static final OverworldConfig overworldConfig = ChunkDecoratorOverworldAPI.overworldConfig;
-	private static final NetherConfig netherConfig = ChunkDecoratorNetherAPI.netherConfig;
 	@Override
 	public String getModID() {
 		return TerrainMain.MOD_ID;
@@ -82,8 +80,8 @@ public class TerrainInitialization implements TerrainAPI {
 		overworldConfig.addRandomGrassBlock(Biomes.OVERWORLD_TAIGA, Block.tallgrassFern);
 	}
 	public static void initializeOverworldStructures() {
-		ChunkDecoratorOverworldAPI.structureFeatures.addStructure(OverworldFunctions::generateDungeons, null);
-		ChunkDecoratorOverworldAPI.structureFeatures.addStructure(OverworldFunctions::generateLabyrinths, null);
+		ChunkDecoratorOverworldAPI.structureFeatures.addFeature(OverworldFunctions::generateDungeons, null);
+		ChunkDecoratorOverworldAPI.structureFeatures.addFeature(OverworldFunctions::generateLabyrinths, null);
 	}
 	public static void initializeOverworldOre(){
 		String currentBlock = Block.blockClay.getKey();

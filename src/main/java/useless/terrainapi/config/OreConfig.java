@@ -9,10 +9,19 @@ import useless.terrainapi.TerrainMain;
 import java.util.HashMap;
 
 public class OreConfig extends APIConfig {
+	/**
+	 * Map of Block key and ore vein size
+	 */
 	@SerializedName(value = "Ore Cluster Size") @Expose
 	public HashMap<String, Integer> clusterSize = new HashMap<>();
+	/**
+	 * Map of Block key and chances to generate per chunk
+	 */
 	@SerializedName(value = "Chances Per Chunk") @Expose
 	public HashMap<String, Integer> chancesPerChunk = new HashMap<>();
+	/**
+	 * Map of Block key generation range
+	 */
 	@SerializedName(value = "Vertical Range") @Expose
 	public HashMap<String, Float> verticalRange = new HashMap<>();
 	public void setOreValues(String modID, Block block, int clusterSize, int chances, float range){

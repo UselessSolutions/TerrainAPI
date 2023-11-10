@@ -2,6 +2,7 @@ package useless.terrainapi.generation.overworld;
 
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.generate.feature.WorldFeature;
+import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.generation.GeneratorFeatures;
 import useless.terrainapi.generation.Parameters;
 
@@ -10,8 +11,15 @@ import java.util.List;
 import java.util.function.Function;
 
 public class OverworldRandomFeatures extends GeneratorFeatures {
+	@ApiStatus.Internal
 	public List<Float> rangeModifierList = new ArrayList<>();
+	@ApiStatus.Internal
 	public List<Integer> inverseProbabilityList = new ArrayList<>();
+
+	/**Adds a world feature entry, will only generate on the surface
+	 * @param feature WorldFeature to generate
+	 * @param inverseProbability Inverse of the probability, example inverseProbability of 2 means a 50% chance
+	 */
 	public void addFeatureSurface(WorldFeature feature, int inverseProbability){
 		addFeature(feature, inverseProbability, -1f);
 	}

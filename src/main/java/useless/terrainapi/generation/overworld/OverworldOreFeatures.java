@@ -4,6 +4,7 @@ import net.minecraft.core.block.Block;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureOre;
+import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.config.OreConfig;
 import useless.terrainapi.generation.GeneratorFeatures;
 import useless.terrainapi.generation.Parameters;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class OverworldOreFeatures extends GeneratorFeatures {
+	@ApiStatus.Internal
 	public List<Float> rangeModifierList = new ArrayList<>();
 	public OreConfig config;
 	public OverworldOreFeatures(OreConfig config){
