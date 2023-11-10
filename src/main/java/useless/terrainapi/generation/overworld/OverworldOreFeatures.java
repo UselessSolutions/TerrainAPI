@@ -27,7 +27,7 @@ public class OverworldOreFeatures extends GeneratorFeatures {
 	public void addFeature(WorldFeature feature, int chances, float rangeModifier){
 		addFeature(feature, chances, rangeModifier, null);
 	}
-	
+
 	/**Adds a world feature entry
 	 * @param feature WorldFeature to generate
 	 * @param chances Number of attempts per chunk
