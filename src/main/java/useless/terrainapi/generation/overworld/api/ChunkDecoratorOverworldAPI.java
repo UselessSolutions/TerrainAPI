@@ -86,18 +86,28 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 	public void swampFeature(int x, int z, Random random){
 		for (int dx = 0; dx < 16; ++dx) {
 			for (int dz = 0; dz < 16; ++dz) {
-				boolean shouldPlaceWater;
+				if (!(random.nextFloat() < 0.5f)) continue;
+
 				int topBlock = this.world.getHeightValue(x + dx, z + dz);
 				int id = this.world.getBlockId(x + dx, topBlock - 1, z + dz);
 				if (id != Block.grass.id) continue;
-				shouldPlaceWater = random.nextFloat() < 0.5f;
-				if (!shouldPlaceWater) continue;
+
 				int posXId = this.world.getBlockId(x + dx + 1, topBlock - 1, z + dz);
+				if (posXId == 0) continue;
 				int negXId = this.world.getBlockId(x + dx - 1, topBlock - 1, z + dz);
+				if (negXId == 0) continue;
 				int posZId = this.world.getBlockId(x + dx, topBlock - 1, z + dz + 1);
+				if (posZId == 0) continue;
 				int negZId = this.world.getBlockId(x + dx, topBlock - 1, z + dz - 1);
+				if (negZId == 0) continue;
 				int negYId = this.world.getBlockId(x + dx, topBlock - 2, z + dz);
-				if (posXId == 0 || !Block.blocksList[posXId].blockMaterial.isSolid() && Block.blocksList[posXId].blockMaterial != Material.water || negXId == 0 || !Block.blocksList[negXId].blockMaterial.isSolid() && Block.blocksList[negXId].blockMaterial != Material.water || posZId == 0 || !Block.blocksList[posZId].blockMaterial.isSolid() && Block.blocksList[posZId].blockMaterial != Material.water || negZId == 0 || !Block.blocksList[negZId].blockMaterial.isSolid() && Block.blocksList[negZId].blockMaterial != Material.water || negYId == 0 || !Block.blocksList[negYId].blockMaterial.isSolid()) continue;
+				if (negYId == 0) continue;
+
+				if ((!Block.blocksList[posXId].blockMaterial.isSolid() && Block.blocksList[posXId].blockMaterial != Material.water)
+					|| (!Block.blocksList[negXId].blockMaterial.isSolid() && Block.blocksList[negXId].blockMaterial != Material.water)
+					|| (!Block.blocksList[posZId].blockMaterial.isSolid() && Block.blocksList[posZId].blockMaterial != Material.water)
+					|| (!Block.blocksList[negZId].blockMaterial.isSolid() && Block.blocksList[negZId].blockMaterial != Material.water)
+					|| !Block.blocksList[negYId].blockMaterial.isSolid()) continue;
 				this.world.setBlock(x + dx, topBlock - 1, z + dz, Block.fluidWaterStill.id);
 				this.world.setBlock(x + dx, topBlock, z + dz, 0);
 			}
