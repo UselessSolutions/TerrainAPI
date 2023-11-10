@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import useless.terrainapi.TerrainMain;
 
-@Mixin(value = MinecraftServer.class, remap = false)
+@Mixin(value = MinecraftServer.class, remap = false, priority = 999)
 public class MinecraftServerMixin {
 	@Inject(method = "startServer()Z", at = @At("HEAD"))
 	private void initializeGeneration(CallbackInfoReturnable<Boolean> cir){

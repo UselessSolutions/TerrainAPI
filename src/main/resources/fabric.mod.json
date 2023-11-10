@@ -8,6 +8,7 @@
   "authors": [
     "Useless"
   ],
+	"icon": "icon.png",
   "contact": {
     "homepage": "",
     "sources": ""
@@ -21,7 +22,7 @@
 			"useless.terrainapi.TerrainMain"
     ],
 		"terrain-api": [
-			"useless.terrainapi.TerrainInitialization"
+          "useless.terrainapi.initialization.TerrainInitialization"
 		]
   },
   "mixins": [

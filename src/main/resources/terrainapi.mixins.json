@@ -6,7 +6,13 @@
   "mixins": [
     "MinecraftMixin",
     "MinecraftServerMixin",
-    "WorldTypeOverworldMixin"
+    "worldtypes.WorldTypeFloatingMixin",
+    "worldtypes.WorldTypeNetherMixin",
+    "worldtypes.WorldTypeOverworldHellMixin",
+    "worldtypes.WorldTypeOverworldMixin",
+    "worldtypes.WorldTypeOverworldRetroMixin",
+    "worldtypes.WorldTypeOverworldWoodsMixin",
+    "worldtypes.WorldTypeParadiseMixin"
   ],
   "client": [
   ],

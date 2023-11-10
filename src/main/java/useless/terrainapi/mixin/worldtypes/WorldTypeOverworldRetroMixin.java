@@ -1,18 +1,18 @@
-package useless.terrainapi.mixin;
+package useless.terrainapi.mixin.worldtypes;
 
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.generate.chunk.ChunkGenerator;
-import net.minecraft.core.world.type.WorldTypeOverworld;
+import net.minecraft.core.world.type.WorldTypeOverworldRetro;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import useless.terrainapi.generation.overworld.ChunkGeneratorOverworldAPI;
+import useless.terrainapi.generation.retro.api.ChunkGeneratorRetroAPI;
 
-@Mixin(value = WorldTypeOverworld.class, remap = false, priority = 999)
-public class WorldTypeOverworldMixin {
+@Mixin(value = WorldTypeOverworldRetro.class, remap = false, priority = 999)
+public class WorldTypeOverworldRetroMixin {
 	@Inject(method = "createChunkGenerator(Lnet/minecraft/core/world/World;)Lnet/minecraft/core/world/generate/chunk/ChunkGenerator;", at = @At("HEAD"), cancellable = true)
 	private void customChunkGenerator(World world, CallbackInfoReturnable<ChunkGenerator> cir){
-		cir.setReturnValue(new ChunkGeneratorOverworldAPI(world));
+		cir.setReturnValue(new ChunkGeneratorRetroAPI(world));
 	}
 }

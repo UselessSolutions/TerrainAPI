@@ -4,54 +4,70 @@ import net.minecraft.core.block.Block;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureOre;
-import useless.terrainapi.TerrainMain;
-import useless.terrainapi.config.TerrainAPIConfig;
+import org.jetbrains.annotations.ApiStatus;
+import useless.terrainapi.config.OreConfig;
 import useless.terrainapi.generation.GeneratorFeatures;
-import useless.terrainapi.generation.VanillaFunctions;
+import useless.terrainapi.generation.Parameters;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 public class OverworldOreFeatures extends GeneratorFeatures {
+	@ApiStatus.Internal
 	public List<Float> rangeModifierList = new ArrayList<>();
-	public TerrainAPIConfig config;
-	public OverworldOreFeatures(TerrainAPIConfig config){
+	public OreConfig config;
+	public OverworldOreFeatures(OreConfig config){
 		this.config = config;
 	}
+
+	/**Adds a world feature entry
+	 * @param feature WorldFeature to generate
+	 * @param chances Number of attempts per chunk
+	 * @param rangeModifier Fraction of the world from the bottom to the surface to generate inside, a value of -1 indicates to spawn on the surface only
+	 */
 	public void addFeature(WorldFeature feature, int chances, float rangeModifier){
 		addFeature(feature, chances, rangeModifier, null);
 	}
-	public void addFeature(WorldFeature feature, int chances, float rangeModifier, Biome[] biomes){
-		addComplexFeature((Object[] x) -> feature, null, VanillaFunctions::getStandardOreBiomesDensity, new Object[]{chances, biomes}, rangeModifier);
-	}
-	/** The Object[] are the parameters passed into the provided function, index 0 will always be populated by Biome, index 1 with Random, index 2 with Chunk, index 3 with the ChunkDecorator, and index 4 with the oreHeightModifier. Additional parameters can be added in the method.
-	 * Range Modifier of -1 indicates that the feature should only generate on the surface
-	 *
+
+	/**Adds a world feature entry
+	 * @param feature WorldFeature to generate
+	 * @param chances Number of attempts per chunk
+	 * @param rangeModifier Fraction of the world from the bottom to the surface to generate inside, a value of -1 indicates to spawn on the surface only
+	 * @param biomes List of biomes to generate in, generates in any biome if array is null
 	 */
-	public void addComplexFeature(Function<Object[], WorldFeature> featureFunction, Object[] featureParameters, Function<Object[], Integer> densityFunction, Object[] densityParameters, float rangeModifier){
-		super.addComplexFeature(featureFunction, featureParameters, densityFunction, densityParameters);
+	public void addFeature(WorldFeature feature, int chances, float rangeModifier, Biome[] biomes){
+		addFeature((Parameters x) -> feature, null, OverworldFunctions::getStandardOreBiomesDensity, new Object[]{chances, biomes}, rangeModifier);
+	}
+
+	/**Adds a world feature entry
+	 * @param featureFunction Function that takes a Parameters object and returns a WorldFeature
+	 * @param featureParameters Object[] of additional parameters that will be included with the Parameters object passed into the feature function
+	 * @param densityFunction Function that takes a Parameters object and returns an Integer representing the number of attempts per chunk
+	 * @param densityParameters Object[] of additional parameters that will be included with the Parameters object passed into the density function
+	 * @param rangeModifier Fraction of the world from the bottom to the surface to generate inside, a value of -1 indicates to spawn on the surface only
+	 */
+	public void addFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters, float rangeModifier){
+		super.addFeature(featureFunction, featureParameters, densityFunction, densityParameters);
 		rangeModifierList.add(rangeModifier);
 	}
-	@Deprecated
-	public void setOreValues(String modID, int blockID, int clusterSize, int chances, float range){
-		setOreValues(modID, Block.getBlock(blockID), clusterSize, chances, range);
+
+	/**Adds an WorldFeatureOre, which has its generation characteristics managed by OreConfig
+	 * @param block Ore to generate
+	 * @param defaultClusterSize Default size in blocks of an ore vein
+	 * @param defaultChances Default number of chances per chunk to generate an ore patch, this values scales with world height
+	 * @param defaultRange Value from [0, 1], it's the default fraction from the bottom of the world to the surface that the ore can generate
+	 * @param hasStoneStates Does ore have states for each stone type
+	 */
+	public void addManagedOreFeature(String modID, Block block, int defaultClusterSize, int defaultChances, float defaultRange, boolean hasStoneStates){
+		config.setOreValues(modID, block, defaultClusterSize, defaultChances, defaultRange);
+		addManagedOreFeature(block, hasStoneStates);
 	}
-	public void setOreValues(String modID, Block block, int clusterSize, int chances, float range){
-		if (config.clusterSize.get(block.getKey()) != null){
-			TerrainMain.LOGGER.warn(modID + String.format(" has changed block %s to generate %d blocks with %d chances and a range of %f", block.getKey(), clusterSize, chances, range));
-		}
-		setOreValues(block, clusterSize, chances, range);
-	}
-	protected void setOreValues(Block block, int clusterSize, int chances, float range){
-		if (config.clusterSize.containsKey(block.getKey()) && config.getConfigOverride()){
-			return;
-		}
-		config.clusterSize.put(block.getKey(), clusterSize);
-		config.chancesPerChunk.put(block.getKey(), chances);
-		config.verticalRange.put(block.getKey(), range);
-	}
+
+	/**Adds an WorldFeatureOre, which has its generation characteristics managed by OreConfig
+	 * @param block Ore to generate
+	 * @param hasStoneStates Does ore have states for each stone type
+	 */
 	public void addManagedOreFeature(Block block, boolean hasStoneStates){
 		String currentBlock = block.getKey();
 		addFeature(new WorldFeatureOre(block.id, config.clusterSize.get(currentBlock), hasStoneStates), config.chancesPerChunk.get(currentBlock), config.verticalRange.get(currentBlock));
