@@ -12,8 +12,6 @@ import useless.terrainapi.generation.overworld.OverworldConfig;
 import useless.terrainapi.generation.overworld.OverworldFunctions;
 import useless.terrainapi.generation.overworld.api.ChunkDecoratorOverworldAPI;
 
-import java.util.HashMap;
-
 public class TerrainInitialization implements TerrainAPI {
 	private static boolean hasInitialized = false;
 	private static final OverworldConfig overworldConfig = ChunkDecoratorOverworldAPI.overworldConfig;
@@ -106,11 +104,11 @@ public class TerrainInitialization implements TerrainAPI {
 	}
 	public static void initializeOverworldBiome(){
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeatureSurface(new WorldFeatureRichScorchedDirt(10), 1, new Biome[]{Biomes.OVERWORLD_OUTBACK, Biomes.OVERWORLD_OUTBACK_GRASSY});
-		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature(OverworldFunctions::getTreeFeature, null, OverworldFunctions::getTreeDensity, null, -1f);
+		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(OverworldFunctions::getTreeFeature, null, OverworldFunctions::getTreeDensity, null, -1f);
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeatureSurface(new WorldFeatureSugarCaneTall(), 1, new Biome[]{Biomes.OVERWORLD_RAINFOREST});
-		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature(OverworldFunctions::flowerTypeCondition, null, (Parameters x) -> ChunkDecoratorOverworldAPI.overworldConfig.getFlowerDensity(x.biome, 0), null, 1f);
-		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature((Parameters x) -> new WorldFeatureFlowers(Block.flowerYellow.id), null, (Parameters x) -> ChunkDecoratorOverworldAPI.overworldConfig.getYellowFlowerDensity(x.biome, 0), null, 1);
-		ChunkDecoratorOverworldAPI.biomeFeatures.addComplexFeature(OverworldFunctions::grassTypeCondition, null, (Parameters x) -> ChunkDecoratorOverworldAPI.overworldConfig.getGrassDensity(x.biome, 0), null, 1);
+		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(OverworldFunctions::flowerTypeCondition, null, (Parameters x) -> ChunkDecoratorOverworldAPI.overworldConfig.getFlowerDensity(x.biome, 0), null, 1f);
+		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature((Parameters x) -> new WorldFeatureFlowers(Block.flowerYellow.id), null, (Parameters x) -> ChunkDecoratorOverworldAPI.overworldConfig.getYellowFlowerDensity(x.biome, 0), null, 1);
+		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(OverworldFunctions::grassTypeCondition, null, (Parameters x) -> ChunkDecoratorOverworldAPI.overworldConfig.getGrassDensity(x.biome, 0), null, 1);
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(new WorldFeatureSpinifexPatch(), 1, 4, new Biome[]{Biomes.OVERWORLD_OUTBACK});
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(new WorldFeatureDeadBush(Block.deadbush.id), 1, 2, new Biome[]{Biomes.OVERWORLD_DESERT});
 		ChunkDecoratorOverworldAPI.biomeFeatures.addFeature(new WorldFeatureCactus(), 1, 10, new Biome[]{Biomes.OVERWORLD_DESERT});
@@ -118,8 +116,8 @@ public class TerrainInitialization implements TerrainAPI {
 	public static void initializeNether(){
 		ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureNetherLava(Block.fluidLavaFlowing.id),  8,120/128f);
 		ChunkDecoratorNetherAPI.oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID, Block.oreNethercoalNetherrack, 12, 10, 120/128f, false);
-		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Parameters x) -> new WorldFeatureFire(), null, NetherFunctions::netherFireDensity, null, 120/128f);
-		ChunkDecoratorNetherAPI.oreFeatures.addComplexFeature((Parameters x) -> new WorldFeatureGlowstoneA(), null, NetherFunctions::netherFireDensity, null, 120/128f);
+		ChunkDecoratorNetherAPI.oreFeatures.addFeature((Parameters x) -> new WorldFeatureFire(), null, NetherFunctions::netherFireDensity, null, 120/128f);
+		ChunkDecoratorNetherAPI.oreFeatures.addFeature((Parameters x) -> new WorldFeatureGlowstoneA(), null, NetherFunctions::netherFireDensity, null, 120/128f);
 		ChunkDecoratorNetherAPI.oreFeatures.addFeature(new WorldFeatureGlowstoneB(), 10, 120/128f);
 		ChunkDecoratorNetherAPI.randomFeatures.addFeature(new WorldFeatureLake(Block.fluidLavaStill.id), 8, 120/128f);
 	}

@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import useless.terrainapi.api.TerrainAPI;
@@ -19,6 +20,7 @@ public class TerrainMain implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("TerrainMain initialized.");
     }
+	@ApiStatus.Internal
 	public static void loadModules(){
 		new TerrainInitialization().onInitialize();
 		FabricLoader.getInstance().getEntrypoints("terrain-api", TerrainAPI.class).forEach(api -> {

@@ -7,6 +7,7 @@ import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.chunk.ChunkDecorator;
 import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.type.WorldTypes;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Random;
 
@@ -25,14 +26,21 @@ public abstract class ChunkDecoratorAPI implements ChunkDecorator {
 		this.oreHeightModifier = (float)rangeY / 128.0f;
 	}
 	@Override
+	@ApiStatus.Internal
 	public abstract void decorate(Chunk chunk);
+	@ApiStatus.Internal
 	public abstract void generateStructures(Biome biome, Chunk chunk, Random random);
+	@ApiStatus.Internal
 	public abstract void generateOreFeatures(Biome biome, int x, int z, Random random, Chunk chunk);
+	@ApiStatus.Internal
 	public abstract void generateRandomFeatures(Biome biome, int x, int z, Random random, Chunk chunk);
+	@ApiStatus.Internal
 	public abstract void generateBiomeFeature(Biome biome, int x, int z, Random random, Chunk chunk);
+	@ApiStatus.Internal
 	public void generateWithChancesUnderground(WorldFeature worldFeature, float chances, int rangeY, int x, int z, Random random){
 		generateWithChancesUnderground(worldFeature, chances, rangeY, x, z, 0, 0, random);
 	}
+	@ApiStatus.Internal
 	public void generateWithChancesUnderground(WorldFeature worldFeature, float chances, int rangeY, int x, int z, int xOff, int zOff, Random random){
 		for (int i = 0; i < chances; i++) {
 			int posX = x + random.nextInt(16) + xOff;
@@ -41,9 +49,11 @@ public abstract class ChunkDecoratorAPI implements ChunkDecorator {
 			worldFeature.generate(world, random, posX, posY, posZ);
 		}
 	}
+	@ApiStatus.Internal
 	public void generateWithChancesSurface(WorldFeature worldFeature, float chances, int x, int z, Random random){
 		generateWithChancesSurface(worldFeature, chances, x, z, 0, 0, random);
 	}
+	@ApiStatus.Internal
 	public void generateWithChancesSurface(WorldFeature worldFeature, float chances, int x, int z, int xOff, int zOff, Random random){
 		for (int i = 0; i < chances; i++) {
 			int posX = x + random.nextInt(16) + xOff;
@@ -52,7 +62,7 @@ public abstract class ChunkDecoratorAPI implements ChunkDecorator {
 			worldFeature.generate(world, random, posX, posY, posZ);
 		}
 	}
-
+	@ApiStatus.Internal
 	public void freezeSurface(int x, int z){
 		int oceanY = this.world.getWorldType().getOceanY();
 		for (int dx = x + 8; dx < x + 8 + 16; ++dx) {

@@ -4,9 +4,11 @@ import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.chunk.ChunkDecorator;
 
-import java.lang.reflect.Array;
 import java.util.Random;
 
+/**
+ * Container for references to chunk decorator info
+ */
 public class Parameters {
 	public Biome biome;
 	public Random random;
@@ -26,17 +28,5 @@ public class Parameters {
 	public Parameters(Parameters baseParameter, Object[] customParameters){
 		this(baseParameter.biome, baseParameter.random, baseParameter.chunk, baseParameter.decorator);
 		this.customParameters = customParameters;
-	}
-
-	public static <T> T[] concatenate(T[] a, T[] b) {
-		int aLen = a.length;
-		int bLen = b.length;
-
-		@SuppressWarnings("unchecked")
-		T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
-		System.arraycopy(a, 0, c, 0, aLen);
-		System.arraycopy(b, 0, c, aLen, bLen);
-
-		return c;
 	}
 }

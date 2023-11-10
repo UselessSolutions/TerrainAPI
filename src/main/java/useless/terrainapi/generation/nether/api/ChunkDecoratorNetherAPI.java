@@ -5,6 +5,7 @@ import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.feature.WorldFeature;
+import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.config.ConfigManager;
 import useless.terrainapi.generation.nether.NetherConfig;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
@@ -28,6 +29,7 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 	}
 
 	@Override
+	@ApiStatus.Internal
 	public void decorate(Chunk chunk) {
 		int chunkX = chunk.xPosition;
 		int chunkZ = chunk.zPosition;
@@ -50,13 +52,15 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 		BlockSand.fallInstantly = false;
 	}
 
+	@ApiStatus.Internal
 	public void generateStructures(Biome biome, Chunk chunk, Random random){
-		int featureSize = structureFeatures.featureFunctionsList.size();
+		int featureSize = structureFeatures.featureFunctionList.size();
 		for (int i = 0; i < featureSize; i++) {
-			structureFeatures.featureFunctionsList.get(i)
+			structureFeatures.featureFunctionList.get(i)
 				.apply(new Parameters(parameterBase, structureFeatures.featureParametersList.get(i)));
 		}
 	}
+	@ApiStatus.Internal
 	public void generateOreFeatures(Biome biome, int x, int z, Random random, Chunk chunk){
 		int featureSize = oreFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
@@ -70,6 +74,7 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 			generateWithChancesUnderground(feature, density, (int) (rangeModifier * rangeY), x, z, random);
 		}
 	}
+	@ApiStatus.Internal
 	public void generateRandomFeatures(Biome biome, int x, int z, Random random, Chunk chunk){
 		int featureSize = randomFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
@@ -88,6 +93,7 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 			}
 		}
 	}
+	@ApiStatus.Internal
 	public void generateBiomeFeature(Biome biome, int x, int z, Random random, Chunk chunk){
 		int featureSize = biomeFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {

@@ -2,6 +2,7 @@ package useless.terrainapi.config;
 
 
 import net.fabricmc.loader.api.FabricLoader;
+import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.TerrainMain;
 
 import java.io.*;
@@ -15,6 +16,9 @@ public class ConfigManager {
 	private static final HashMap<String, File> fileHashMap = new HashMap<>();
 	private static final HashMap<String, APIConfig> configHashMap = new HashMap<>();
 
+	/**Prepares the config file for either saving or loading
+	 * @param id Config Config entry identifier
+	 */
 	private static void prepareBiomeConfigFile(String id) {
 		if (fileHashMap.get(id) != null) {
 			return;
@@ -44,7 +48,11 @@ public class ConfigManager {
 			e.printStackTrace();
 		}
 	}
-	public static void save(String id) {
+
+	/**Saves the specified config entry
+	 * @param id Config entry identifier
+	 */
+	private static void save(String id) {
 		prepareBiomeConfigFile(id);
 
 		String jsonString = TerrainMain.GSON.toJson(configHashMap.get(id));
@@ -56,11 +64,22 @@ public class ConfigManager {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * Saves every config entry
+	 */
+	@ApiStatus.Internal
 	public static void saveAll(){
 		for (String id: configHashMap.keySet()) {
 			save(id);
 		}
 	}
+
+	/**
+	 * @param id Config entry identifier
+	 * @param classOfT Class of the Config entry must extend <b><code>APIConfig.class</b></code>
+	 * @return Returns the specified config entry with same type as <b>classOfT</b>
+	 */
 	public static <T extends APIConfig> T getConfig(String id, Class<T> classOfT) {
 		if (configHashMap.get(id) == null){
 			try {

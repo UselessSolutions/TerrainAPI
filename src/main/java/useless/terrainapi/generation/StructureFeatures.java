@@ -11,9 +11,10 @@ public class StructureFeatures extends GeneratorFeatures{
 	public List<Function<Parameters, Void>> featureFunctionList = new ArrayList<>();
 	@ApiStatus.Internal
 	public List<Object[]> featureParametersList = new ArrayList<>();
-	/** The Object[] are the parameters passed into the provided function, index 0 will always be populated by Biome, index 1 with Random, index 2 with Chunk, index 3 with the ChunkDecorator, and index 4 with the oreHeightModifier. Additional parameters can be added in the method.
-	 * Range Modifier of -1 indicates that the feature should only generate on the surface
-	 *
+
+	/**Adds a structure entry
+	 * @param function Function that takes a Parameters object and handles the generation
+	 * @param additionalParameters Object[] of additional parameters that will be included with the Parameters object passed into the function
 	 */
 	public void addFeature(Function<Parameters, Void> function, Object[] additionalParameters){
 		featureFunctionList.add(function);
