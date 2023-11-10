@@ -23,33 +23,40 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 	public static NetherOreFeatures oreFeatures = new NetherOreFeatures(netherConfig);
 	public static NetherRandomFeatures randomFeatures = new NetherRandomFeatures();
 	public static NetherBiomeFeatures biomeFeatures = new NetherBiomeFeatures();
-	private Parameters parameterBase;
 	protected ChunkDecoratorNetherAPI(World world) {
 		super(world);
 	}
 
 	@Override
-	@ApiStatus.Internal
 	public void decorate(Chunk chunk) {
 		int chunkX = chunk.xPosition;
 		int chunkZ = chunk.zPosition;
+
 		int xCoord = chunkX * 16;
 		int zCoord = chunkZ * 16;
-		Random random = new Random((long)chunkX * 341873128712L + (long)chunkZ * 132897987541L);
-		Random structureRand = new Random((long)chunkX * 341873128712L + (long)chunkZ * 341873128712L);
+		int yCoord = this.world.getHeightValue(xCoord + 16, zCoord + 16);
 
-		Biome biome = this.world.getBlockBiome(xCoord + 16, maxY-1, zCoord + 16);
+		Biome biome = this.world.getBlockBiome(xCoord + 16, yCoord, zCoord + 16);
 
-		BlockSand.fallInstantly = true;
+		chunkSeed = (long)chunkX * 341873128712L + (long)chunkZ * 132897987541L;
+		Random random = new Random(chunkSeed);
 
 		parameterBase = new Parameters(biome, random, chunk, this);
 
-		generateStructures(biome, chunk, structureRand);
-		generateOreFeatures(biome, xCoord, zCoord, random, chunk);
-		generateBiomeFeature(biome,xCoord, zCoord, random, chunk);
-		generateRandomFeatures(biome,xCoord, zCoord, random, chunk);
-
+		BlockSand.fallInstantly = true;
+		decorateAPI();
 		BlockSand.fallInstantly = false;
+	}
+
+	@Override
+	@ApiStatus.Internal
+	public void decorateAPI() {
+		int xCoord = parameterBase.chunk.xPosition * 16;
+		int zCoord = parameterBase.chunk.zPosition * 16;
+		generateStructures(parameterBase.biome, parameterBase.chunk, parameterBase.random);
+		generateOreFeatures(parameterBase.biome, xCoord, zCoord, parameterBase.random, parameterBase.chunk);
+		generateBiomeFeature(parameterBase.biome,xCoord, zCoord, parameterBase.random, parameterBase.chunk);
+		generateRandomFeatures(parameterBase.biome,xCoord, zCoord, parameterBase.random, parameterBase.chunk);
 	}
 
 	@ApiStatus.Internal

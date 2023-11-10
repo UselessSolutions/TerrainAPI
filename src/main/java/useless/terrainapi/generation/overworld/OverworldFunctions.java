@@ -99,7 +99,7 @@ public class OverworldFunctions {
 	 * @return number of chances per chunk scaled by the oreHeightModifier if in valid biome
 	 */
 	public static int getStandardOreBiomesDensity(Parameters parameters){
-		float oreHeightModifier = ((ChunkDecoratorOverworldAPI) parameters.decorator).oreHeightModifier;
+		float oreHeightModifier = parameters.decorator.oreHeightModifier;
 		int chance = (int) parameters.customParameters[0];
 		Biome[] biomes = (Biome[]) parameters.customParameters[1];
 		if (biomes == null) {return chance;}
@@ -161,27 +161,26 @@ public class OverworldFunctions {
 		if (parameters.biome != Biomes.OVERWORLD_SWAMPLAND) return null;
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
-		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters.decorator;
 
-		Random swampRand = new Random(decorator.chunkSeed);
+		Random swampRand = new Random(parameters.decorator.chunkSeed);
 
 		for (int dx = 0; dx < 16; ++dx) {
 			for (int dz = 0; dz < 16; ++dz) {
 				if (!(swampRand.nextFloat() < 0.5f)) continue;
 
-				int topBlock = decorator.world.getHeightValue(x + dx, z + dz);
-				int id = decorator.world.getBlockId(x + dx, topBlock - 1, z + dz);
+				int topBlock = parameters.decorator.world.getHeightValue(x + dx, z + dz);
+				int id = parameters.decorator.world.getBlockId(x + dx, topBlock - 1, z + dz);
 				if (id != Block.grass.id) continue;
 
-				int posXId = decorator.world.getBlockId(x + dx + 1, topBlock - 1, z + dz);
+				int posXId = parameters.decorator.world.getBlockId(x + dx + 1, topBlock - 1, z + dz);
 				if (posXId == 0) continue;
-				int negXId = decorator.world.getBlockId(x + dx - 1, topBlock - 1, z + dz);
+				int negXId = parameters.decorator.world.getBlockId(x + dx - 1, topBlock - 1, z + dz);
 				if (negXId == 0) continue;
-				int posZId = decorator.world.getBlockId(x + dx, topBlock - 1, z + dz + 1);
+				int posZId = parameters.decorator.world.getBlockId(x + dx, topBlock - 1, z + dz + 1);
 				if (posZId == 0) continue;
-				int negZId = decorator.world.getBlockId(x + dx, topBlock - 1, z + dz - 1);
+				int negZId = parameters.decorator.world.getBlockId(x + dx, topBlock - 1, z + dz - 1);
 				if (negZId == 0) continue;
-				int negYId = decorator.world.getBlockId(x + dx, topBlock - 2, z + dz);
+				int negYId = parameters.decorator.world.getBlockId(x + dx, topBlock - 2, z + dz);
 				if (negYId == 0) continue;
 
 				if ((!Block.blocksList[posXId].blockMaterial.isSolid() && Block.blocksList[posXId].blockMaterial != Material.water)
@@ -189,8 +188,8 @@ public class OverworldFunctions {
 					|| (!Block.blocksList[posZId].blockMaterial.isSolid() && Block.blocksList[posZId].blockMaterial != Material.water)
 					|| (!Block.blocksList[negZId].blockMaterial.isSolid() && Block.blocksList[negZId].blockMaterial != Material.water)
 					|| !Block.blocksList[negYId].blockMaterial.isSolid()) continue;
-				decorator.world.setBlock(x + dx, topBlock - 1, z + dz, Block.fluidWaterStill.id);
-				decorator.world.setBlock(x + dx, topBlock, z + dz, 0);
+				parameters.decorator.world.setBlock(x + dx, topBlock - 1, z + dz, Block.fluidWaterStill.id);
+				parameters.decorator.world.setBlock(x + dx, topBlock, z + dz, 0);
 			}
 		}
 		return null;
@@ -205,17 +204,15 @@ public class OverworldFunctions {
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
 
-		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters.decorator;
-
 		if (lakeChance != 0 && parameters.random.nextInt(lakeChance) == 0) {
 			int fluid = Block.fluidWaterStill.id;
 			if (parameters.biome.hasSurfaceSnow()) {
 				fluid = Block.ice.id;
 			}
 			int xf = x + parameters.random.nextInt(16) + 8;
-			int yf = decorator.minY + parameters.random.nextInt(decorator.rangeY);
+			int yf = parameters.decorator.minY + parameters.random.nextInt(parameters.decorator.rangeY);
 			int zf = z + parameters.random.nextInt(16) + 8;
-			new WorldFeatureLake(fluid).generate(decorator.world, parameters.random, xf, yf, zf);
+			new WorldFeatureLake(fluid).generate(parameters.decorator.world, parameters.random, xf, yf, zf);
 		}
 		return null;
 	}

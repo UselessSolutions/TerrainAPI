@@ -1,6 +1,7 @@
 package useless.terrainapi.generation;
 
 import net.minecraft.core.block.Block;
+import net.minecraft.core.block.BlockSand;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
@@ -17,6 +18,8 @@ public abstract class ChunkDecoratorAPI implements ChunkDecorator {
 	public final int maxY;
 	public final int rangeY;
 	public final float oreHeightModifier;
+	public long chunkSeed;
+	protected Parameters parameterBase;
 	protected ChunkDecoratorAPI(World world) {
 		this.world = world;
 
@@ -26,8 +29,31 @@ public abstract class ChunkDecoratorAPI implements ChunkDecorator {
 		this.oreHeightModifier = (float)rangeY / 128.0f;
 	}
 	@Override
+	public void decorate(Chunk chunk){
+		int chunkX = chunk.xPosition;
+		int chunkZ = chunk.zPosition;
+
+		int xCoord = chunkX * 16;
+		int zCoord = chunkZ * 16;
+		int yCoord = this.world.getHeightValue(xCoord + 16, zCoord + 16);
+
+		Biome biome = this.world.getBlockBiome(xCoord + 16, yCoord, zCoord + 16);
+
+		Random random = new Random(this.world.getRandomSeed());
+		long l1 = random.nextLong() / 2L * 2L + 1L;
+		long l2 = random.nextLong() / 2L * 2L + 1L;
+		chunkSeed = (long)chunkX * l1 + (long)chunkZ * l2 ^ this.world.getRandomSeed();
+		random.setSeed(chunkSeed);
+		parameterBase = new Parameters(biome, random, chunk, this);
+
+		BlockSand.fallInstantly = true;
+
+		decorateAPI();
+
+		BlockSand.fallInstantly = false;
+	}
 	@ApiStatus.Internal
-	public abstract void decorate(Chunk chunk);
+	public abstract void decorateAPI();
 	@ApiStatus.Internal
 	public abstract void generateStructures(Biome biome, Chunk chunk, Random random);
 	@ApiStatus.Internal
