@@ -22,16 +22,27 @@ public class OverworldConfig extends OreConfig {
 	public HashMap<String, Integer> yellowFlowerDensityMap = new HashMap<>();
 	@Expose @SerializedName(value = "Tree Density")
 	public HashMap<String, Integer> treeDensityMap = new HashMap<>();
+
+	/**Specifies the block to randomly replace some grass with in the specified biome
+	 */
 	public void addRandomGrassBlock(Biome biome, Block block) {
 		if (getConfigOverride() && getRandomGrassBlock(biome) != null){
 			return;
 		}
 		biomeRandomGrassBlock.put(Registries.BIOMES.getKey(biome), block.getKey());
 	}
+
+	/**
+	 * @return Biome's random grass block, returns null if there is no entry for the biome
+	 */
 	@Nullable
 	public Block getRandomGrassBlock(Biome biome){
 		return Block.getBlockByName(biomeRandomGrassBlock.get(Registries.BIOMES.getKey(biome)));
 	}
+
+	/**
+	 * @return Biome's random grass block, returns defaultValue if there is no entry for the biome
+	 */
 	@NotNull
 	public Block getRandomGrassBlock(Biome biome, Block defaultValue){
 		Block returnBlock = Block.getBlockByName(biomeRandomGrassBlock.get(Registries.BIOMES.getKey(biome)));
@@ -40,61 +51,102 @@ public class OverworldConfig extends OreConfig {
 		}
 		return returnBlock;
 	}
+
+	/**Specifies the number of chances for grass to spawn for the specified biome
+	 */
 	public void addGrassDensity(Biome biome, int density){
 		if (getConfigOverride() && getGrassDensity(biome) != null){
 			return;
 		}
 		grassDensityMap.put(Registries.BIOMES.getKey(biome), density);
 	}
+
+	/**
+	 * @return Biome's grass density, returns null if there is no entry for the biome
+	 */
 	@Nullable
 	public Integer getGrassDensity(Biome biome){
 		return grassDensityMap.get(Registries.BIOMES.getKey(biome));
 	}
+
+	/**
+	 * @return Biome's grass density, returns defaultValue if there is no entry for the biome
+	 */
 	@NotNull
 	public Integer getGrassDensity(Biome biome, int defaultValue){
 		return grassDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
 	}
 
+	/**Specifies the number of chances for red/yellow flowers patches to spawn for the specified biome
+	 */
 	public void addFlowerDensity(Biome biome, int density){
 		if (getConfigOverride() && getFlowerDensity(biome) != null){
 			return;
 		}
 		flowerDensityMap.put(Registries.BIOMES.getKey(biome), density);
 	}
+
+	/**
+	 * @return Biome's red/yellow density, returns null if there is no entry for the biome
+	 */
 	@Nullable
 	public Integer getFlowerDensity(Biome biome){
 		return flowerDensityMap.get(Registries.BIOMES.getKey(biome));
 	}
+
+	/**
+	 * @return Biome's red/yellow density, returns defaultValue if there is no entry for the biome
+	 */
 	@NotNull
 	public Integer getFlowerDensity(Biome biome, int defaultValue){
 		return flowerDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
 	}
 
+	/**Specifies the number of chances for yellow flowers to spawn for the specified biome
+	 */
 	public void addYellowFlowerDensity(Biome biome, int density){
 		if (getConfigOverride() && getYellowFlowerDensity(biome) != null){
 			return;
 		}
 		yellowFlowerDensityMap.put(Registries.BIOMES.getKey(biome), density);
 	}
+
+	/**
+	 * @return Biome's yellow flower density, returns null if there is no entry for the biome
+	 */
 	@Nullable
 	public Integer getYellowFlowerDensity(Biome biome){
 		return yellowFlowerDensityMap.get(Registries.BIOMES.getKey(biome));
 	}
+
+	/**
+	 * @return Biome's yellow flower density, returns defaultValue if there is no entry for the biome
+	 */
 	@NotNull
 	public Integer getYellowFlowerDensity(Biome biome, int defaultValue){
 		return yellowFlowerDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
 	}
 
+	/**Specifies the number of chances for trees to spawn for the specified biome
+	 */
 	public void addTreeDensity(Biome biome, int density){
 		if (getConfigOverride() && getTreeDensity(biome) != null){
 			return;
 		}
 		treeDensityMap.put(Registries.BIOMES.getKey(biome), density);
 	}
+
+	/**
+	 * @return Biome's tree density, returns null if there is no entry for the biome
+	 */
 	@Nullable
 	public Integer getTreeDensity(Biome biome){
 		return treeDensityMap.get(Registries.BIOMES.getKey(biome));
 	}
+
+	/**
+	 * @return Biome's tree density, returns defaultValue if there is no entry for the biome
+	 */
 	@NotNull
 	public Integer getTreeDensity(Biome biome, int defaultValue){
 		return treeDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
