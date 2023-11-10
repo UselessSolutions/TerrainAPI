@@ -54,7 +54,7 @@ public class RetroInitialization extends BaseInitialization {
 
 	@Override
 	protected void initBiome() {
-		biomeFeatures.addFeature(RetroFunctions::getTreeFeature, null, RetroFunctions::getTreeDensity, null);
+		biomeFeatures.addFeature(RetroFunctions::getTreeFeature, null, RetroFunctions::getTreeDensity, null, -1);
 		biomeFeatures.addFeature(new WorldFeatureFlowers(Block.flowerYellow.id), 1, 2, null);
 		biomeFeatures.addFeature(new WorldFeatureSugarCane(), 1, 10, null);
 		biomeFeatures.addFeature(new WorldFeatureCactus(), 1, 1, null);

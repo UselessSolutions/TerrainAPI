@@ -9,6 +9,7 @@ import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.retro.api.ChunkDecoratorRetroAPI;
 
 public class RetroFunctions {
+	public static RetroConfig retroConfig = ChunkDecoratorRetroAPI.retroConfig;
 	public static Void generateDungeon(Parameters parameters){
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;

@@ -7,18 +7,18 @@ import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.noise.RetroPerlinNoise;
 import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.config.ConfigManager;
-import useless.terrainapi.config.OreConfig;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.StructureFeatures;
 import useless.terrainapi.generation.overworld.OverworldBiomeFeatures;
 import useless.terrainapi.generation.overworld.OverworldOreFeatures;
 import useless.terrainapi.generation.overworld.OverworldRandomFeatures;
+import useless.terrainapi.generation.retro.RetroConfig;
 
 import java.util.Random;
 
 public class ChunkDecoratorRetroAPI extends ChunkDecoratorAPI {
-	public static OreConfig retroConfig = ConfigManager.getConfig("retro", OreConfig.class);
+	public static RetroConfig retroConfig = ConfigManager.getConfig("retro", RetroConfig.class);
 	public final RetroPerlinNoise treeDensityNoise;
 	public final boolean snowCovered;
 	public static StructureFeatures structureFeatures = new StructureFeatures();
