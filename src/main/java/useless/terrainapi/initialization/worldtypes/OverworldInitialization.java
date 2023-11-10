@@ -75,6 +75,7 @@ public class OverworldInitialization extends BaseInitialization {
 		structureFeatures.addFeature(OverworldFunctions::generateLavaLakeFeature, null);
 		structureFeatures.addFeature(OverworldFunctions::generateDungeons, null);
 		structureFeatures.addFeature(OverworldFunctions::generateLabyrinths, null);
+		structureFeatures.addFeature(OverworldFunctions::generateTrees, null);
 		structureFeatures.addFeature(OverworldFunctions::generateRandomFluid, new Object[]{50, Block.fluidWaterFlowing.id});
 		structureFeatures.addFeature(OverworldFunctions::generateRandomFluid, new Object[]{20, Block.fluidLavaFlowing.id});
 	}
@@ -107,7 +108,6 @@ public class OverworldInitialization extends BaseInitialization {
 	@Override
 	protected void initBiome() {
 		biomeFeatures.addFeatureSurface(new WorldFeatureRichScorchedDirt(10), 1, new Biome[]{Biomes.OVERWORLD_OUTBACK, Biomes.OVERWORLD_OUTBACK_GRASSY});
-		biomeFeatures.addFeature(OverworldFunctions::getTreeFeature, null, OverworldFunctions::getTreeDensity, null, -1f);
 		biomeFeatures.addFeatureSurface(new WorldFeatureSugarCaneTall(), 1, new Biome[]{Biomes.OVERWORLD_RAINFOREST});
 		biomeFeatures.addFeature(OverworldFunctions::flowerTypeCondition, null, (Parameters x) -> overworldConfig.getFlowerDensity(x.biome, 0), null, 1f);
 		biomeFeatures.addFeature((Parameters x) -> new WorldFeatureFlowers(Block.flowerYellow.id), null, (Parameters x) -> overworldConfig.getYellowFlowerDensity(x.biome, 0), null, 1);
