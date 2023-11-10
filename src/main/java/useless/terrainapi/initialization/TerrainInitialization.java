@@ -2,6 +2,7 @@ package useless.terrainapi.initialization;
 
 import useless.terrainapi.TerrainMain;
 import useless.terrainapi.api.TerrainAPI;
+import useless.terrainapi.initialization.worldtypes.HellInitialization;
 import useless.terrainapi.initialization.worldtypes.NetherInitialization;
 import useless.terrainapi.initialization.worldtypes.OverworldInitialization;
 import useless.terrainapi.initialization.worldtypes.RetroInitialization;
@@ -19,6 +20,7 @@ public class TerrainInitialization implements TerrainAPI {
 		new OverworldInitialization().init();
 		new NetherInitialization().init();
 		new RetroInitialization().init();
+		new HellInitialization().init();
 	}
 }
 

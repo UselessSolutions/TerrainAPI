@@ -8,6 +8,7 @@
     "MinecraftServerMixin",
     "worldtypes.WorldTypeFloatingMixin",
     "worldtypes.WorldTypeNetherMixin",
+    "worldtypes.WorldTypeOverworldHellMixin",
     "worldtypes.WorldTypeOverworldMixin",
     "worldtypes.WorldTypeOverworldRetroMixin",
     "worldtypes.WorldTypeOverworldWoodsMixin",

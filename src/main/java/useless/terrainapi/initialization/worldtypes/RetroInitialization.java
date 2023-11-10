@@ -2,6 +2,7 @@ package useless.terrainapi.initialization.worldtypes;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.world.generate.feature.WorldFeatureCactus;
+import net.minecraft.core.world.generate.feature.WorldFeatureClay;
 import net.minecraft.core.world.generate.feature.WorldFeatureFlowers;
 import net.minecraft.core.world.generate.feature.WorldFeatureSugarCane;
 import useless.terrainapi.TerrainMain;
@@ -35,7 +36,8 @@ public class RetroInitialization extends BaseInitialization {
 
 	@Override
 	protected void initOre() {
-		oreFeatures.addManagedOreFeature(Block.blockClay, false);
+		String currentBlock = Block.blockClay.getKey();
+		oreFeatures.addFeature(new WorldFeatureClay(retroConfig.clusterSize.get(currentBlock)), retroConfig.chancesPerChunk.get(currentBlock), retroConfig.verticalRange.get(currentBlock));
 		oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID, Block.dirt, 32, 20, 1, false);
 		oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID, Block.gravel, 32, 10, 1, false);
 		oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID, Block.oreCoalStone, 16, 20, 1, true);

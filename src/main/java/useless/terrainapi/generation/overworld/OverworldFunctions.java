@@ -116,15 +116,14 @@ public class OverworldFunctions {
 	public static Void generateDungeons(Parameters parameters){
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
-		ChunkDecoratorOverworldAPI decoratorOverworldAPI = (ChunkDecoratorOverworldAPI) parameters.decorator;
-		for (int i = 0; i < 8.0f * decoratorOverworldAPI.oreHeightModifier; i++) {
+		for (int i = 0; i < 8.0f * parameters.decorator.oreHeightModifier; i++) {
 			int xPos = x + parameters.random.nextInt(16) + 8;
-			int yPos = decoratorOverworldAPI.minY + parameters.random.nextInt(decoratorOverworldAPI.rangeY);
+			int yPos = parameters.decorator.minY + parameters.random.nextInt(parameters.decorator.rangeY);
 			int zPos = z + parameters.random.nextInt(16) + 8;
 			if (parameters.random.nextInt(2) == 0){
-				new WorldFeatureDungeon(Block.brickClay.id, Block.brickClay.id, null).generate(decoratorOverworldAPI.world, parameters.random, xPos, yPos, zPos);
+				new WorldFeatureDungeon(Block.brickClay.id, Block.brickClay.id, null).generate(parameters.decorator.world, parameters.random, xPos, yPos, zPos);
 			} else {
-				new WorldFeatureDungeon(Block.cobbleStone.id, Block.cobbleStoneMossy.id, null).generate(decoratorOverworldAPI.world, parameters.random, xPos, yPos, zPos);
+				new WorldFeatureDungeon(Block.cobbleStone.id, Block.cobbleStoneMossy.id, null).generate(parameters.decorator.world, parameters.random, xPos, yPos, zPos);
 			}
 		}
 		return null;
@@ -136,19 +135,18 @@ public class OverworldFunctions {
 	 */
 	@Nullable
 	public static Void generateLabyrinths(Parameters parameters){
-		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters.decorator;
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
 		for (int i = 0; i < 1; ++i) {
 			int xPos = x + parameters.random.nextInt(16) + 8;
 			int zPos = z + parameters.random.nextInt(16) + 8;
-			int yPos = decorator.world.getHeightValue(xPos, zPos) - (parameters.random.nextInt(2) + 2);
+			int yPos = parameters.decorator.world.getHeightValue(xPos, zPos) - (parameters.random.nextInt(2) + 2);
 			if (parameters.random.nextInt(5) == 0) {
 				yPos -= parameters.random.nextInt(10) + 30;
 			}
 			if (parameters.random.nextInt(700) != 0) continue;
 			Random lRand = parameters.chunk.getChunkRandom(75644760L);
-			new WorldFeatureLabyrinth().generate(decorator.world, lRand, xPos, yPos, zPos);
+			new WorldFeatureLabyrinth().generate(parameters.decorator.world, lRand, xPos, yPos, zPos);
 		}
 		return null;
 	}
@@ -224,13 +222,12 @@ public class OverworldFunctions {
 	public static Void generateLavaLakeFeature(Parameters parameters){
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
-		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters.decorator;
 		if (parameters.random.nextInt(8) == 0) {
 			int xf = x + parameters.random.nextInt(16) + 8;
-			int yf = decorator.minY + parameters.random.nextInt(parameters.random.nextInt(decorator.rangeY - decorator.rangeY / 16) + decorator.rangeY / 16);
+			int yf = parameters.decorator.minY + parameters.random.nextInt(parameters.random.nextInt(parameters.decorator.rangeY - parameters.decorator.rangeY / 16) + parameters.decorator.rangeY / 16);
 			int zf = z + parameters.random.nextInt(16) + 8;
-			if (yf < decorator.minY + decorator.rangeY / 2 || parameters.random.nextInt(10) == 0) {
-				new WorldFeatureLake(Block.fluidLavaStill.id).generate(decorator.world, parameters.random, xf, yf, zf);
+			if (yf < parameters.decorator.minY + parameters.decorator.rangeY / 2 || parameters.random.nextInt(10) == 0) {
+				new WorldFeatureLake(Block.fluidLavaStill.id).generate(parameters.decorator.world, parameters.random, xf, yf, zf);
 			}
 		}
 		return null;
