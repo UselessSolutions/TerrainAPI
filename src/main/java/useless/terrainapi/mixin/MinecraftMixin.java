@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import useless.terrainapi.TerrainMain;
 
-@Mixin(value = Minecraft.class, remap = false)
+@Mixin(value = Minecraft.class, remap = false, priority = 999)
 public class MinecraftMixin {
 	@Inject(method = "startGame()V", at = @At("HEAD"))
 	private void initializeGeneration(CallbackInfo ci){

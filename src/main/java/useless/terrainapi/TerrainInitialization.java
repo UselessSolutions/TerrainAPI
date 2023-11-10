@@ -76,6 +76,9 @@ public class TerrainInitialization implements TerrainAPI {
 		overworldConfig.addRandomGrassBlock(Biomes.OVERWORLD_SWAMPLAND, Block.tallgrassFern);
 		overworldConfig.addRandomGrassBlock(Biomes.OVERWORLD_BOREAL_FOREST, Block.tallgrassFern);
 		overworldConfig.addRandomGrassBlock(Biomes.OVERWORLD_TAIGA, Block.tallgrassFern);
+
+		overworldConfig.addLakeDensity(Biomes.OVERWORLD_SWAMPLAND, 2);
+		overworldConfig.addLakeDensity(Biomes.OVERWORLD_DESERT, 2);
 	}
 	public static void initializeOverworldStructures() {
 		ChunkDecoratorOverworldAPI.structureFeatures.addFeature(OverworldFunctions::generateDungeons, null);
