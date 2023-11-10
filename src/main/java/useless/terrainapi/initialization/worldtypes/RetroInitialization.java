@@ -30,6 +30,7 @@ public class RetroInitialization extends BaseInitialization {
 	@Override
 	protected void initStructure() {
 		structureFeatures.addFeature(RetroFunctions::generateDungeon, null);
+		structureFeatures.addFeature(RetroFunctions::generateTrees, null);
 		structureFeatures.addFeature(OverworldFunctions::generateRandomFluid, new Object[]{50, Block.fluidWaterFlowing.id});
 		structureFeatures.addFeature(OverworldFunctions::generateRandomFluid, new Object[]{20, Block.fluidLavaFlowing.id});
 	}
@@ -56,7 +57,6 @@ public class RetroInitialization extends BaseInitialization {
 
 	@Override
 	protected void initBiome() {
-		biomeFeatures.addFeature(RetroFunctions::getTreeFeature, null, RetroFunctions::getTreeDensity, null, -1);
 		biomeFeatures.addFeature(new WorldFeatureFlowers(Block.flowerYellow.id), 1, 2, null);
 		biomeFeatures.addFeature(new WorldFeatureSugarCane(), 1, 10, null);
 		biomeFeatures.addFeature(new WorldFeatureCactus(), 1, 1, null);

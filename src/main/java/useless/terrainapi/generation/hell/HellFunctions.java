@@ -122,8 +122,9 @@ public class HellFunctions {
 		}
 		return treeDensity/2;
 	}
-	/**Vanilla tree generator
-	 * @param parameters Parameters Container
+
+	/**Vanilla hell tree generator
+	 * @param parameters Parameters Container, takes two custom parameters getTreeFeature function and getTreeDensity function
 	 * @return null
 	 */
 	public static Void generateTrees(Parameters parameters){

@@ -249,4 +249,20 @@ public class OverworldFunctions {
 		}
 		return null;
 	}
+
+	/**Vanilla tree generator
+	 * @param parameters Parameters Container, takes two custom parameters getTreeFeature function and getTreeDensity function
+	 * @return null
+	 */
+	public static Void generateTrees(Parameters parameters){
+		int x = parameters.chunk.xPosition * 16;
+		int z = parameters.chunk.zPosition * 16;
+		for (int i = 0; i < getTreeDensity(parameters); i++) {
+			int xf = x + parameters.random.nextInt(16) + 8;
+			int zf = z + parameters.random.nextInt(16) + 8;
+			int yf = parameters.decorator.world.getHeightValue(xf, zf);
+			getTreeFeature(parameters).generate(parameters.decorator.world, parameters.random, xf, yf, zf);
+		}
+		return null;
+	}
 }
