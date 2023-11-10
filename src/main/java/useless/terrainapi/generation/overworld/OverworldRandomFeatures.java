@@ -37,7 +37,7 @@ public class OverworldRandomFeatures extends GeneratorFeatures {
 	 * @param biomes List of biomes to generate in, generates in any biome if array is null
 	 */
 	public void addFeature(WorldFeature feature, int inverseProbability, float rangeModifier, int chances, Biome[] biomes){
-		addComplexFeature((Parameters x) -> feature, null, OverworldFunctions::getStandardBiomesDensity, new Object[]{chances, biomes}, inverseProbability, rangeModifier);
+		addFeature((Parameters x) -> feature, null, OverworldFunctions::getStandardBiomesDensity, new Object[]{chances, biomes}, inverseProbability, rangeModifier);
 	}
 
 	/**Adds a world feature entry
@@ -48,8 +48,8 @@ public class OverworldRandomFeatures extends GeneratorFeatures {
 	 * @param inverseProbability Inverse of the probability, example inverseProbability of 2 means a 50% chance
 	 * @param rangeModifier Fraction of the world from the bottom to the surface to generate inside, a value of -1 indicates to spawn on the surface only
 	 */
-	public void addComplexFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters, int inverseProbability, float rangeModifier){
-		super.addComplexFeature(featureFunction, featureParameters, densityFunction, densityParameters);
+	public void addFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters, int inverseProbability, float rangeModifier){
+		super.addFeature(featureFunction, featureParameters, densityFunction, densityParameters);
 		rangeModifierList.add(rangeModifier);
 		inverseProbabilityList.add(inverseProbability);
 	}

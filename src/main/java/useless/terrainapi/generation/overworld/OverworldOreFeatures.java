@@ -35,7 +35,7 @@ public class OverworldOreFeatures extends GeneratorFeatures {
 	 * @param biomes List of biomes to generate in, generates in any biome if array is null
 	 */
 	public void addFeature(WorldFeature feature, int chances, float rangeModifier, Biome[] biomes){
-		addComplexFeature((Parameters x) -> feature, null, OverworldFunctions::getStandardOreBiomesDensity, new Object[]{chances, biomes}, rangeModifier);
+		addFeature((Parameters x) -> feature, null, OverworldFunctions::getStandardOreBiomesDensity, new Object[]{chances, biomes}, rangeModifier);
 	}
 
 	/**Adds a world feature entry
@@ -45,8 +45,8 @@ public class OverworldOreFeatures extends GeneratorFeatures {
 	 * @param densityParameters Object[] of additional parameters that will be included with the Parameters object passed into the density function
 	 * @param rangeModifier Fraction of the world from the bottom to the surface to generate inside, a value of -1 indicates to spawn on the surface only
 	 */
-	public void addComplexFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters, float rangeModifier){
-		super.addComplexFeature(featureFunction, featureParameters, densityFunction, densityParameters);
+	public void addFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters, float rangeModifier){
+		super.addFeature(featureFunction, featureParameters, densityFunction, densityParameters);
 		rangeModifierList.add(rangeModifier);
 	}
 

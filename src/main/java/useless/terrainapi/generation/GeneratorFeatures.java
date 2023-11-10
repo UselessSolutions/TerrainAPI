@@ -18,7 +18,7 @@ public class GeneratorFeatures {
 	 * @param densityFunction Function that takes a Parameters object and returns an Integer representing the number of attempts per chunk
 	 * @param densityParameters Object[] of additional parameters that will be included with the Parameters object passed into the density function
 	 */
-	public void addComplexFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters){
+	public void addFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters){
 		featureFunctionsList.add(featureFunction);
 		featureParametersList.add(featureParameters);
 		densityFunctionsList.add(densityFunction);
