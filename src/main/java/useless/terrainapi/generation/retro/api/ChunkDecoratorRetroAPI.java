@@ -1,48 +1,44 @@
-package useless.terrainapi.generation.overworld.api;
+package useless.terrainapi.generation.retro.api;
 
 import net.minecraft.core.block.BlockSand;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.feature.WorldFeature;
-import net.minecraft.core.world.noise.PerlinNoise;
+import net.minecraft.core.world.noise.RetroPerlinNoise;
 import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.config.ConfigManager;
+import useless.terrainapi.config.OreConfig;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.StructureFeatures;
 import useless.terrainapi.generation.overworld.OverworldBiomeFeatures;
-import useless.terrainapi.generation.overworld.OverworldConfig;
 import useless.terrainapi.generation.overworld.OverworldOreFeatures;
 import useless.terrainapi.generation.overworld.OverworldRandomFeatures;
 
 import java.util.Random;
 
-public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
-	public static OverworldConfig overworldConfig = ConfigManager.getConfig("overworld", OverworldConfig.class);
-	public final PerlinNoise treeDensityNoise;
-	public final int treeDensityOverride;
-	private Parameters parameterBase;
+public class ChunkDecoratorRetroAPI extends ChunkDecoratorAPI {
+	public static OreConfig retroConfig = ConfigManager.getConfig("retro", OreConfig.class);
+	public final RetroPerlinNoise treeDensityNoise;
+	public final boolean snowCovered;
 	public static StructureFeatures structureFeatures = new StructureFeatures();
-	public static OverworldOreFeatures oreFeatures = new OverworldOreFeatures(overworldConfig);
+	public static OverworldOreFeatures oreFeatures = new OverworldOreFeatures(retroConfig);
 	public static OverworldRandomFeatures randomFeatures = new OverworldRandomFeatures();
 	public static OverworldBiomeFeatures biomeFeatures = new OverworldBiomeFeatures();
+	private Parameters parameterBase;
 	public long chunkSeed;
-	protected ChunkDecoratorOverworldAPI(World world, int treeDensityOverride) {
+	protected ChunkDecoratorRetroAPI(World world) {
 		super(world);
-		this.treeDensityOverride = treeDensityOverride;
-		this.treeDensityNoise = new PerlinNoise(world.getRandomSeed(), 8, 74);
+		this.treeDensityNoise = new RetroPerlinNoise(world.getRandomSeed(), 8, 74);
+		this.snowCovered = false;
 	}
 
-	public ChunkDecoratorOverworldAPI(World world) {
-		this(world, -1);
-	}
 	@Override
-	@ApiStatus.Internal
 	public void decorate(Chunk chunk) {
 		int chunkX = chunk.xPosition;
 		int chunkZ = chunk.zPosition;
-
+		BlockSand.fallInstantly = true;
 		int xCoord = chunkX * 16;
 		int zCoord = chunkZ * 16;
 		int yCoord = this.world.getHeightValue(xCoord + 16, zCoord + 16);
@@ -55,8 +51,6 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 		chunkSeed = (long)chunkX * l1 + (long)chunkZ * l2 ^ this.world.getRandomSeed();
 		random.setSeed(chunkSeed);
 
-		BlockSand.fallInstantly = true;
-
 		parameterBase = new Parameters(biome, random, chunk, this);
 
 		generateStructures(biome, chunk, random);
@@ -65,10 +59,9 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 		generateRandomFeatures(biome,xCoord, zCoord, random, chunk);
 
 		freezeSurface(xCoord, zCoord);
-
 		BlockSand.fallInstantly = false;
-
 	}
+
 	@ApiStatus.Internal
 	public void generateStructures(Biome biome, Chunk chunk, Random random){
 		int featureSize = structureFeatures.featureFunctionList.size();

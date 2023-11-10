@@ -212,10 +212,10 @@ public class OverworldFunctions {
 			if (parameters.biome.hasSurfaceSnow()) {
 				fluid = Block.ice.id;
 			}
-			int i1 = x + parameters.random.nextInt(16) + 8;
-			int l4 = decorator.minY + parameters.random.nextInt(decorator.rangeY);
-			int i8 = z + parameters.random.nextInt(16) + 8;
-			new WorldFeatureLake(fluid).generate(decorator.world, parameters.random, i1, l4, i8);
+			int xf = x + parameters.random.nextInt(16) + 8;
+			int yf = decorator.minY + parameters.random.nextInt(decorator.rangeY);
+			int zf = z + parameters.random.nextInt(16) + 8;
+			new WorldFeatureLake(fluid).generate(decorator.world, parameters.random, xf, yf, zf);
 		}
 		return null;
 	}
@@ -235,6 +235,23 @@ public class OverworldFunctions {
 			if (yf < decorator.minY + decorator.rangeY / 2 || parameters.random.nextInt(10) == 0) {
 				new WorldFeatureLake(Block.fluidLavaStill.id).generate(decorator.world, parameters.random, xf, yf, zf);
 			}
+		}
+		return null;
+	}
+	/**Vanilla random fluid generation code, takes two custom parameters (int)Chances and (int)BlockID
+	 * @param parameters Parameters Container
+	 * @return null
+	 */
+	public static Void generateRandomFluid(Parameters parameters){
+		int x = parameters.chunk.xPosition * 16;
+		int z = parameters.chunk.zPosition * 16;
+		int chances = (int) parameters.customParameters[0];
+		int fluidId = (int) parameters.customParameters[1];
+		for (int i = 0; i < chances; ++i) {
+			int blockX = x + parameters.random.nextInt(16) + 8;
+			int blockY = parameters.decorator.minY + parameters.random.nextInt(parameters.random.nextInt(parameters.decorator.rangeY - 8) + 8);
+			int blockZ = z + parameters.random.nextInt(16) + 8;
+			new WorldFeatureLiquid(fluidId).generate(parameters.decorator.world, parameters.random, blockX, blockY, blockZ);
 		}
 		return null;
 	}

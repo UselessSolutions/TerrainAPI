@@ -2,7 +2,6 @@ package useless.terrainapi.generation;
 
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
-import net.minecraft.core.world.generate.chunk.ChunkDecorator;
 
 import java.util.Random;
 
@@ -13,13 +12,13 @@ public class Parameters {
 	public Biome biome;
 	public Random random;
 	public Chunk chunk;
-	public ChunkDecorator decorator;
+	public ChunkDecoratorAPI decorator;
 	public Object[] customParameters = new Object[0];
-	public Parameters(Biome biome, Random random, Chunk chunk, ChunkDecorator chunkDecorator, Object[] customParameters){
+	public Parameters(Biome biome, Random random, Chunk chunk, ChunkDecoratorAPI chunkDecorator, Object[] customParameters){
 		this(biome, random, chunk, chunkDecorator);
 		this.customParameters = customParameters;
 	}
-	public Parameters(Biome biome, Random random, Chunk chunk, ChunkDecorator chunkDecorator){
+	public Parameters(Biome biome, Random random, Chunk chunk, ChunkDecoratorAPI chunkDecorator){
 		this.biome = biome;
 		this.random = random;
 		this.chunk = chunk;
