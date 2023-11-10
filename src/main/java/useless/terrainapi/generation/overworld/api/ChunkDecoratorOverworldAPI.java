@@ -11,6 +11,7 @@ import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureLake;
 import net.minecraft.core.world.generate.feature.WorldFeatureLiquid;
 import net.minecraft.core.world.noise.PerlinNoise;
+import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.config.ConfigManager;
 import useless.terrainapi.generation.overworld.OverworldConfig;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
@@ -26,7 +27,6 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 	public static OverworldConfig overworldConfig = ConfigManager.getConfig("overworld", OverworldConfig.class);
 	public final PerlinNoise treeDensityNoise;
 	public final int treeDensityOverride;
-	private final int lakeDensityDefault = 4;
 	private Parameters parameterBase;
 	public static StructureFeatures structureFeatures = new StructureFeatures();
 	public static OverworldOreFeatures oreFeatures = new OverworldOreFeatures(overworldConfig);
@@ -42,6 +42,7 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 		this(world, -1);
 	}
 	@Override
+	@ApiStatus.Internal
 	public void decorate(Chunk chunk) {
 		int chunkX = chunk.xPosition;
 		int chunkZ = chunk.zPosition;
@@ -63,11 +64,10 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 		if (biome == Biomes.OVERWORLD_SWAMPLAND){
 			swampFeature(xCoord, zCoord, swampRand);
 		}
-		int lakeChance = getLakeChance(biome);
 
 		parameterBase = new Parameters(biome, random, chunk, this);
 
-		generateLakeFeature(lakeChance, xCoord, zCoord, biome, random);
+		generateLakeFeature(overworldConfig.getLakeDensity(biome, overworldConfig.defaultLakeDensity), xCoord, zCoord, biome, random);
 
 		generateStructures(biome, chunk, random);
 		generateOreFeatures(biome, xCoord, zCoord, random, chunk);
@@ -82,6 +82,7 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 		BlockSand.fallInstantly = false;
 
 	}
+	@ApiStatus.Internal
 	public void swampFeature(int x, int z, Random random){
 		for (int dx = 0; dx < 16; ++dx) {
 			for (int dz = 0; dz < 16; ++dz) {
@@ -102,15 +103,7 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 			}
 		}
 	}
-	public int getLakeChance(Biome biome){
-		if (biome == Biomes.OVERWORLD_SWAMPLAND) {
-			return 2;
-		}
-		if (biome == Biomes.OVERWORLD_DESERT) {
-			return 0;
-		}
-		return lakeDensityDefault;
-	}
+	@ApiStatus.Internal
 	public void generateLakeFeature(int lakeChance, int x, int z, Biome biome, Random random){
 		if (lakeChance != 0 && random.nextInt(lakeChance) == 0) {
 			int fluid = Block.fluidWaterStill.id;
@@ -131,6 +124,7 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 			}
 		}
 	}
+	@ApiStatus.Internal
 	public void generateStructures(Biome biome, Chunk chunk, Random random){
 		int featureSize = structureFeatures.featureFunctionList.size();
 		for (int i = 0; i < featureSize; i++) {
@@ -138,6 +132,7 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 				.apply(new Parameters(parameterBase, structureFeatures.featureParametersList.get(i)));
 		}
 	}
+	@ApiStatus.Internal
 	public void generateOreFeatures(Biome biome, int x, int z, Random random, Chunk chunk){
 		int featureSize = oreFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
@@ -151,6 +146,7 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 			generateWithChancesUnderground(feature, density, (int) (rangeModifier * rangeY), x, z, random);
 		}
 	}
+	@ApiStatus.Internal
 	public void generateRandomFeatures(Biome biome, int x, int z, Random random, Chunk chunk){
 		int featureSize = randomFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
@@ -169,6 +165,7 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 			}
 		}
 	}
+	@ApiStatus.Internal
 	public void generateBiomeFeature(Biome biome, int x, int z, Random random, Chunk chunk){
 		int featureSize = biomeFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {

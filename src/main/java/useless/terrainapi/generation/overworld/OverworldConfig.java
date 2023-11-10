@@ -22,6 +22,9 @@ public class OverworldConfig extends OreConfig {
 	public HashMap<String, Integer> yellowFlowerDensityMap = new HashMap<>();
 	@Expose @SerializedName(value = "Tree Density")
 	public HashMap<String, Integer> treeDensityMap = new HashMap<>();
+	@Expose @SerializedName(value = "Lake Density")
+	public HashMap<String, Integer> lakeDensityMap = new HashMap<>();
+	public int defaultLakeDensity = 4;
 
 	/**Specifies the block to randomly replace some grass with in the specified biome
 	 */
@@ -150,5 +153,30 @@ public class OverworldConfig extends OreConfig {
 	@NotNull
 	public Integer getTreeDensity(Biome biome, int defaultValue){
 		return treeDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
+	}
+
+	/**Specifies the number of chances for lake to spawn for the specified biome
+	 */
+	public void addLakeDensity(Biome biome, int density){
+		if (getConfigOverride() && getTreeDensity(biome) != null){
+			return;
+		}
+		lakeDensityMap.put(Registries.BIOMES.getKey(biome), density);
+	}
+
+	/**
+	 * @return Biome's lake density, returns null if there is no entry for the biome
+	 */
+	@Nullable
+	public Integer getLakeDensity(Biome biome){
+		return lakeDensityMap.get(Registries.BIOMES.getKey(biome));
+	}
+
+	/**
+	 * @return Biome's lake density, returns defaultValue if there is no entry for the biome
+	 */
+	@NotNull
+	public Integer getLakeDensity(Biome biome, int defaultValue){
+		return lakeDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
 	}
 }
