@@ -9,7 +9,8 @@
     "worldtypes.WorldTypeNetherMixin",
     "worldtypes.WorldTypeOverworldMixin",
     "worldtypes.WorldTypeOverworldRetroMixin",
-    "worldtypes.WorldTypeOverworldWoodsMixin"
+    "worldtypes.WorldTypeOverworldWoodsMixin",
+    "worldtypes.WorldTypeParadiseMixin"
   ],
   "client": [
   ],

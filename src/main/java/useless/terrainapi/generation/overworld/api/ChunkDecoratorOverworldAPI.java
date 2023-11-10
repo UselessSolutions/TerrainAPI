@@ -25,7 +25,7 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 	public static OverworldOreFeatures oreFeatures = new OverworldOreFeatures(overworldConfig);
 	public static OverworldRandomFeatures randomFeatures = new OverworldRandomFeatures();
 	public static OverworldBiomeFeatures biomeFeatures = new OverworldBiomeFeatures();
-	protected ChunkDecoratorOverworldAPI(World world, int treeDensityOverride) {
+	public ChunkDecoratorOverworldAPI(World world, int treeDensityOverride) {
 		super(world);
 		this.treeDensityOverride = treeDensityOverride;
 		this.treeDensityNoise = new PerlinNoise(world.getRandomSeed(), 8, 74);
