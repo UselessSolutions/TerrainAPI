@@ -2,7 +2,6 @@ package useless.terrainapi.generation.overworld;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.world.biome.Biome;
-import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.generate.feature.WorldFeature;
 import net.minecraft.core.world.generate.feature.WorldFeatureDungeon;
 import net.minecraft.core.world.generate.feature.WorldFeatureLabyrinth;

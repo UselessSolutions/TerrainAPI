@@ -2,6 +2,7 @@ package useless.terrainapi.config;
 
 
 import net.fabricmc.loader.api.FabricLoader;
+import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.TerrainMain;
 
 import java.io.*;
@@ -67,6 +68,7 @@ public class ConfigManager {
 	/**
 	 * Saves every config entry
 	 */
+	@ApiStatus.Internal
 	public static void saveAll(){
 		for (String id: configHashMap.keySet()) {
 			save(id);

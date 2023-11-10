@@ -4,6 +4,7 @@ package useless.terrainapi.config;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.core.block.Block;
+import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.TerrainMain;
 
 import java.util.HashMap;
@@ -28,6 +29,13 @@ public class OreConfig extends APIConfig {
 		}
 		setOreValues(block, clusterSize, chances, range);
 	}
+	/**Creates an ore entry, this can be used directly by OreFeatures#addManagedOreFeature or directly by referencing the HashMaps themselves
+	 * @param block The block to be generated, the block key is used as the key for the hashmap
+	 * @param clusterSize Size in blocks of an ore vein
+	 * @param chances Number of chances per chunk to generate an ore patch, this values scales with world height
+	 * @param range Value from [0, 1], it's the fraction from the bottom of the world to the surface that the ore can generate
+	 */
+	@ApiStatus.Internal
 	protected void setOreValues(Block block, int clusterSize, int chances, float range){
 		if (this.clusterSize.containsKey(block.getKey()) && this.getConfigOverride()){
 			return;
