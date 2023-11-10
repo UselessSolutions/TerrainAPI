@@ -99,7 +99,7 @@ public class OverworldFunctions {
 	 * @return number of chances per chunk scaled by the oreHeightModifier if in valid biome
 	 */
 	public static int getStandardOreBiomesDensity(Parameters parameters){
-		float oreHeightModifier = ((ChunkDecoratorOverworldAPI) parameters.decorator).oreHeightModifier;
+		float oreHeightModifier = parameters.decorator.oreHeightModifier;
 		int chance = (int) parameters.customParameters[0];
 		Biome[] biomes = (Biome[]) parameters.customParameters[1];
 		if (biomes == null) {return chance;}
@@ -116,15 +116,14 @@ public class OverworldFunctions {
 	public static Void generateDungeons(Parameters parameters){
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
-		ChunkDecoratorOverworldAPI decoratorOverworldAPI = (ChunkDecoratorOverworldAPI) parameters.decorator;
-		for (int i = 0; i < 8.0f * decoratorOverworldAPI.oreHeightModifier; i++) {
+		for (int i = 0; i < 8.0f * parameters.decorator.oreHeightModifier; i++) {
 			int xPos = x + parameters.random.nextInt(16) + 8;
-			int yPos = decoratorOverworldAPI.minY + parameters.random.nextInt(decoratorOverworldAPI.rangeY);
+			int yPos = parameters.decorator.minY + parameters.random.nextInt(parameters.decorator.rangeY);
 			int zPos = z + parameters.random.nextInt(16) + 8;
 			if (parameters.random.nextInt(2) == 0){
-				new WorldFeatureDungeon(Block.brickClay.id, Block.brickClay.id, null).generate(decoratorOverworldAPI.world, parameters.random, xPos, yPos, zPos);
+				new WorldFeatureDungeon(Block.brickClay.id, Block.brickClay.id, null).generate(parameters.decorator.world, parameters.random, xPos, yPos, zPos);
 			} else {
-				new WorldFeatureDungeon(Block.cobbleStone.id, Block.cobbleStoneMossy.id, null).generate(decoratorOverworldAPI.world, parameters.random, xPos, yPos, zPos);
+				new WorldFeatureDungeon(Block.cobbleStone.id, Block.cobbleStoneMossy.id, null).generate(parameters.decorator.world, parameters.random, xPos, yPos, zPos);
 			}
 		}
 		return null;
@@ -136,19 +135,18 @@ public class OverworldFunctions {
 	 */
 	@Nullable
 	public static Void generateLabyrinths(Parameters parameters){
-		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters.decorator;
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
 		for (int i = 0; i < 1; ++i) {
 			int xPos = x + parameters.random.nextInt(16) + 8;
 			int zPos = z + parameters.random.nextInt(16) + 8;
-			int yPos = decorator.world.getHeightValue(xPos, zPos) - (parameters.random.nextInt(2) + 2);
+			int yPos = parameters.decorator.world.getHeightValue(xPos, zPos) - (parameters.random.nextInt(2) + 2);
 			if (parameters.random.nextInt(5) == 0) {
 				yPos -= parameters.random.nextInt(10) + 30;
 			}
 			if (parameters.random.nextInt(700) != 0) continue;
 			Random lRand = parameters.chunk.getChunkRandom(75644760L);
-			new WorldFeatureLabyrinth().generate(decorator.world, lRand, xPos, yPos, zPos);
+			new WorldFeatureLabyrinth().generate(parameters.decorator.world, lRand, xPos, yPos, zPos);
 		}
 		return null;
 	}
@@ -161,27 +159,26 @@ public class OverworldFunctions {
 		if (parameters.biome != Biomes.OVERWORLD_SWAMPLAND) return null;
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
-		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters.decorator;
 
-		Random swampRand = new Random(decorator.chunkSeed);
+		Random swampRand = new Random(parameters.decorator.chunkSeed);
 
 		for (int dx = 0; dx < 16; ++dx) {
 			for (int dz = 0; dz < 16; ++dz) {
 				if (!(swampRand.nextFloat() < 0.5f)) continue;
 
-				int topBlock = decorator.world.getHeightValue(x + dx, z + dz);
-				int id = decorator.world.getBlockId(x + dx, topBlock - 1, z + dz);
+				int topBlock = parameters.decorator.world.getHeightValue(x + dx, z + dz);
+				int id = parameters.decorator.world.getBlockId(x + dx, topBlock - 1, z + dz);
 				if (id != Block.grass.id) continue;
 
-				int posXId = decorator.world.getBlockId(x + dx + 1, topBlock - 1, z + dz);
+				int posXId = parameters.decorator.world.getBlockId(x + dx + 1, topBlock - 1, z + dz);
 				if (posXId == 0) continue;
-				int negXId = decorator.world.getBlockId(x + dx - 1, topBlock - 1, z + dz);
+				int negXId = parameters.decorator.world.getBlockId(x + dx - 1, topBlock - 1, z + dz);
 				if (negXId == 0) continue;
-				int posZId = decorator.world.getBlockId(x + dx, topBlock - 1, z + dz + 1);
+				int posZId = parameters.decorator.world.getBlockId(x + dx, topBlock - 1, z + dz + 1);
 				if (posZId == 0) continue;
-				int negZId = decorator.world.getBlockId(x + dx, topBlock - 1, z + dz - 1);
+				int negZId = parameters.decorator.world.getBlockId(x + dx, topBlock - 1, z + dz - 1);
 				if (negZId == 0) continue;
-				int negYId = decorator.world.getBlockId(x + dx, topBlock - 2, z + dz);
+				int negYId = parameters.decorator.world.getBlockId(x + dx, topBlock - 2, z + dz);
 				if (negYId == 0) continue;
 
 				if ((!Block.blocksList[posXId].blockMaterial.isSolid() && Block.blocksList[posXId].blockMaterial != Material.water)
@@ -189,8 +186,8 @@ public class OverworldFunctions {
 					|| (!Block.blocksList[posZId].blockMaterial.isSolid() && Block.blocksList[posZId].blockMaterial != Material.water)
 					|| (!Block.blocksList[negZId].blockMaterial.isSolid() && Block.blocksList[negZId].blockMaterial != Material.water)
 					|| !Block.blocksList[negYId].blockMaterial.isSolid()) continue;
-				decorator.world.setBlock(x + dx, topBlock - 1, z + dz, Block.fluidWaterStill.id);
-				decorator.world.setBlock(x + dx, topBlock, z + dz, 0);
+				parameters.decorator.world.setBlock(x + dx, topBlock - 1, z + dz, Block.fluidWaterStill.id);
+				parameters.decorator.world.setBlock(x + dx, topBlock, z + dz, 0);
 			}
 		}
 		return null;
@@ -205,17 +202,15 @@ public class OverworldFunctions {
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
 
-		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters.decorator;
-
 		if (lakeChance != 0 && parameters.random.nextInt(lakeChance) == 0) {
 			int fluid = Block.fluidWaterStill.id;
 			if (parameters.biome.hasSurfaceSnow()) {
 				fluid = Block.ice.id;
 			}
-			int i1 = x + parameters.random.nextInt(16) + 8;
-			int l4 = decorator.minY + parameters.random.nextInt(decorator.rangeY);
-			int i8 = z + parameters.random.nextInt(16) + 8;
-			new WorldFeatureLake(fluid).generate(decorator.world, parameters.random, i1, l4, i8);
+			int xf = x + parameters.random.nextInt(16) + 8;
+			int yf = parameters.decorator.minY + parameters.random.nextInt(parameters.decorator.rangeY);
+			int zf = z + parameters.random.nextInt(16) + 8;
+			new WorldFeatureLake(fluid).generate(parameters.decorator.world, parameters.random, xf, yf, zf);
 		}
 		return null;
 	}
@@ -227,14 +222,46 @@ public class OverworldFunctions {
 	public static Void generateLavaLakeFeature(Parameters parameters){
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
-		ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters.decorator;
 		if (parameters.random.nextInt(8) == 0) {
 			int xf = x + parameters.random.nextInt(16) + 8;
-			int yf = decorator.minY + parameters.random.nextInt(parameters.random.nextInt(decorator.rangeY - decorator.rangeY / 16) + decorator.rangeY / 16);
+			int yf = parameters.decorator.minY + parameters.random.nextInt(parameters.random.nextInt(parameters.decorator.rangeY - parameters.decorator.rangeY / 16) + parameters.decorator.rangeY / 16);
 			int zf = z + parameters.random.nextInt(16) + 8;
-			if (yf < decorator.minY + decorator.rangeY / 2 || parameters.random.nextInt(10) == 0) {
-				new WorldFeatureLake(Block.fluidLavaStill.id).generate(decorator.world, parameters.random, xf, yf, zf);
+			if (yf < parameters.decorator.minY + parameters.decorator.rangeY / 2 || parameters.random.nextInt(10) == 0) {
+				new WorldFeatureLake(Block.fluidLavaStill.id).generate(parameters.decorator.world, parameters.random, xf, yf, zf);
 			}
+		}
+		return null;
+	}
+	/**Vanilla random fluid generation code, takes two custom parameters (int)Chances and (int)BlockID
+	 * @param parameters Parameters Container
+	 * @return null
+	 */
+	public static Void generateRandomFluid(Parameters parameters){
+		int x = parameters.chunk.xPosition * 16;
+		int z = parameters.chunk.zPosition * 16;
+		int chances = (int) parameters.customParameters[0];
+		int fluidId = (int) parameters.customParameters[1];
+		for (int i = 0; i < chances; ++i) {
+			int blockX = x + parameters.random.nextInt(16) + 8;
+			int blockY = parameters.decorator.minY + parameters.random.nextInt(parameters.random.nextInt(parameters.decorator.rangeY - 8) + 8);
+			int blockZ = z + parameters.random.nextInt(16) + 8;
+			new WorldFeatureLiquid(fluidId).generate(parameters.decorator.world, parameters.random, blockX, blockY, blockZ);
+		}
+		return null;
+	}
+
+	/**Vanilla tree generator
+	 * @param parameters Parameters Container, takes two custom parameters getTreeFeature function and getTreeDensity function
+	 * @return null
+	 */
+	public static Void generateTrees(Parameters parameters){
+		int x = parameters.chunk.xPosition * 16;
+		int z = parameters.chunk.zPosition * 16;
+		for (int i = 0; i < getTreeDensity(parameters); i++) {
+			int xf = x + parameters.random.nextInt(16) + 8;
+			int zf = z + parameters.random.nextInt(16) + 8;
+			int yf = parameters.decorator.world.getHeightValue(xf, zf);
+			getTreeFeature(parameters).generate(parameters.decorator.world, parameters.random, xf, yf, zf);
 		}
 		return null;
 	}

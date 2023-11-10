@@ -1,51 +1,32 @@
-package useless.terrainapi.generation.nether.api;
+package useless.terrainapi.generation.hell.api;
 
-import net.minecraft.core.block.BlockSand;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.feature.WorldFeature;
+import net.minecraft.core.world.noise.PerlinNoise;
 import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.config.ConfigManager;
-import useless.terrainapi.generation.nether.NetherConfig;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.StructureFeatures;
-import useless.terrainapi.generation.nether.NetherBiomeFeatures;
-import useless.terrainapi.generation.nether.NetherOreFeatures;
-import useless.terrainapi.generation.nether.NetherRandomFeatures;
+import useless.terrainapi.generation.hell.HellConfig;
+import useless.terrainapi.generation.overworld.OverworldBiomeFeatures;
+import useless.terrainapi.generation.overworld.OverworldOreFeatures;
+import useless.terrainapi.generation.overworld.OverworldRandomFeatures;
 
 import java.util.Random;
 
-public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
-	public static NetherConfig netherConfig = ConfigManager.getConfig("nether", NetherConfig.class);
+public class ChunkDecoratorOverworldHellAPI extends ChunkDecoratorAPI {
+	public final PerlinNoise treeDensityNoise;
+	public static HellConfig hellConfig = ConfigManager.getConfig("hell", HellConfig.class);
 	public static StructureFeatures structureFeatures = new StructureFeatures();
-	public static NetherOreFeatures oreFeatures = new NetherOreFeatures(netherConfig);
-	public static NetherRandomFeatures randomFeatures = new NetherRandomFeatures();
-	public static NetherBiomeFeatures biomeFeatures = new NetherBiomeFeatures();
-	protected ChunkDecoratorNetherAPI(World world) {
+	public static OverworldOreFeatures oreFeatures = new OverworldOreFeatures(hellConfig);
+	public static OverworldRandomFeatures randomFeatures = new OverworldRandomFeatures();
+	public static OverworldBiomeFeatures biomeFeatures = new OverworldBiomeFeatures();
+	protected ChunkDecoratorOverworldHellAPI(World world) {
 		super(world);
-	}
-
-	@Override
-	public void decorate(Chunk chunk) {
-		int chunkX = chunk.xPosition;
-		int chunkZ = chunk.zPosition;
-
-		int xCoord = chunkX * 16;
-		int zCoord = chunkZ * 16;
-		int yCoord = this.world.getHeightValue(xCoord + 16, zCoord + 16);
-
-		Biome biome = this.world.getBlockBiome(xCoord + 16, yCoord, zCoord + 16);
-
-		chunkSeed = (long)chunkX * 341873128712L + (long)chunkZ * 132897987541L;
-		Random random = new Random(chunkSeed);
-
-		parameterBase = new Parameters(biome, random, chunk, this);
-
-		BlockSand.fallInstantly = true;
-		decorateAPI();
-		BlockSand.fallInstantly = false;
+		this.treeDensityNoise = new PerlinNoise(world.getRandomSeed(), 8, 74);
 	}
 
 	@Override
@@ -53,12 +34,16 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 	public void decorateAPI() {
 		int xCoord = parameterBase.chunk.xPosition * 16;
 		int zCoord = parameterBase.chunk.zPosition * 16;
+
 		generateStructures(parameterBase.biome, parameterBase.chunk, parameterBase.random);
 		generateOreFeatures(parameterBase.biome, xCoord, zCoord, parameterBase.random, parameterBase.chunk);
 		generateBiomeFeature(parameterBase.biome,xCoord, zCoord, parameterBase.random, parameterBase.chunk);
 		generateRandomFeatures(parameterBase.biome,xCoord, zCoord, parameterBase.random, parameterBase.chunk);
-	}
 
+		if (this.world.getBlockId(xCoord, minY + this.world.getWorldType().getOceanY() - 1, zCoord) == this.world.getWorldType().getOceanBlock()) {
+			this.world.setBlockWithNotify(xCoord, minY + this.world.getWorldType().getOceanY() - 1, zCoord, this.world.getWorldType().getOceanBlock());
+		}
+	}
 	@ApiStatus.Internal
 	public void generateStructures(Biome biome, Chunk chunk, Random random){
 		int featureSize = structureFeatures.featureFunctionList.size();

@@ -1,23 +1,17 @@
 package useless.terrainapi.generation.overworld.api;
 
-import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockSand;
-import net.minecraft.core.block.material.Material;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
-import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.feature.WorldFeature;
-import net.minecraft.core.world.generate.feature.WorldFeatureLake;
-import net.minecraft.core.world.generate.feature.WorldFeatureLiquid;
 import net.minecraft.core.world.noise.PerlinNoise;
 import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.config.ConfigManager;
-import useless.terrainapi.generation.overworld.OverworldConfig;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.StructureFeatures;
 import useless.terrainapi.generation.overworld.OverworldBiomeFeatures;
+import useless.terrainapi.generation.overworld.OverworldConfig;
 import useless.terrainapi.generation.overworld.OverworldOreFeatures;
 import useless.terrainapi.generation.overworld.OverworldRandomFeatures;
 
@@ -27,13 +21,11 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 	public static OverworldConfig overworldConfig = ConfigManager.getConfig("overworld", OverworldConfig.class);
 	public final PerlinNoise treeDensityNoise;
 	public final int treeDensityOverride;
-	private Parameters parameterBase;
 	public static StructureFeatures structureFeatures = new StructureFeatures();
 	public static OverworldOreFeatures oreFeatures = new OverworldOreFeatures(overworldConfig);
 	public static OverworldRandomFeatures randomFeatures = new OverworldRandomFeatures();
 	public static OverworldBiomeFeatures biomeFeatures = new OverworldBiomeFeatures();
-	public long chunkSeed;
-	protected ChunkDecoratorOverworldAPI(World world, int treeDensityOverride) {
+	public ChunkDecoratorOverworldAPI(World world, int treeDensityOverride) {
 		super(world);
 		this.treeDensityOverride = treeDensityOverride;
 		this.treeDensityNoise = new PerlinNoise(world.getRandomSeed(), 8, 74);
@@ -44,38 +36,14 @@ public class ChunkDecoratorOverworldAPI extends ChunkDecoratorAPI {
 	}
 	@Override
 	@ApiStatus.Internal
-	public void decorate(Chunk chunk) {
-		int chunkX = chunk.xPosition;
-		int chunkZ = chunk.zPosition;
-
-		int xCoord = chunkX * 16;
-		int zCoord = chunkZ * 16;
-		int yCoord = this.world.getHeightValue(xCoord + 16, zCoord + 16);
-
-		Biome biome = this.world.getBlockBiome(xCoord + 16, yCoord, zCoord + 16);
-
-		Random random = new Random(this.world.getRandomSeed());
-		long l1 = random.nextLong() / 2L * 2L + 1L;
-		long l2 = random.nextLong() / 2L * 2L + 1L;
-		chunkSeed = (long)chunkX * l1 + (long)chunkZ * l2 ^ this.world.getRandomSeed();
-		random.setSeed(chunkSeed);
-
-		BlockSand.fallInstantly = true;
-
-		parameterBase = new Parameters(biome, random, chunk, this);
-
-		generateStructures(biome, chunk, random);
-		generateOreFeatures(biome, xCoord, zCoord, random, chunk);
-		generateBiomeFeature(biome,xCoord, zCoord, random, chunk);
-		generateRandomFeatures(biome,xCoord, zCoord, random, chunk);
-
-		generateWithChancesUnderground(new WorldFeatureLiquid(Block.fluidWaterFlowing.id), 50, rangeY, xCoord, zCoord, 8, 8, random);
-		generateWithChancesUnderground(new WorldFeatureLiquid(Block.fluidLavaFlowing.id), 20, rangeY, xCoord, zCoord, 8, 8, random);
-
+	public void decorateAPI() {
+		int xCoord = parameterBase.chunk.xPosition * 16;
+		int zCoord = parameterBase.chunk.zPosition * 16;
+		generateStructures(parameterBase.biome, parameterBase.chunk, parameterBase.random);
+		generateOreFeatures(parameterBase.biome, xCoord, zCoord, parameterBase.random, parameterBase.chunk);
+		generateBiomeFeature(parameterBase.biome,xCoord, zCoord, parameterBase.random, parameterBase.chunk);
+		generateRandomFeatures(parameterBase.biome,xCoord, zCoord, parameterBase.random, parameterBase.chunk);
 		freezeSurface(xCoord, zCoord);
-
-		BlockSand.fallInstantly = false;
-
 	}
 	@ApiStatus.Internal
 	public void generateStructures(Biome biome, Chunk chunk, Random random){

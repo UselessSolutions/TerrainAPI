@@ -1,55 +1,36 @@
-package useless.terrainapi.generation.nether.api;
+package useless.terrainapi.generation.retro.api;
 
-import net.minecraft.core.block.BlockSand;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.generate.feature.WorldFeature;
+import net.minecraft.core.world.noise.RetroPerlinNoise;
 import org.jetbrains.annotations.ApiStatus;
 import useless.terrainapi.config.ConfigManager;
-import useless.terrainapi.generation.nether.NetherConfig;
 import useless.terrainapi.generation.ChunkDecoratorAPI;
 import useless.terrainapi.generation.Parameters;
 import useless.terrainapi.generation.StructureFeatures;
-import useless.terrainapi.generation.nether.NetherBiomeFeatures;
-import useless.terrainapi.generation.nether.NetherOreFeatures;
-import useless.terrainapi.generation.nether.NetherRandomFeatures;
+import useless.terrainapi.generation.overworld.OverworldBiomeFeatures;
+import useless.terrainapi.generation.overworld.OverworldOreFeatures;
+import useless.terrainapi.generation.overworld.OverworldRandomFeatures;
+import useless.terrainapi.generation.retro.RetroConfig;
 
 import java.util.Random;
 
-public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
-	public static NetherConfig netherConfig = ConfigManager.getConfig("nether", NetherConfig.class);
+public class ChunkDecoratorRetroAPI extends ChunkDecoratorAPI {
+	public static RetroConfig retroConfig = ConfigManager.getConfig("retro", RetroConfig.class);
+	public final RetroPerlinNoise treeDensityNoise;
+	public final boolean snowCovered;
 	public static StructureFeatures structureFeatures = new StructureFeatures();
-	public static NetherOreFeatures oreFeatures = new NetherOreFeatures(netherConfig);
-	public static NetherRandomFeatures randomFeatures = new NetherRandomFeatures();
-	public static NetherBiomeFeatures biomeFeatures = new NetherBiomeFeatures();
-	protected ChunkDecoratorNetherAPI(World world) {
+	public static OverworldOreFeatures oreFeatures = new OverworldOreFeatures(retroConfig);
+	public static OverworldRandomFeatures randomFeatures = new OverworldRandomFeatures();
+	public static OverworldBiomeFeatures biomeFeatures = new OverworldBiomeFeatures();
+	protected ChunkDecoratorRetroAPI(World world) {
 		super(world);
+		this.treeDensityNoise = new RetroPerlinNoise(world.getRandomSeed(), 8, 74);
+		this.snowCovered = false;
 	}
-
 	@Override
-	public void decorate(Chunk chunk) {
-		int chunkX = chunk.xPosition;
-		int chunkZ = chunk.zPosition;
-
-		int xCoord = chunkX * 16;
-		int zCoord = chunkZ * 16;
-		int yCoord = this.world.getHeightValue(xCoord + 16, zCoord + 16);
-
-		Biome biome = this.world.getBlockBiome(xCoord + 16, yCoord, zCoord + 16);
-
-		chunkSeed = (long)chunkX * 341873128712L + (long)chunkZ * 132897987541L;
-		Random random = new Random(chunkSeed);
-
-		parameterBase = new Parameters(biome, random, chunk, this);
-
-		BlockSand.fallInstantly = true;
-		decorateAPI();
-		BlockSand.fallInstantly = false;
-	}
-
-	@Override
-	@ApiStatus.Internal
 	public void decorateAPI() {
 		int xCoord = parameterBase.chunk.xPosition * 16;
 		int zCoord = parameterBase.chunk.zPosition * 16;
@@ -57,6 +38,7 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 		generateOreFeatures(parameterBase.biome, xCoord, zCoord, parameterBase.random, parameterBase.chunk);
 		generateBiomeFeature(parameterBase.biome,xCoord, zCoord, parameterBase.random, parameterBase.chunk);
 		generateRandomFeatures(parameterBase.biome,xCoord, zCoord, parameterBase.random, parameterBase.chunk);
+		freezeSurface(xCoord, zCoord);
 	}
 
 	@ApiStatus.Internal

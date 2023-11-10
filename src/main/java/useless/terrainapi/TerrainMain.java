@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import useless.terrainapi.api.TerrainAPI;
 import useless.terrainapi.config.ConfigManager;
+import useless.terrainapi.initialization.TerrainInitialization;
 
 
 public class TerrainMain implements ModInitializer {

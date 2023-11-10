@@ -21,7 +21,7 @@
 			"useless.terrainapi.TerrainMain"
     ],
 		"terrain-api": [
-			"useless.terrainapi.TerrainInitialization"
+          "useless.terrainapi.initialization.TerrainInitialization"
 		]
   },
   "mixins": [
