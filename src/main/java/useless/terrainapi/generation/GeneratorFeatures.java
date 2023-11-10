@@ -15,7 +15,7 @@ public class GeneratorFeatures {
 	/**Adds a world feature entry
 	 * @param featureFunction Function that takes a Parameters object and returns a WorldFeature
 	 * @param featureParameters Object[] of additional parameters that will be included with the Parameters object passed into the feature function
-	 * @param densityFunction Function that takes a Parameters object and returns an Integer
+	 * @param densityFunction Function that takes a Parameters object and returns an Integer representing the number of attempts per chunk
 	 * @param densityParameters Object[] of additional parameters that will be included with the Parameters object passed into the density function
 	 */
 	public void addComplexFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters){
