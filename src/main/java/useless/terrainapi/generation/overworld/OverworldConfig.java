@@ -5,8 +5,10 @@ import com.google.gson.annotations.SerializedName;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.data.registry.Registries;
 import net.minecraft.core.world.biome.Biome;
+import org.jetbrains.annotations.NotNull;
 import useless.terrainapi.config.OreConfig;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 
 public class OverworldConfig extends OreConfig {
@@ -26,9 +28,11 @@ public class OverworldConfig extends OreConfig {
 		}
 		biomeRandomGrassBlock.put(Registries.BIOMES.getKey(biome), block.getKey());
 	}
+	@Nullable
 	public Block getRandomGrassBlock(Biome biome){
 		return Block.getBlockByName(biomeRandomGrassBlock.get(Registries.BIOMES.getKey(biome)));
 	}
+	@NotNull
 	public Block getRandomGrassBlock(Biome biome, Block defaultValue){
 		Block returnBlock = Block.getBlockByName(biomeRandomGrassBlock.get(Registries.BIOMES.getKey(biome)));
 		if (returnBlock == null){
@@ -42,9 +46,11 @@ public class OverworldConfig extends OreConfig {
 		}
 		grassDensityMap.put(Registries.BIOMES.getKey(biome), density);
 	}
+	@Nullable
 	public Integer getGrassDensity(Biome biome){
 		return grassDensityMap.get(Registries.BIOMES.getKey(biome));
 	}
+	@NotNull
 	public Integer getGrassDensity(Biome biome, int defaultValue){
 		return grassDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
 	}
@@ -55,9 +61,11 @@ public class OverworldConfig extends OreConfig {
 		}
 		flowerDensityMap.put(Registries.BIOMES.getKey(biome), density);
 	}
+	@Nullable
 	public Integer getFlowerDensity(Biome biome){
 		return flowerDensityMap.get(Registries.BIOMES.getKey(biome));
 	}
+	@NotNull
 	public Integer getFlowerDensity(Biome biome, int defaultValue){
 		return flowerDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
 	}
@@ -68,9 +76,11 @@ public class OverworldConfig extends OreConfig {
 		}
 		yellowFlowerDensityMap.put(Registries.BIOMES.getKey(biome), density);
 	}
+	@Nullable
 	public Integer getYellowFlowerDensity(Biome biome){
 		return yellowFlowerDensityMap.get(Registries.BIOMES.getKey(biome));
 	}
+	@NotNull
 	public Integer getYellowFlowerDensity(Biome biome, int defaultValue){
 		return yellowFlowerDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
 	}
@@ -81,9 +91,12 @@ public class OverworldConfig extends OreConfig {
 		}
 		treeDensityMap.put(Registries.BIOMES.getKey(biome), density);
 	}
+	@Nullable
 	public Integer getTreeDensity(Biome biome){
 		return treeDensityMap.get(Registries.BIOMES.getKey(biome));
-	}public Integer getTreeDensity(Biome biome, int defaultValue){
+	}
+	@NotNull
+	public Integer getTreeDensity(Biome biome, int defaultValue){
 		return treeDensityMap.getOrDefault(Registries.BIOMES.getKey(biome), defaultValue);
 	}
 }
