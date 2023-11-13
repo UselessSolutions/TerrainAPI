@@ -124,9 +124,10 @@ public class HellFunctions {
 	}
 
 	/**Vanilla hell tree generator
-	 * @param parameters Parameters Container, takes two custom parameters getTreeFeature function and getTreeDensity function
+	 * @param parameters Parameters Container
 	 * @return null
 	 */
+	@Deprecated
 	public static Void generateTrees(Parameters parameters){
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;

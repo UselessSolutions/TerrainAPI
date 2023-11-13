@@ -7,6 +7,7 @@ import net.minecraft.core.data.registry.Registries;
 import net.minecraft.core.world.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 import useless.terrainapi.config.OreConfig;
+import useless.terrainapi.util.Utilities;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class OverworldConfig extends OreConfig {
 	 */
 	@Nullable
 	public Block getRandomGrassBlock(Biome biome){
-		return Block.getBlockByName(biomeRandomGrassBlock.get(Registries.BIOMES.getKey(biome)));
+		return Utilities.getBlock(biomeRandomGrassBlock.get(Registries.BIOMES.getKey(biome)));
 	}
 
 	/**
@@ -48,7 +49,7 @@ public class OverworldConfig extends OreConfig {
 	 */
 	@NotNull
 	public Block getRandomGrassBlock(Biome biome, Block defaultValue){
-		Block returnBlock = Block.getBlockByName(biomeRandomGrassBlock.get(Registries.BIOMES.getKey(biome)));
+		Block returnBlock = Utilities.getBlock(biomeRandomGrassBlock.get(Registries.BIOMES.getKey(biome)));
 		if (returnBlock == null){
 			returnBlock = defaultValue;
 		}

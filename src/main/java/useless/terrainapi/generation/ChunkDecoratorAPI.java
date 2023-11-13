@@ -11,6 +11,7 @@ import net.minecraft.core.world.type.WorldTypes;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Random;
+import java.util.function.Function;
 
 public abstract class ChunkDecoratorAPI implements ChunkDecorator {
 	public final World world;
@@ -62,11 +63,24 @@ public abstract class ChunkDecoratorAPI implements ChunkDecorator {
 	public abstract void generateRandomFeatures(Biome biome, int x, int z, Random random, Chunk chunk);
 	@ApiStatus.Internal
 	public abstract void generateBiomeFeature(Biome biome, int x, int z, Random random, Chunk chunk);
+	/**
+	 * @Deprecated Implementation causes world features to be decided before generating multiple instead of each attempt creating patches of "clone" world features
+	 */
 	@ApiStatus.Internal
+	@Deprecated
 	public void generateWithChancesUnderground(WorldFeature worldFeature, float chances, int rangeY, int x, int z, Random random){
 		generateWithChancesUnderground(worldFeature, chances, rangeY, x, z, 0, 0, random);
 	}
 	@ApiStatus.Internal
+	public void generateWithChancesUnderground(Function<Parameters, WorldFeature> featureFunction, Parameters parameters, float chances, int rangeY, int x, int z, Random random){
+		generateWithChancesUnderground(featureFunction, parameters, chances, rangeY, x, z, 0, 0, random);
+	}
+
+	/**
+	 * @Deprecated Implementation causes world features to be decided before generating multiple instead of each attempt creating patches of "clone" world features
+	 */
+	@ApiStatus.Internal
+	@Deprecated
 	public void generateWithChancesUnderground(WorldFeature worldFeature, float chances, int rangeY, int x, int z, int xOff, int zOff, Random random){
 		for (int i = 0; i < chances; i++) {
 			int posX = x + random.nextInt(16) + xOff;
@@ -76,16 +90,46 @@ public abstract class ChunkDecoratorAPI implements ChunkDecorator {
 		}
 	}
 	@ApiStatus.Internal
+	public void generateWithChancesUnderground(Function<Parameters, WorldFeature> featureFunction, Parameters parameters, float chances, int rangeY, int x, int z, int xOff, int zOff, Random random){
+		for (int i = 0; i < chances; i++) {
+			int posX = x + random.nextInt(16) + xOff;
+			int posY = minY + random.nextInt(rangeY);
+			int posZ = z + random.nextInt(16) + zOff;
+			featureFunction.apply(parameters).generate(world, random, posX, posY, posZ);
+		}
+	}
+	/**
+	 * @Deprecated Implementation causes world features to be decided before generating multiple instead of each attempt creating patches of "clone" world features
+	 */
+	@ApiStatus.Internal
+	@Deprecated
 	public void generateWithChancesSurface(WorldFeature worldFeature, float chances, int x, int z, Random random){
 		generateWithChancesSurface(worldFeature, chances, x, z, 0, 0, random);
 	}
 	@ApiStatus.Internal
+	public void generateWithChancesSurface(Function<Parameters, WorldFeature> featureFunction, Parameters parameters, float chances, int x, int z, Random random){
+		generateWithChancesSurface(featureFunction, parameters, chances, x, z, 0, 0, random);
+	}
+	/**
+	 * @Deprecated Implementation causes world features to be decided before generating multiple instead of each attempt creating patches of "clone" world features
+	 */
+	@ApiStatus.Internal
+	@Deprecated
 	public void generateWithChancesSurface(WorldFeature worldFeature, float chances, int x, int z, int xOff, int zOff, Random random){
 		for (int i = 0; i < chances; i++) {
 			int posX = x + random.nextInt(16) + xOff;
 			int posZ = z + random.nextInt(16) + zOff;
 			int posY = this.world.getHeightValue(posX, posZ);
 			worldFeature.generate(world, random, posX, posY, posZ);
+		}
+	}
+	@ApiStatus.Internal
+	public void generateWithChancesSurface(Function<Parameters, WorldFeature> featureFunction, Parameters parameters, float chances, int x, int z, int xOff, int zOff, Random random){
+		for (int i = 0; i < chances; i++) {
+			int posX = x + random.nextInt(16) + xOff;
+			int posZ = z + random.nextInt(16) + zOff;
+			int posY = this.world.getHeightValue(posX, posZ);
+			featureFunction.apply(parameters).generate(world, random, posX, posY, posZ);
 		}
 	}
 	@ApiStatus.Internal

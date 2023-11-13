@@ -32,7 +32,6 @@ public class HellInitialization extends BaseInitialization {
 		structureFeatures.addFeature(HellFunctions::generateRandomFluid, new Object[]{50, Block.fluidWaterFlowing.id});
 		structureFeatures.addFeature(OverworldFunctions::generateDungeons, null);
 		structureFeatures.addFeature(HellFunctions::generateLabyrinths, null);
-		structureFeatures.addFeature(HellFunctions::generateTrees, null);
 		structureFeatures.addFeature(OverworldFunctions::generateRandomFluid, new Object[]{5, Block.fluidWaterFlowing.id});
 		structureFeatures.addFeature(HellFunctions::generateRandomFluid, new Object[]{20, Block.fluidLavaFlowing.id});
 	}
@@ -58,6 +57,7 @@ public class HellInitialization extends BaseInitialization {
 
 	@Override
 	protected void initBiome() {
+		biomeFeatures.addFeature(HellFunctions::getTreeFeature, null, HellFunctions::getTreeDensity, null, -1f);
 		biomeFeatures.addFeature(new WorldFeatureDeadBush(Block.deadbush.id), 1, 10, null);
 	}
 }
