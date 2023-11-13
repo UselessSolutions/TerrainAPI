@@ -17,12 +17,17 @@ public class TerrainMain implements ModInitializer {
 	public static final Gson GSON = (new GsonBuilder()).setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
     public static final String MOD_ID = "terrain-api";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	/**
+	 * Prevents accidental use of API Features outside the proper initialization environment
+	 */
+	public static boolean LOCK_API = true;
     @Override
     public void onInitialize() {
         LOGGER.info("TerrainMain initialized.");
     }
 	@ApiStatus.Internal
 	public static void loadModules(){
+		LOCK_API = false;
 		new TerrainInitialization().onInitialize();
 		FabricLoader.getInstance().getEntrypoints("terrain-api", TerrainAPI.class).forEach(api -> {
 			// Make sure the method is implemented
@@ -33,5 +38,6 @@ public class TerrainMain implements ModInitializer {
 			}
 		});
 		ConfigManager.saveAll();
+		LOCK_API = true;
 	}
 }
