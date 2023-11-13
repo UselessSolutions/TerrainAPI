@@ -2,6 +2,7 @@ package useless.terrainapi.generation;
 
 import net.minecraft.core.world.generate.feature.WorldFeature;
 import org.jetbrains.annotations.ApiStatus;
+import useless.terrainapi.TerrainMain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,9 @@ public class GeneratorFeatures {
 	 * @param densityParameters Object[] of additional parameters that will be included with the Parameters object passed into the density function
 	 */
 	public void addFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters){
+		if (TerrainMain.LOCK_API){
+			throw new RuntimeException("Illegal use of Terrain Initialization outside of the main terrain-api entrypoint loop!!!");
+		}
 		featureFunctionsList.add(featureFunction);
 		featureParametersList.add(featureParameters);
 		densityFunctionsList.add(densityFunction);
