@@ -1,7 +1,9 @@
 package useless.terrainapi.util;
 
+import net.minecraft.core.block.Block;
 import net.minecraft.core.data.registry.Registries;
 import net.minecraft.core.world.biome.Biome;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
 
@@ -52,5 +54,17 @@ public class Utilities {
 		System.arraycopy(b, 0, c, aLen, bLen);
 
 		return c;
+	}
+
+	/**Finds a block by its block key
+	 * @param key Block Key
+	 * @return Block if Block exists, null otherwise
+	 */
+	@Nullable
+	public static Block getBlock(String key){
+		if (key == null){
+			return null;
+		}
+		return Block.getBlockByName(key);
 	}
 }

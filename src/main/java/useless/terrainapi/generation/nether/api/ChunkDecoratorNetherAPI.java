@@ -16,6 +16,7 @@ import useless.terrainapi.generation.nether.NetherOreFeatures;
 import useless.terrainapi.generation.nether.NetherRandomFeatures;
 
 import java.util.Random;
+import java.util.function.Function;
 
 public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 	public static NetherConfig netherConfig = ConfigManager.getConfig("nether", NetherConfig.class);
@@ -71,14 +72,13 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 	public void generateOreFeatures(Biome biome, int x, int z, Random random, Chunk chunk){
 		int featureSize = oreFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
-			WorldFeature feature = oreFeatures.featureFunctionsList.get(i)
-				.apply(new Parameters(parameterBase, oreFeatures.featureParametersList.get(i)));
-
 			int density = oreFeatures.densityFunctionsList.get(i)
 				.apply(new Parameters(parameterBase, oreFeatures.densityParametersList.get(i)));
 
 			float rangeModifier = oreFeatures.rangeModifierList.get(i);
-			generateWithChancesUnderground(feature, density, (int) (rangeModifier * rangeY), x, z, random);
+			generateWithChancesUnderground(oreFeatures.featureFunctionsList.get(i),
+				new Parameters(parameterBase, oreFeatures.featureParametersList.get(i)),
+				density, (int) (rangeModifier * rangeY), x, z, random);
 		}
 	}
 	@ApiStatus.Internal
@@ -86,17 +86,20 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 		int featureSize = randomFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
 			if (random.nextInt(randomFeatures.inverseProbabilityList.get(i)) != 0) {continue;}
-			WorldFeature feature = randomFeatures.featureFunctionsList.get(i)
-				.apply(new Parameters(parameterBase, randomFeatures.featureParametersList.get(i)));
+			Function<Parameters, WorldFeature> featureFunction = randomFeatures.featureFunctionsList.get(i);
 
 			int density = randomFeatures.densityFunctionsList.get(i)
 				.apply(new Parameters(parameterBase, randomFeatures.densityParametersList.get(i)));
 
 			float rangeModifier = randomFeatures.rangeModifierList.get(i);
 			if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
-				generateWithChancesSurface(feature, density, x, z, 8, 8, random);
+				generateWithChancesSurface(featureFunction,
+					new Parameters(parameterBase, randomFeatures.featureParametersList.get(i)),
+					density, x, z, 8, 8, random);
 			} else {
-				generateWithChancesUnderground(feature, density, (int) (rangeModifier * rangeY), x, z, 8, 8, random);
+				generateWithChancesUnderground(featureFunction,
+					new Parameters(parameterBase, randomFeatures.featureParametersList.get(i)),
+					density, (int) (rangeModifier * rangeY), x, z, 8, 8, random);
 			}
 		}
 	}
@@ -104,17 +107,20 @@ public class ChunkDecoratorNetherAPI extends ChunkDecoratorAPI {
 	public void generateBiomeFeature(Biome biome, int x, int z, Random random, Chunk chunk){
 		int featureSize = biomeFeatures.featureFunctionsList.size();
 		for (int i = 0; i < featureSize; i++) {
-			WorldFeature feature = biomeFeatures.featureFunctionsList.get(i)
-				.apply(new Parameters(parameterBase, biomeFeatures.featureParametersList.get(i)));
+			Function<Parameters, WorldFeature> featureFunction = biomeFeatures.featureFunctionsList.get(i);
 
 			int density = biomeFeatures.densityFunctionsList.get(i)
 				.apply(new Parameters(parameterBase, biomeFeatures.densityParametersList.get(i)));
 
 			float rangeModifier = biomeFeatures.rangeModifierList.get(i);
 			if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
-				generateWithChancesSurface(feature, density, x, z, 8, 8, random);
+				generateWithChancesSurface(featureFunction,
+					new Parameters(parameterBase, biomeFeatures.featureParametersList.get(i)),
+					density, x, z, 8, 8, random);
 			} else {
-				generateWithChancesUnderground(feature, density, (int) (rangeModifier * rangeY), x, z, 8, 8, random);
+				generateWithChancesUnderground(featureFunction,
+					new Parameters(parameterBase, biomeFeatures.featureParametersList.get(i)),
+					density, (int) (rangeModifier * rangeY), x, z, 8, 8, random);
 			}
 		}
 	}

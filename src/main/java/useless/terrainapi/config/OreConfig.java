@@ -33,7 +33,11 @@ public class OreConfig extends APIConfig {
 	 * @param range Value from [0, 1], it's the fraction from the bottom of the world to the surface that the ore can generate
 	 */
 	public void setOreValues(String modID, Block block, int clusterSize, int chances, float range){
-		if (this.clusterSize.get(block.getKey()) != null){
+		String key = block.getKey();
+		if (this.clusterSize.containsKey(key) && this.getConfigOverride()){
+			return;
+		}
+		if (this.clusterSize.getOrDefault(key, clusterSize) != clusterSize || this.chancesPerChunk.getOrDefault(key, chances) != chances || this.verticalRange.getOrDefault(key, range) != range){
 			TerrainMain.LOGGER.warn(modID + String.format(" has changed block %s to generate %d blocks with %d chances and a range of %f", block.getKey(), clusterSize, chances, range));
 		}
 		setOreValues(block, clusterSize, chances, range);
@@ -46,9 +50,6 @@ public class OreConfig extends APIConfig {
 	 */
 	@ApiStatus.Internal
 	protected void setOreValues(Block block, int clusterSize, int chances, float range){
-		if (this.clusterSize.containsKey(block.getKey()) && this.getConfigOverride()){
-			return;
-		}
 		this.clusterSize.put(block.getKey(), clusterSize);
 		this.chancesPerChunk.put(block.getKey(), chances);
 		this.verticalRange.put(block.getKey(), range);

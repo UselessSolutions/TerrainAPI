@@ -63,6 +63,7 @@ public class RetroFunctions {
 	 * @param parameters Parameters Container, takes two custom parameters getTreeFeature function and getTreeDensity function
 	 * @return null
 	 */
+	@Deprecated
 	public static Void generateTrees(Parameters parameters){
 		int x = parameters.chunk.xPosition * 16;
 		int z = parameters.chunk.zPosition * 16;
