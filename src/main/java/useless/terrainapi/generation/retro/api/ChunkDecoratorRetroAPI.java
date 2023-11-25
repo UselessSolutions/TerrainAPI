@@ -57,10 +57,11 @@ public class ChunkDecoratorRetroAPI extends ChunkDecoratorAPI {
 			int density = oreFeatures.densityFunctionsList.get(i)
 				.apply(new Parameters(parameterBase, oreFeatures.densityParametersList.get(i)));
 
-			float rangeModifier = oreFeatures.rangeModifierList.get(i);
+			float startingRange = oreFeatures.startingRangeList.get(i);
+			float endingRange = oreFeatures.endingRangeList.get(i);
 			generateWithChancesUnderground(oreFeatures.featureFunctionsList.get(i),
 				new Parameters(parameterBase, oreFeatures.featureParametersList.get(i)),
-				density, (int) (rangeModifier * rangeY), x, z, random);
+				density, (int) (startingRange * rangeY), (int) (endingRange * rangeY), x, z, random);
 		}
 	}
 	@ApiStatus.Internal
@@ -73,15 +74,16 @@ public class ChunkDecoratorRetroAPI extends ChunkDecoratorAPI {
 			int density = randomFeatures.densityFunctionsList.get(i)
 				.apply(new Parameters(parameterBase, randomFeatures.densityParametersList.get(i)));
 
-			float rangeModifier = randomFeatures.rangeModifierList.get(i);
-			if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
+			float startingRange = randomFeatures.startingRangeList.get(i);
+			float endingRange = randomFeatures.endingRangeList.get(i);
+			if (-1.01 <= startingRange && startingRange <= -0.99 || -1.01 <= endingRange && endingRange <= -0.99){
 				generateWithChancesSurface(featureFunction,
 					new Parameters(parameterBase, randomFeatures.featureParametersList.get(i)),
 					density, x, z, 8, 8, random);
 			} else {
 				generateWithChancesUnderground(featureFunction,
 					new Parameters(parameterBase, randomFeatures.featureParametersList.get(i)),
-					density, (int) (rangeModifier * rangeY), x, z, 8, 8, random);
+					density, (int) (startingRange * rangeY), (int) (endingRange * rangeY), x, z, 8, 8, random);
 			}
 		}
 	}
@@ -94,15 +96,16 @@ public class ChunkDecoratorRetroAPI extends ChunkDecoratorAPI {
 			int density = biomeFeatures.densityFunctionsList.get(i)
 				.apply(new Parameters(parameterBase, biomeFeatures.densityParametersList.get(i)));
 
-			float rangeModifier = biomeFeatures.rangeModifierList.get(i);
-			if (-1.01 <= rangeModifier && rangeModifier <= -0.99){
+			float startingRange = biomeFeatures.startingRangeList.get(i);
+			float endingRange = biomeFeatures.endingRangeList.get(i);
+			if (-1.01 <= startingRange && startingRange <= -0.99 || -1.01 <= endingRange && endingRange <= -0.99){
 				generateWithChancesSurface(featureFunction,
 					new Parameters(parameterBase, biomeFeatures.featureParametersList.get(i)),
 					density, x, z, 8, 8, random);
 			} else {
 				generateWithChancesUnderground(featureFunction,
 					new Parameters(parameterBase, biomeFeatures.featureParametersList.get(i)),
-					density, (int) (rangeModifier * rangeY), x, z, 8, 8, random);
+					density, (int) (startingRange * rangeY), (int) (endingRange * rangeY), x, z, 8, 8, random);
 			}
 		}
 	}

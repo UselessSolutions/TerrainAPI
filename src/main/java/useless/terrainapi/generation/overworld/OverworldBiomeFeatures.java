@@ -12,7 +12,9 @@ import java.util.function.Function;
 
 public class OverworldBiomeFeatures extends GeneratorFeatures {
 	@ApiStatus.Internal
-	public List<Float> rangeModifierList = new ArrayList<>();
+	public List<Float> startingRangeList = new ArrayList<>();
+	@ApiStatus.Internal
+	public List<Float> endingRangeList = new ArrayList<>();
 
 	/**Adds a world feature entry
 	 * @param feature WorldFeature to generate
@@ -41,7 +43,20 @@ public class OverworldBiomeFeatures extends GeneratorFeatures {
 	 * @param rangeModifier Fraction of the world from the bottom to the surface to generate inside, a value of -1 indicates to spawn on the surface only
 	 */
 	public void addFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters, float rangeModifier){
+		addFeature(featureFunction, featureParameters, densityFunction, densityParameters, 0, rangeModifier);
+	}
+
+	/**Adds a world feature entry
+	 * @param featureFunction Function that takes a Parameters object and returns a WorldFeature
+	 * @param featureParameters Object[] of additional parameters that will be included with the Parameters object passed into the feature function
+	 * @param densityFunction Function that takes a Parameters object and returns an Integer representing the number of attempts per chunk
+	 * @param densityParameters Object[] of additional parameters that will be included with the Parameters object passed into the density function
+	 * @param startingRange Fraction of the world from the bottom to the surface to generate inside, a value of -1 indicates to spawn on the surface only
+	 * @param endingRange Fraction of the world from the bottom to the surface to generate inside, a value of -1 indicates to spawn on the surface only
+	 */
+	public void addFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters, float startingRange, float endingRange){
 		super.addFeature(featureFunction, featureParameters, densityFunction, densityParameters);
-		rangeModifierList.add(rangeModifier);
+		startingRangeList.add(startingRange);
+		endingRangeList.add(endingRange);
 	}
 }

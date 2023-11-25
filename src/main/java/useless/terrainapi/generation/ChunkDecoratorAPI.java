@@ -72,8 +72,8 @@ public abstract class ChunkDecoratorAPI implements ChunkDecorator {
 		generateWithChancesUnderground(worldFeature, chances, rangeY, x, z, 0, 0, random);
 	}
 	@ApiStatus.Internal
-	public void generateWithChancesUnderground(Function<Parameters, WorldFeature> featureFunction, Parameters parameters, float chances, int rangeY, int x, int z, Random random){
-		generateWithChancesUnderground(featureFunction, parameters, chances, rangeY, x, z, 0, 0, random);
+	public void generateWithChancesUnderground(Function<Parameters, WorldFeature> featureFunction, Parameters parameters, float chances, int startingY, int endingY, int x, int z, Random random){
+		generateWithChancesUnderground(featureFunction, parameters, chances, startingY, endingY, x, z, 0, 0, random);
 	}
 
 	/**
@@ -90,10 +90,11 @@ public abstract class ChunkDecoratorAPI implements ChunkDecorator {
 		}
 	}
 	@ApiStatus.Internal
-	public void generateWithChancesUnderground(Function<Parameters, WorldFeature> featureFunction, Parameters parameters, float chances, int rangeY, int x, int z, int xOff, int zOff, Random random){
+	public void generateWithChancesUnderground(Function<Parameters, WorldFeature> featureFunction, Parameters parameters, float chances, int startingY, int endingY, int x, int z, int xOff, int zOff, Random random){
 		for (int i = 0; i < chances; i++) {
 			int posX = x + random.nextInt(16) + xOff;
-			int posY = minY + random.nextInt(rangeY);
+			int offset = endingY - startingY >= 1 ? random.nextInt(endingY - startingY) : 0;
+			int posY = minY + startingY + offset;
 			int posZ = z + random.nextInt(16) + zOff;
 			featureFunction.apply(parameters).generate(world, random, posX, posY, posZ);
 		}
