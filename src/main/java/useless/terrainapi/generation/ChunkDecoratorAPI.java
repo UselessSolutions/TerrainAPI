@@ -48,10 +48,12 @@ public abstract class ChunkDecoratorAPI implements ChunkDecorator {
 		parameterBase = new Parameters(biome, random, chunk, this);
 
 		BlockSand.fallInstantly = true;
+		world.scheduledUpdatesAreImmediate = true;
 
 		decorateAPI();
 
 		BlockSand.fallInstantly = false;
+		world.scheduledUpdatesAreImmediate = false;
 	}
 	@ApiStatus.Internal
 	public abstract void decorateAPI();
