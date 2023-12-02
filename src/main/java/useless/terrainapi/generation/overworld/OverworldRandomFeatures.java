@@ -65,7 +65,7 @@ public class OverworldRandomFeatures extends GeneratorFeatures {
 	 * @param startingRange Fraction of the world from the bottom to the surface to generate inside, a value of -1 indicates to spawn on the surface only
 	 * @param endingRange Fraction of the world from the bottom to the surface to generate inside, a value of -1 indicates to spawn on the surface only
 	 */
-	public void addFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters, int inverseProbability, float endingRange, float startingRange){
+	public void addFeature(Function<Parameters, WorldFeature> featureFunction, Object[] featureParameters, Function<Parameters, Integer> densityFunction, Object[] densityParameters, int inverseProbability, float startingRange, float endingRange){
 		super.addFeature(featureFunction, featureParameters, densityFunction, densityParameters);
 		endingRangeList.add(endingRange);
 		startingRangeList.add(startingRange);
