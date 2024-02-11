@@ -5,13 +5,13 @@ Add this in your `build.gradle`:
 ```groovy
 repositories {
     ivy {
-        url = "https://github.com/UselessBullets"
-        patternLayout {
-            artifact "[organisation]/releases/download/r[revision]/[module]-[revision].jar"
-            m2compatible = true
-        }
-        metadataSources { artifact() }
-    }
+		url = "https://github.com/UselessSolutions"
+		patternLayout {
+			artifact "[organisation]/releases/download/v[revision]/[module]-[revision].jar"
+			m2compatible = true
+		}
+		metadataSources { artifact() }
+	}
 }
 
 dependencies {
