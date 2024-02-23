@@ -1,6 +1,6 @@
 # TerrainAPI
 
-## How to include PrismaticLibe in a project
+## How to include TerrainAPI in a project
 Add this in your `build.gradle`:
 ```groovy
 repositories {
