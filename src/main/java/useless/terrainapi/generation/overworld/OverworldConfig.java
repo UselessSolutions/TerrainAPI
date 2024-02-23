@@ -25,7 +25,31 @@ public class OverworldConfig extends OreConfig {
 	public HashMap<String, Integer> treeDensityMap = new HashMap<>();
 	@Expose @SerializedName(value = "Lake Density")
 	public HashMap<String, Integer> lakeDensityMap = new HashMap<>();
+	@Expose @SerializedName(value = "World Feature Chance")
+	public HashMap<String, Integer> featureChanceMap = new HashMap<>();
 	public int defaultLakeDensity = 4;
+
+	/** Specifies the inverse of the chance of a world feature via key
+	 */
+	public void addFeatureChance(String modId, String key, int chanceINV) {
+		if (getConfigOverride() && getFeatureChance(modId, key) != null){
+			return;
+		}
+		featureChanceMap.put(modId + ":" + key, chanceINV);
+	}
+	/**
+	 * @return the inverse of the chance of a world feature via key
+	 */
+	@Nullable
+	public Integer getFeatureChance(String modId, String key){
+		return featureChanceMap.get(modId + ":" + key);
+	}
+	/**
+	 * @return the inverse of the chance of a world feature via key
+	 */
+	public int getFeatureChanceOrDefault(String modId, String key, int defaultValue){
+		return featureChanceMap.getOrDefault(modId + ":" + key, defaultValue);
+	}
 
 	/**Specifies the block to randomly replace some grass with in the specified biome
 	 */

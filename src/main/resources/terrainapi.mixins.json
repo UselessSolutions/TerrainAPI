@@ -4,8 +4,6 @@
   "package": "useless.terrainapi.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MinecraftMixin",
-    "MinecraftServerMixin",
     "worldtypes.WorldTypeFloatingMixin",
     "worldtypes.WorldTypeNetherMixin",
     "worldtypes.WorldTypeOverworldHellMixin",

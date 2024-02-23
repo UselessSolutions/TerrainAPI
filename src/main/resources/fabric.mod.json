@@ -21,8 +21,11 @@
     "main": [
 			"useless.terrainapi.TerrainMain"
     ],
+		"afterGameStart": [
+			"useless.terrainapi.TerrainMain"
+		],
 		"terrain-api": [
-          "useless.terrainapi.initialization.TerrainInitialization"
+			"useless.terrainapi.initialization.TerrainInitialization"
 		]
   },
   "mixins": [

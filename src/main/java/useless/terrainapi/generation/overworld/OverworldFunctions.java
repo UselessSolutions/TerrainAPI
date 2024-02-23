@@ -144,7 +144,7 @@ public class OverworldFunctions {
 			if (parameters.random.nextInt(5) == 0) {
 				yPos -= parameters.random.nextInt(10) + 30;
 			}
-			if (parameters.random.nextInt(700) != 0) continue;
+			if (parameters.random.nextInt((int)parameters.customParameters[0]) != 0) continue;
 			Random lRand = parameters.chunk.getChunkRandom(75644760L);
 			new WorldFeatureLabyrinth().generate(parameters.decorator.world, lRand, xPos, yPos, zPos);
 		}

@@ -70,11 +70,13 @@ public class OverworldInitialization extends BaseInitialization {
 
 	@Override
 	protected void initStructure() {
+		overworldConfig.addFeatureChance(TerrainMain.MOD_ID, "labyrinth", 700);
+
 		structureFeatures.addFeature(OverworldFunctions::generateSwamp, null);
 		structureFeatures.addFeature(OverworldFunctions::generateLakeFeature, null);
 		structureFeatures.addFeature(OverworldFunctions::generateLavaLakeFeature, null);
 		structureFeatures.addFeature(OverworldFunctions::generateDungeons, null);
-		structureFeatures.addFeature(OverworldFunctions::generateLabyrinths, null);
+		structureFeatures.addFeature(OverworldFunctions::generateLabyrinths, new Object[]{overworldConfig.getFeatureChanceOrDefault(TerrainMain.MOD_ID, "labyrinth", 700)});
 		structureFeatures.addFeature(OverworldFunctions::generateRandomFluid, new Object[]{50, Block.fluidWaterFlowing.id});
 		structureFeatures.addFeature(OverworldFunctions::generateRandomFluid, new Object[]{20, Block.fluidLavaFlowing.id});
 	}
