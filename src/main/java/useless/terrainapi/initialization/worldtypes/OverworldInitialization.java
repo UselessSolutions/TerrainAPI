@@ -84,7 +84,10 @@ public class OverworldInitialization extends BaseInitialization {
 	@Override
 	protected void initOre() {
 		String currentBlock = Block.blockClay.getKey();
-		oreFeatures.addFeature(new WorldFeatureClay(overworldConfig.clusterSize.get(currentBlock)), overworldConfig.chancesPerChunk.get(currentBlock), overworldConfig.verticalStartingRange.get(currentBlock));
+		oreFeatures.addFeature(
+			(x) -> new WorldFeatureClay(overworldConfig.clusterSize.get(currentBlock)), null,
+			OverworldFunctions::getStandardOreBiomesDensity, new Object[]{overworldConfig.chancesPerChunk.get(currentBlock), null},
+			overworldConfig.verticalStartingRange.get(currentBlock), overworldConfig.verticalEndingRange.get(currentBlock));
 		oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.dirt, 32, 20, 1f, false);
 		oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.gravel, 32, 10, 1f, false);
 		oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID,Block.oreCoalStone, 16, 20, 1f, true);
