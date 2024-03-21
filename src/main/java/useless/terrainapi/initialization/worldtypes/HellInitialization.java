@@ -39,7 +39,10 @@ public class HellInitialization extends BaseInitialization {
 	@Override
 	protected void initOre() {
 		String blockKey = Block.blockClay.getKey();
-		oreFeatures.addFeature(new WorldFeatureClay(hellConfig.clusterSize.get(blockKey)), hellConfig.chancesPerChunk.get(blockKey), hellConfig.verticalStartingRange.get(blockKey));
+		oreFeatures.addFeature(
+			(x) -> new WorldFeatureClay(hellConfig.clusterSize.get(blockKey)), null,
+			OverworldFunctions::getStandardOreBiomesDensity, new Object[]{hellConfig.chancesPerChunk.get(blockKey), null},
+			hellConfig.verticalStartingRange.get(blockKey), hellConfig.verticalEndingRange.get(blockKey));
 		oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID, Block.dirt, 32, 20, 1, false);
 		oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID, Block.gravel, 32, 10, 1, false);
 		oreFeatures.addManagedOreFeature(TerrainMain.MOD_ID, Block.oreCoalStone, 16, 20, 1, true);
